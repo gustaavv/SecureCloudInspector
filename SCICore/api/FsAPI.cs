@@ -3,9 +3,10 @@ using SCICore.util;
 
 namespace SCICore.api;
 
-/**
- * FileSystem API
- */
+
+/// <summary>
+/// FileSystem API
+/// </summary>
 public static class FsApi
 {
     private static string GetLastEntry(string path)

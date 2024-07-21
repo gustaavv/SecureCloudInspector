@@ -1,16 +1,10 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using SCICore.entity;
 
 namespace SCICore.util;
 
-public enum HashAlg
-{
-    Sha256,
-    Sha1,
-    Md5
-}
-
-public static class EncryptUtils
+public static class HashUtils
 {
     private static HashAlgorithm GetHashAlgorithmInstance(HashAlg hashAlg) =>
         hashAlg switch
@@ -32,6 +26,17 @@ public static class EncryptUtils
         });
     }
 
+    public static async Task<HashResult> ComputeFileHash(string filePath)
+    {
+        var sha256Task = ComputeFileHash(filePath, HashAlg.Sha256);
+        var sha1Task = ComputeFileHash(filePath, HashAlg.Sha1);
+        var md5Task = ComputeFileHash(filePath, HashAlg.Md5);
+
+        var hashResults = await Task.WhenAll(sha256Task, sha1Task, md5Task);
+
+        return new HashResult(hashResults[0], hashResults[1], hashResults[2]);
+    }
+
     public static async Task<string> ComputeStringHash(string text, HashAlg hashAlg)
     {
         return await Task.Run(() =>
@@ -41,5 +46,16 @@ public static class EncryptUtils
             var hashBytes = ha.ComputeHash(inputBytes);
             return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
         });
+    }
+
+    public static async Task<HashResult> ComputeStringHash(string text)
+    {
+        var sha256Task = ComputeStringHash(text, HashAlg.Sha256);
+        var sha1Task = ComputeStringHash(text, HashAlg.Sha1);
+        var md5Task = ComputeStringHash(text, HashAlg.Md5);
+
+        var hashResults = await Task.WhenAll(sha256Task, sha1Task, md5Task);
+
+        return new HashResult(hashResults[0], hashResults[1], hashResults[2]);
     }
 }

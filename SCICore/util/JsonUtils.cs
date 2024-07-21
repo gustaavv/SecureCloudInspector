@@ -14,7 +14,7 @@ public static class JsonUtils
         }
     };
 
-    public static string ToStr(Object obj)
+    public static string ToStr(object obj)
     {
         return JsonSerializer.Serialize(obj, Options);
     }
@@ -31,7 +31,7 @@ public static class JsonUtils
         return await JsonSerializer.DeserializeAsync<T>(stream, options: Options);
     }
 
-    public static async Task Write(string file, Object obj)
+    public static async Task Write(string file, object obj)
     {
         await using var stream = File.Create(file);
         await JsonSerializer.SerializeAsync(stream, obj, Options);
