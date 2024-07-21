@@ -13,7 +13,7 @@ public record Item(string Name, ItemType Type, List<Item> Children)
     {
     }
 
-    public Item() : this(null, ItemType.File, new List<Item>())
+    public Item() : this(null!, ItemType.File, new List<Item>())
     {
     }
 }

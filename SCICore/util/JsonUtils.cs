@@ -5,7 +5,7 @@ namespace SCICore.util;
 
 public static class JsonUtils
 {
-    private static readonly JsonSerializerOptions Options = new JsonSerializerOptions
+    private static readonly JsonSerializerOptions Options = new()
     {
         WriteIndented = false,
         Converters =
@@ -19,13 +19,13 @@ public static class JsonUtils
         return JsonSerializer.Serialize(obj, Options);
     }
 
-    public static T ToObj<T>(string s)
+    public static T? ToObj<T>(string s)
     {
         return JsonSerializer.Deserialize<T>(s, Options);
     }
 
 
-    public static async Task<T> Read<T>(string file)
+    public static async Task<T?> Read<T>(string file)
     {
         await using var stream = File.OpenRead(file);
         return await JsonSerializer.DeserializeAsync<T>(stream, options: Options);

@@ -25,7 +25,7 @@ public static class FsApi
         var ans = new Item(GetLastEntry(path), ItemType.Dir);
         map[path] = ans;
 
-        FSUtils.Walk(path, (root, dirs, files) =>
+        FsUtils.Walk(path, (root, dirs, files) =>
         {
             var parent = map[root];
             foreach (var d in dirs)
