@@ -12,4 +12,8 @@ public record Item(string Name, ItemType Type, List<Item> Children)
         : this(Name, Type, new List<Item>())
     {
     }
+
+    public Item() : this(null, ItemType.File, new List<Item>())
+    {
+    }
 }

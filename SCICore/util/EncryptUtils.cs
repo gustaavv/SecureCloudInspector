@@ -10,7 +10,7 @@ public enum HashAlg
     Md5
 }
 
-public static class EncryptUtil
+public static class EncryptUtils
 {
     private static HashAlgorithm GetHashAlgorithmInstance(HashAlg hashAlg) =>
         hashAlg switch

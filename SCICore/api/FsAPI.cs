@@ -6,13 +6,13 @@ namespace SCICore.api;
 /**
  * FileSystem API
  */
-public class FsApi
+public static class FsApi
 {
     private static string GetLastEntry(string path)
     {
         return Path.GetFileName(path);
     }
-    
+
     public static Item BuildItemTree(string path)
     {
         if (!Directory.Exists(path))
@@ -25,7 +25,7 @@ public class FsApi
         var ans = new Item(GetLastEntry(path), ItemType.Dir);
         map[path] = ans;
 
-        FsUtil.Walk(path, (root, dirs, files) =>
+        FSUtils.Walk(path, (root, dirs, files) =>
         {
             var parent = map[root];
             foreach (var d in dirs)

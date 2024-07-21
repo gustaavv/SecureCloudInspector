@@ -3,7 +3,7 @@
 /**
  * FileSystem Utils
  */
-public static class FsUtil
+public static class FSUtils
 {
     /// <summary>  Walk through the directory like python's os.walk(). <br/>
     /// This method should not be async because preorder traversal matters. 
