@@ -1,2 +1,2 @@
 # SecureCloudInspector
-> call this **SCI** for short.
+> call this tool **SCI** for short.
