@@ -18,12 +18,26 @@ SCI encrypts your data **at folder level**. Let's call the folder you want to en
 TODO
 
 
-## Name
+# What SCI is not
+- A tool that follows every modern cryptography rule. Choose other tools that guarantee absolute data security if you prioritize it.
+- A cloud drive client.
+
+# Name
 
 'Secure Cloud Inspector' means an inspector between users' local filesystem and the cloud drive, aiming to secure privacy of users' data in the cloud drive transparently.
 
 Finding a proper abbreviation is also the target (maybe the main target 🤣).
 
-# What SCI is not
-- A tool that follows every modern cryptography rule. Choose other tools that guarantee absolute data security if you prioritize it.
-- A cloud drive client.
+# Why C#?
+
+I have a good knowledge of Python and Java before. 
+- Python lacks performance;
+- Java is hard to use when developing GUI;
+
+While C#
+- Have good performance;
+- Coding experience is better than Java;
+- Easier to develop a GUI program (it seems so);
+
+Since C# resembles Java, it is easy for me to learn. I think it's a good opportunity to practice coding in C#.
+
