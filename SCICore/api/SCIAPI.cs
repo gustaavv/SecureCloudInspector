@@ -8,6 +8,12 @@ namespace SCICore.api;
 /// </summary>
 public static class SciApi
 {
+    /// <summary>
+    /// Walk through a dir, build an item tree and calculate hashes for each file.
+    /// This method can be used for both source folder and encrypted folder.
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <returns></returns>
     public static async Task<Node> CalculateHashesWhenWalk(string dir)
     {
         var item = FsApi.BuildItemTree(dir);
@@ -28,6 +34,7 @@ public static class SciApi
         }
         else
         {
+            // postorder 
             var tasks = item.Children.Select(child =>
                 CalculateHashesWhenWalk(child, curPath)).ToList();
             var results = await Task.WhenAll(tasks);
