@@ -10,11 +10,10 @@ public static class SciApi
 {
     public static async Task<Node> CalculateHashesWhenWalk(string dir)
     {
-        // TODO: untested
         var item = FsApi.BuildItemTree(dir);
 
         dir = Path.GetFullPath(dir);
-        var node = await CalculateHashesWhenWalk(item, Path.GetDirectoryName(dir)!);
+        var node = await CalculateHashesWhenWalk(item, new DirectoryInfo(dir).Parent!.ToString());
         return node;
     }
 
@@ -29,7 +28,6 @@ public static class SciApi
         }
         else
         {
-            
             var tasks = item.Children.Select(child =>
                 CalculateHashesWhenWalk(child, curPath)).ToList();
             var results = await Task.WhenAll(tasks);

@@ -30,9 +30,9 @@ public record Item
     /// <summary>
     /// Size of a file. Useless if it is a directory item.
     /// </summary>
-    public ulong Size { get; set; }
+    public long Size { get; set; }
 
-    public Item(string name, ItemType type, List<Item> children, ulong size = 0L)
+    public Item(string name, ItemType type, List<Item> children, long size = 0L)
     {
         Name = name;
         Type = type;
@@ -57,10 +57,10 @@ public record Node
 {
     public string FileName { get; set; }
     public ItemType Type { get; set; }
-    public ulong FileSize { get; set; }
+    public long FileSize { get; set; }
     public HashResult FileHashResult { get; set; }
     public string ArchiveName { get; set; }
-    public ulong ArchiveSize { get; set; }
+    public long ArchiveSize { get; set; }
     public HashResult ArchiveHashResult { get; set; }
     public List<Node> Children { get; set; }
 
@@ -74,7 +74,7 @@ public record Node
     {
     }
 
-    public Node(string fileName, ItemType type, ulong fileSize, HashResult fileHashResult) :
+    public Node(string fileName, ItemType type, long fileSize, HashResult fileHashResult) :
         this(
             fileName, type, fileSize, fileHashResult,
             null!, 0L, null!,
@@ -84,8 +84,8 @@ public record Node
     }
 
     public Node(
-        string fileName, ItemType type, ulong fileSize, HashResult fileHashResult,
-        string archiveName, ulong archiveSize, HashResult archiveHashResult,
+        string fileName, ItemType type, long fileSize, HashResult fileHashResult,
+        string archiveName, long archiveSize, HashResult archiveHashResult,
         List<Node> children
     )
     {

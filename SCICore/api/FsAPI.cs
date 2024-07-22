@@ -3,17 +3,11 @@ using SCICore.util;
 
 namespace SCICore.api;
 
-
 /// <summary>
 /// FileSystem API
 /// </summary>
 public static class FsApi
 {
-    private static string GetLastEntry(string path)
-    {
-        return Path.GetFileName(path);
-    }
-
     public static Item BuildItemTree(string path)
     {
         if (!Directory.Exists(path))
@@ -23,7 +17,7 @@ public static class FsApi
 
         var map = new Dictionary<string, Item>();
 
-        var ans = new Item(GetLastEntry(path), ItemType.Dir);
+        var ans = new Item(FsUtils.GetLastEntry(path), ItemType.Dir);
         map[path] = ans;
 
         FsUtils.Walk(path, (root, dirs, files) =>
@@ -31,14 +25,17 @@ public static class FsApi
             var parent = map[root];
             foreach (var d in dirs)
             {
-                var item = new Item(GetLastEntry(d.ToString()), ItemType.Dir);
+                var item = new Item(FsUtils.GetLastEntry(d.ToString()), ItemType.Dir);
                 parent.Children.Add(item);
                 map[d.ToString()] = item;
             }
 
             foreach (var f in files)
             {
-                var item = new Item(GetLastEntry(f.ToString()), ItemType.File);
+                var item = new Item(FsUtils.GetLastEntry(f.ToString()), ItemType.File)
+                {
+                    Size = f.Length
+                };
                 parent.Children.Add(item);
             }
         });
