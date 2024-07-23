@@ -74,11 +74,11 @@ Encrypted folder:
     └── bd938c68
         └── a2bea7e8.rar
 ```
-> You may notice the encrypted names are the first 4 bytes of the sha256 result of the filename. Don't worry. This is just an example. The real encrypted names are different.  
+> You may notice (really?🤨) the encrypted names are the first 4 bytes of the sha256 result of the filename. Don't worry. This is just an example. The real encrypted names are different.  
 
 In terms of data security, t**he purpose of SCI is to be secure against cloud drive providers (nobody else)**. There is a password for each source folder, inputted by the user, say `pwd`. The real password for every archive is a function `pwd_func(md5(pwd), sha1(pwd), sha256(pwd), filename)` (filename is also hashed first). So, `pwd` can be short and easy to remember, while the archive's password is hard to brute-force attack.
 
-In terms of data recoverability, SCI takes advantage of rar files' recovery record. Therefore, every archive itself is recoverable. In addition, users can manually extract the archives as well.
+In terms of data recoverability, SCI takes advantage of rar files' recovery record. Therefore, every archive itself is recoverable. In addition, users can manually extract the archives even if SCI no longer exists.
 
 Lastly, the metadata of a source folder(`pwd`,folder structure, name of each file etc.) is stored **in plaintext**. This follows the purpose of SCI as long as the cloud drive providers do not get these data. 
 
