@@ -3,7 +3,7 @@
 
 Encrypting your data before uploading to cloud drives should be a common practice. However, managing this process is often tedious. Therefore, **SecureCloudInspector** (**SCI**) comes to help you.
 
-Unlike other encryption tools, SCI trys to **focus on both data security and data recoverability** when it comes to cloud storage.
+Unlike other encryption tools, SCI **focuses on both data security and data recoverability** when it comes to cloud storage.
 
 # How to use
 
