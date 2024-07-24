@@ -22,8 +22,7 @@ public record Item
     public ItemType Type { get; set; }
 
     /// <summary>
-    /// If it is a directory item, then this field means subdirectories.
-    /// Otherwise, this field is useless.
+    /// Subdirectories. Useless if it is a file item.
     /// </summary>
     public List<Item> Children { get; set; }
 
@@ -55,13 +54,46 @@ public record Item
 /// </summary>
 public record Node
 {
+    /// <summary>
+    /// Name of the original file/directory.
+    /// </summary>
     public string FileName { get; set; }
+    
+    
+    /// <summary>
+    /// Directory item can have different types.
+    /// </summary>
     public ItemType Type { get; set; }
+    
+    /// <summary>
+    /// Size of the original file. Useless if it is a directory item.
+    /// </summary>
     public long FileSize { get; set; }
+    
+    
+    /// <summary>
+    /// HashResult of the original file. Useless if it is a directory item.
+    /// </summary>
     public HashResult FileHashResult { get; set; }
+    
+    /// <summary>
+    /// For file, this is the archive name. For dir, this is the hashed name.
+    /// </summary>
     public string ArchiveName { get; set; }
+    
+    /// <summary>
+    /// Size of the archive. Useless if it is a directory item.
+    /// </summary>
     public long ArchiveSize { get; set; }
+    
+    /// <summary>
+    /// HashResult of the archive. Useless if it is a directory item.
+    /// </summary>
     public HashResult ArchiveHashResult { get; set; }
+    
+    /// <summary>
+    /// Subdirectories. Useless if it is a file item.
+    /// </summary>
     public List<Node> Children { get; set; }
 
 
@@ -97,5 +129,40 @@ public record Node
         ArchiveSize = archiveSize;
         ArchiveHashResult = archiveHashResult;
         Children = children;
+    }
+
+    /// <summary>
+    /// key: child.FileName <br/>
+    /// value: child node
+    /// </summary>
+    public Dictionary<string, Node> GetChildFileNameMap()
+    {
+        var map = new Dictionary<string, Node>();
+
+        foreach (var child in Children)
+        {
+            map[child.FileName] = child;
+        }
+
+        return map;
+    }
+
+    
+    /// <summary>
+    /// key: child.ArchiveName (not null) <br/>
+    /// value: child node.
+    ///
+    /// </summary>
+    public Dictionary<string, Node> GetChildArchiveNameMap()
+    {
+        var map = new Dictionary<string, Node>();
+
+        foreach (var child in Children)
+        {
+            if (child.ArchiveName == null) continue;
+            map[child.ArchiveName] = child;
+        }
+
+        return map;
     }
 }

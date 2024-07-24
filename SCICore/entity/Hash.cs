@@ -12,4 +12,6 @@ public record HashResult(string? Sha256, string? Sha1, string? Md5)
     public HashResult() : this(null, null, null)
     {
     }
+    
+    
 }
