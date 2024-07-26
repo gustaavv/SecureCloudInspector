@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SCICore", "SCICore\SCICore.csproj", "{FC0930A4-49F5-4B84-8C7C-90F684CECF64}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SCICli", "SCICli\SCICli.csproj", "{261A8C02-3759-4082-B578-F120D1AD864C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{FC0930A4-49F5-4B84-8C7C-90F684CECF64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC0930A4-49F5-4B84-8C7C-90F684CECF64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC0930A4-49F5-4B84-8C7C-90F684CECF64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{261A8C02-3759-4082-B578-F120D1AD864C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{261A8C02-3759-4082-B578-F120D1AD864C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{261A8C02-3759-4082-B578-F120D1AD864C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{261A8C02-3759-4082-B578-F120D1AD864C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
