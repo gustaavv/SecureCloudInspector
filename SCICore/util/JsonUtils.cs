@@ -31,8 +31,13 @@ public static class JsonUtils
         return await JsonSerializer.DeserializeAsync<T>(stream, options: Options);
     }
 
-    public static async Task Write(string file, object obj)
+    public static async Task Write(string file, object obj, bool force = false)
     {
+        if (File.Exists(file) && !force)
+        {
+            throw new Exception($"file already exists and force is set to false: {file}");
+        }
+
         await using var stream = File.Create(file);
         await JsonSerializer.SerializeAsync(stream, obj, Options);
     }

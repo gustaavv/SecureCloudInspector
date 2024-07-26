@@ -19,13 +19,12 @@ public static class SciApi
         var item = FsApi.BuildItemTree(dir);
 
         dir = Path.GetFullPath(dir);
-        var node = await CalculateHashesWhenWalk(item, new DirectoryInfo(dir).Parent!.ToString());
+        var node = await CalculateHashesWhenWalk(item, dir);
         return node;
     }
 
-    private static async Task<Node> CalculateHashesWhenWalk(Item item, string parentPath)
+    private static async Task<Node> CalculateHashesWhenWalk(Item item, string curPath)
     {
-        var curPath = Path.Join(parentPath, item.Name);
         if (item.Type == ItemType.File)
         {
             var hashResult = await HashUtils.ComputeFileHash(curPath);
@@ -36,7 +35,7 @@ public static class SciApi
         {
             // postorder 
             var tasks = item.Children.Select(child =>
-                CalculateHashesWhenWalk(child, curPath)).ToList();
+                CalculateHashesWhenWalk(child, Path.Join(curPath, child.Name))).ToList();
             var results = await Task.WhenAll(tasks);
 
             var node = new Node(item.Name, item.Type);
@@ -58,12 +57,9 @@ public static class SciApi
         ReuseArchives(newNode, oldNode);
         db.Node = newNode;
         // delete old archives cannot be reused
-        DeleteOldArchives(db.Node, new DirectoryInfo(db.EncryptedFolder).Parent!.ToString());
+        DeleteOldArchives(db.Node, db.EncryptedFolder);
         // make new archives
-        await MakeNewArchive(db, db.Node,
-            new DirectoryInfo(db.EncryptedFolder).Parent!.ToString(),
-            new DirectoryInfo(db.SourceFolder).Parent!.ToString()
-        );
+        await MakeNewArchive(db, db.Node, db.EncryptedFolder, db.SourceFolder);
     }
 
     /// <summary>
@@ -106,8 +102,8 @@ public static class SciApi
     /// 
     /// </summary>
     /// <param name="node">a node representing current directory</param>
-    /// <param name="parentPath"> path to the parent of the encrypted folder </param>
-    private static void DeleteOldArchives(Node node, string parentPath)
+    /// <param name="curPath"> path to the encrypted folder </param>
+    private static void DeleteOldArchives(Node node, string curPath)
     {
         if (node.Type != ItemType.Dir)
             throw new Exception("node is not Dir type");
@@ -115,7 +111,6 @@ public static class SciApi
         if (node.ArchiveName == null!)
             return;
 
-        var curPath = Path.Join(parentPath, node.ArchiveName);
         var map = node.GetChildArchiveNameMap();
 
         foreach (var f in Directory.GetFiles(curPath))
@@ -129,7 +124,8 @@ public static class SciApi
         {
             if (map.ContainsKey(d))
             {
-                DeleteOldArchives(map[d], curPath);
+                var n = map[d];
+                DeleteOldArchives(n, Path.Join(curPath, n.ArchiveName));
             }
             else
             {
@@ -144,20 +140,18 @@ public static class SciApi
     /// </summary>
     /// <param name="db"> Database </param>
     /// <param name="node">a node representing current directory</param>
-    /// <param name="parentPath"> path to the parent of the encrypted folder </param>
-    /// <param name="sourceParentPath"> path to the parent of the source folder </param>
-    private static async Task MakeNewArchive(Database db, Node node, string parentPath, string sourceParentPath)
+    /// <param name="encPath"> path to the encrypted folder </param>
+    /// <param name="srcPath"> path to the source folder </param>
+    private static async Task MakeNewArchive(Database db, Node node, string encPath, string srcPath)
     {
         // TODO: code review
-        // TODO: 确定 top-level node 的 archiveFileName 应该是什么
         if (node.Type != ItemType.Dir)
             throw new Exception("node is not Dir type");
-        var curPath = Path.Join(parentPath, node.ArchiveName);
 
         // old archives and folders
         var set = new HashSet<string>();
-        Directory.GetFiles(curPath).ToList().ForEach(e => set.Add(e));
-        Directory.GetDirectories(curPath).ToList().ForEach(e => set.Add(e));
+        Directory.GetFiles(encPath).ToList().ForEach(e => set.Add(e));
+        Directory.GetDirectories(encPath).ToList().ForEach(e => set.Add(e));
 
         var makeRarTasks = new List<Task>();
         var callSubDirTasks = new List<Task>();
@@ -168,14 +162,15 @@ public static class SciApi
             {
                 if (set.Contains(child.ArchiveName))
                     continue;
+                // make a new rar
                 var results = await Task.WhenAll(
                     EncryptApi.MakeArchiveName(db.EncryptScheme.FileNamePattern, child.FileName),
                     EncryptApi.MakeArchivePwd(db, child.FileName)
                 );
                 var archiveName = results[0] + ".rar";
                 var pwd = results[1];
-                var sourceFilePath = Path.Join(sourceParentPath, node.FileName, child.FileName);
-                var targetArchivePath = Path.Join(curPath, archiveName);
+                var sourceFilePath = Path.Join(srcPath, child.FileName);
+                var targetArchivePath = Path.Join(encPath, archiveName);
                 makeRarTasks.Add(ArchiveUtils.CompressRar(new List<string> { sourceFilePath }, targetArchivePath, pwd));
                 child.ArchiveName = archiveName;
             }
@@ -183,13 +178,19 @@ public static class SciApi
             {
                 if (child.ArchiveName == null!)
                 {
+                    // make a new dir
                     string archiveName =
                         await EncryptApi.MakeArchiveName(db.EncryptScheme.FileNamePattern, child.FileName);
-                    Directory.CreateDirectory(Path.Join(curPath, archiveName));
+                    Directory.CreateDirectory(Path.Join(encPath, archiveName));
                     child.ArchiveName = archiveName;
                 }
 
-                callSubDirTasks.Add(MakeNewArchive(db, child, curPath, Path.Join(sourceParentPath, node.FileName)));
+                callSubDirTasks.Add(
+                    MakeNewArchive(db, child,
+                        Path.Join(encPath, child.ArchiveName),
+                        Path.Join(srcPath, child.FileName)
+                    )
+                );
             }
             else
             {
@@ -199,7 +200,6 @@ public static class SciApi
 
         await Task.WhenAll(makeRarTasks);
 
-
         // now calculate hashes of new archives
         var newArchiveHashTasks = new List<Task>();
         foreach (var child in node.Children)
@@ -208,7 +208,7 @@ public static class SciApi
             {
                 newArchiveHashTasks.Add(Task.Run(() =>
                 {
-                    var archivePath = Path.Join(curPath, child.ArchiveName);
+                    var archivePath = Path.Join(encPath, child.ArchiveName);
                     var hashResult = HashUtils.ComputeFileHash(archivePath).Result;
                     child.ArchiveHashResult = hashResult;
                     child.ArchiveSize = new FileInfo(archivePath).Length;
@@ -220,5 +220,13 @@ public static class SciApi
         finalTasks.AddRange(newArchiveHashTasks);
         finalTasks.AddRange(callSubDirTasks);
         await Task.WhenAll(finalTasks);
+    }
+
+    public static async Task DecryptData(string encFolder, string decFolder, Database db)
+    {
+    }
+
+    private static async Task DecryptData(Database db, string encPath, string decPath)
+    {
     }
 }

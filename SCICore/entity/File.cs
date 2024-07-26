@@ -58,44 +58,47 @@ public record Node
     /// Name of the original file/directory.
     /// </summary>
     public string FileName { get; set; }
-    
-    
+
+
     /// <summary>
     /// Directory item can have different types.
     /// </summary>
     public ItemType Type { get; set; }
-    
+
     /// <summary>
     /// Size of the original file. Useless if it is a directory item.
     /// </summary>
     public long FileSize { get; set; }
-    
-    
+
+
     /// <summary>
     /// HashResult of the original file. Useless if it is a directory item.
     /// </summary>
     public HashResult FileHashResult { get; set; }
-    
+
     /// <summary>
     /// For file, this is the archive name. For dir, this is the hashed name.
     /// </summary>
     public string ArchiveName { get; set; }
-    
+
     /// <summary>
     /// Size of the archive. Useless if it is a directory item.
     /// </summary>
     public long ArchiveSize { get; set; }
-    
+
     /// <summary>
     /// HashResult of the archive. Useless if it is a directory item.
     /// </summary>
     public HashResult ArchiveHashResult { get; set; }
-    
+
     /// <summary>
     /// Subdirectories. Useless if it is a file item.
     /// </summary>
     public List<Node> Children { get; set; }
 
+    public Node()
+    {
+    }
 
     public Node(string fileName, ItemType type) :
         this(
@@ -147,7 +150,7 @@ public record Node
         return map;
     }
 
-    
+
     /// <summary>
     /// key: child.ArchiveName (not null) <br/>
     /// value: child node.

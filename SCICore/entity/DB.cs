@@ -40,6 +40,10 @@ public record EncryptScheme
     public Pattern PwdPattern { get; set; }
     public Pattern FileNamePattern { get; set; }
 
+    public EncryptScheme()
+    {
+    }
+
     public EncryptScheme(PasswordLevel pwdLevel) : this(
         pwdLevel,
         new Pattern(),
@@ -63,6 +67,10 @@ public record Database
     public Node Node { get; set; }
     public EncryptScheme EncryptScheme { get; set; }
     public string Password { get; set; }
+
+    public Database()
+    {
+    }
 
     public Database(
         string sourceFolder,
