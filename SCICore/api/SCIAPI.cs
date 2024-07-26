@@ -112,6 +112,9 @@ public static class SciApi
         if (node.Type != ItemType.Dir)
             throw new Exception("node is not Dir type");
 
+        if (node.ArchiveName == null!)
+            return;
+
         var curPath = Path.Join(parentPath, node.ArchiveName);
         var map = node.GetChildArchiveNameMap();
 
@@ -169,7 +172,7 @@ public static class SciApi
                     EncryptApi.MakeArchiveName(db.EncryptScheme.FileNamePattern, child.FileName),
                     EncryptApi.MakeArchivePwd(db, child.FileName)
                 );
-                var archiveName = results[0];
+                var archiveName = results[0] + ".rar";
                 var pwd = results[1];
                 var sourceFilePath = Path.Join(sourceParentPath, node.FileName, child.FileName);
                 var targetArchivePath = Path.Join(curPath, archiveName);

@@ -18,9 +18,9 @@ public static class EncryptApi
             throw new ArgumentException($"length >= {MinPatternSize} does not hold");
         }
 
-        var l1 = new Random().Next(2, length / 3);
+        var l1 = new Random().Next(2, length / 3 + 1);
         l1 = Math.Min(l1, Md5Length);
-        var l2 = new Random().Next(2, length / 3);
+        var l2 = new Random().Next(2, length / 3 + 1);
         l2 = Math.Min(l2, Sha1Length);
         var l3 = length - l1 - l2;
         l3 = Math.Min(l3, Sha256Length);
