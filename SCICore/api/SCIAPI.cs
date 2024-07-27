@@ -144,7 +144,6 @@ public static class SciApi
     /// <param name="srcPath"> path to the source folder </param>
     private static async Task MakeNewArchive(Database db, Node node, string encPath, string srcPath)
     {
-        // TODO: code review
         if (node.Type != ItemType.Dir)
             throw new Exception("node is not Dir type");
 
@@ -224,9 +223,46 @@ public static class SciApi
 
     public static async Task DecryptData(string encFolder, string decFolder, Database db)
     {
+        await DecryptData(encFolder, decFolder, db, db.Node);
     }
 
-    private static async Task DecryptData(Database db, string encPath, string decPath)
+    private static async Task DecryptData(string encPath, string decPath, Database db, Node node)
     {
+        if (node.Type != ItemType.Dir)
+            throw new Exception("node is not Dir type");
+
+        var tasks = new List<Task>();
+
+        foreach (var child in node.Children)
+        {
+            if (child.Type == ItemType.Dir)
+            {
+                Directory.CreateDirectory(Path.Join(decPath, child.FileName));
+                tasks.Add(
+                    DecryptData(
+                        Path.Join(encPath, child.ArchiveName),
+                        Path.Join(decPath, child.FileName),
+                        db, child
+                    )
+                );
+            }
+            else if (child.Type == ItemType.File)
+            {
+                var pwd = await EncryptApi.MakeArchivePwd(db, child.FileName);
+                tasks.Add(
+                    ArchiveUtils.ExtractRar(
+                        Path.Join(encPath, child.ArchiveName),
+                        decPath,
+                        pwd
+                    )
+                );
+            }
+            else
+            {
+                throw new Exception($"unknown type: {child.Type}");
+            }
+        }
+
+        await Task.WhenAll(tasks);
     }
 }

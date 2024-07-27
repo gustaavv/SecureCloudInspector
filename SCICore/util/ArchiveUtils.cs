@@ -135,7 +135,7 @@ public static class ArchiveUtils
     }
 
 
-    public static async Task<bool> ExtractRar(string archive, string outputDir)
+    public static async Task<bool> ExtractRar(string archive, string outputDir, string pwd="")
     {
         if (!File.Exists(RarPath))
         {
@@ -154,8 +154,25 @@ public static class ArchiveUtils
         {
             outputDir += "\\";
         }
+        
+        pwd = pwd.Trim();
+        if (pwd != "")
+        {
+            if (pwd.Length > 126)
+            {
+                throw new Exception("len(pwd) <= 126");
+            }
 
-        var argument = $" x \"{archive}\" \"{outputDir}\"";
+            if (pwd.Contains('"'))
+            {
+                throw new Exception("No \" in pwd");
+            }
+
+            // -hp Encrypt file and file name
+            pwd = $"-hp\"{pwd}\"";
+        }
+
+        var argument = $" x {pwd} \"{archive}\" \"{outputDir}\"";
 
         using var process = CreateProcess(RarPath, argument);
         var (res, output, error, exception) = await RunProcess(process);
