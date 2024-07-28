@@ -87,17 +87,3 @@ public record Database
         Password = password;
     }
 }
-
-public record DatabaseIndex
-{
-    /// <summary>
-    /// key: path of a source folder. <br/>
-    /// value: path of the db file.
-    /// </summary>
-    private Dictionary<string, string> SourceFolder2DbMap { get; set; }
-
-    public DatabaseIndex()
-    {
-        SourceFolder2DbMap = new Dictionary<string, string>();
-    }
-}
