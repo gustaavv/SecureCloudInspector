@@ -14,9 +14,19 @@ public static class JsonUtils
         }
     };
 
-    public static string ToStr(object obj)
+    // same to Options except WriteIndented = true
+    private static readonly JsonSerializerOptions PrettyPrintOptions = new()
     {
-        return JsonSerializer.Serialize(obj, Options);
+        WriteIndented = true,
+        Converters =
+        {
+            new JsonStringEnumConverter()
+        }
+    };
+
+    public static string ToStr(object obj, bool pretty = false)
+    {
+        return JsonSerializer.Serialize(obj, pretty ? PrettyPrintOptions : Options);
     }
 
     public static T? ToObj<T>(string s)
@@ -31,7 +41,7 @@ public static class JsonUtils
         return await JsonSerializer.DeserializeAsync<T>(stream, options: Options);
     }
 
-    public static async Task Write(string file, object obj, bool force = false)
+    public static async Task Write(string file, object obj, bool force = false, bool pretty = false)
     {
         if (File.Exists(file) && !force)
         {
@@ -39,6 +49,6 @@ public static class JsonUtils
         }
 
         await using var stream = File.Create(file);
-        await JsonSerializer.SerializeAsync(stream, obj, Options);
+        await JsonSerializer.SerializeAsync(stream, obj, pretty ? PrettyPrintOptions : Options);
     }
 }

@@ -28,7 +28,7 @@ public class DatabaseIndexDao
         }
     }
 
-    private async Task WriteDbIndex()
+    public async Task WriteDbIndex()
     {
         await JsonUtils.Write(Path.Join(DbFolder, DbIndexFileName), Index, true);
     }

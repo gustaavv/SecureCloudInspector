@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using CommandLine;
 using SCICli.dao;
-using SCICli.entity;
 using SCICli.util;
 using SCICore.util;
 
@@ -36,13 +35,13 @@ public static class Application
             {
                 if (!options.Init)
                 {
-                    Console.WriteLine("sci-cli is not initialized yet. Use 'config --init' first");
+                    Console.WriteLine("SCI-CLI is not initialized yet. Use 'config --init' first");
                     return;
                 }
             }
             else
             {
-                Console.WriteLine("sci-cli is not initialized yet. Use 'config --init' first");
+                Console.WriteLine("SCI-CLI is not initialized yet. Use 'config --init' first");
                 return;
             }
         }
@@ -52,6 +51,27 @@ public static class Application
             case ConfigOptions opt:
                 if (opt.Init)
                 {
+                    if (ConfigDao.Config.Init)
+                    {
+                        Console.WriteLine("SCI-CLI has already been initialized.");
+                        return;
+                    }
+
+
+                    var rarPath = InputUtils.Read("input rar path:");
+                    var process = ProcessUtils.CreateProcess(rarPath!, "");
+                    var (success, output, error, exception) = ProcessUtils.RunProcess(process).Result;
+                    if (success)
+                    {
+                        ConfigDao.Config.RarPath = rarPath;
+                        ConfigDao.Config.Init = true;
+                        _ = ConfigDao.WriteConfig();
+                        Console.WriteLine("init succeed");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{rarPath} not a valid path");
+                    }
                 }
 
                 break;
@@ -84,7 +104,22 @@ public static class Application
         else
         {
             var configFilePath = ConfigUtils.FindConfigPath()!;
-            ConfigDao = new ConfigDao(configFilePath);
+            if (configFilePath != null!)
+            {
+                ConfigDao = new ConfigDao(configFilePath);
+            }
+            else
+            {
+                var result = ConfigUtils.CreateDefaultConfig().Result;
+                if (!result)
+                {
+                    throw new Exception("no default config file. Creation failed as well.");
+                }
+                else
+                {
+                    ConfigDao = new ConfigDao(ConfigUtils.GetDefaultConfigPath());
+                }
+            }
         }
     }
 

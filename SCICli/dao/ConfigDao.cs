@@ -20,9 +20,9 @@ public class ConfigDao
         Config = JsonUtils.Read<Config>(ConfigFilePath).Result!;
     }
 
-    private async Task WriteConfig()
+    public async Task WriteConfig()
     {
-        await JsonUtils.Write(ConfigFilePath, Config, true);
+        await JsonUtils.Write(ConfigFilePath, Config, force: true, pretty: true);
     }
 
     public string GetDbFolder()

@@ -6,45 +6,6 @@ public static class ArchiveUtils
 {
     public static string? RarPath { get; set; }
 
-
-    private static Process CreateProcess(string filepath, string args)
-    {
-        var processStartInfo = new ProcessStartInfo()
-        {
-            FileName = filepath,
-            Arguments = args,
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            CreateNoWindow = true
-        };
-
-        var process = new Process();
-        process.StartInfo = processStartInfo;
-        return process;
-    }
-
-    private static async Task<(bool, string, string, Exception?)> RunProcess(Process process)
-    {
-        string output = null!, error = null!;
-        try
-        {
-            process.Start();
-
-            // Read the output asynchronously
-            output = await process.StandardOutput.ReadToEndAsync();
-            error = await process.StandardError.ReadToEndAsync();
-
-            await process.WaitForExitAsync();
-
-            return (process.ExitCode == 0, output, error, null);
-        }
-        catch (Exception ex)
-        {
-            return (false, output, error, ex);
-        }
-    }
-
     public static async Task<bool> CompressRar(
         List<string> sources,
         string target,
@@ -129,13 +90,13 @@ public static class ArchiveUtils
             $" a {solidArchiveStr} {dictSize} -ep1 -o- -m{compressRate} {pwd} {recoveryRateStr} -r0 \"{target}\" {filesStr}";
 
 
-        using var process = CreateProcess(RarPath, argument);
-        var (res, output, error, exception) = await RunProcess(process);
+        using var process = ProcessUtils.CreateProcess(RarPath, argument);
+        var (res, output, error, exception) = await ProcessUtils.RunProcess(process);
         return res;
     }
 
 
-    public static async Task<bool> ExtractRar(string archive, string outputDir, string pwd="")
+    public static async Task<bool> ExtractRar(string archive, string outputDir, string pwd = "")
     {
         if (!File.Exists(RarPath))
         {
@@ -154,7 +115,7 @@ public static class ArchiveUtils
         {
             outputDir += "\\";
         }
-        
+
         pwd = pwd.Trim();
         if (pwd != "")
         {
@@ -174,8 +135,8 @@ public static class ArchiveUtils
 
         var argument = $" x {pwd} \"{archive}\" \"{outputDir}\"";
 
-        using var process = CreateProcess(RarPath, argument);
-        var (res, output, error, exception) = await RunProcess(process);
+        using var process = ProcessUtils.CreateProcess(RarPath, argument);
+        var (res, output, error, exception) = await ProcessUtils.RunProcess(process);
         return res;
     }
 }

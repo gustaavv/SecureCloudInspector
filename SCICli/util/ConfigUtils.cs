@@ -13,7 +13,7 @@ public static class ConfigUtils
     private static readonly string[] ConfigDirs =
     {
         AppContext.BaseDirectory,
-        Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "sci-cli")
+        Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SCI-CLI")
     };
 
 
@@ -34,28 +34,7 @@ public static class ConfigUtils
         return null;
     }
 
-    /// <summary>
-    /// read config. If config file doesn't exist, create one at default location.
-    /// </summary>
-    public static async Task<Config?> ReadConfig()
-    {
-        var configPath = FindConfigPath();
-
-        if (configPath != null)
-        {
-            return await JsonUtils.Read<Config>(configPath);
-        }
-
-        var result = await CreateDefaultConfig();
-        if (!result)
-        {
-            return null;
-        }
-
-        return await JsonUtils.Read<Config>(GetDefaultConfigPath());
-    }
-
-    private static string GetDefaultConfigPath()
+    public static string GetDefaultConfigPath()
     {
         return Path.Join(ConfigDirs[^1], ConfigFileName);
     }
@@ -64,7 +43,7 @@ public static class ConfigUtils
     /// <summary>
     /// create config file at default location
     /// </summary>
-    private static async Task<bool> CreateDefaultConfig()
+    public static async Task<bool> CreateDefaultConfig()
     {
         var configFile = GetDefaultConfigPath();
         if (File.Exists(configFile))
@@ -72,7 +51,12 @@ public static class ConfigUtils
             return false;
         }
 
-        await JsonUtils.Write(configFile, new Config());
+        if (!Directory.Exists(ConfigDirs[^1]))
+        {
+            Directory.CreateDirectory(ConfigDirs[^1]);
+        }
+
+        await JsonUtils.Write(configFile, new Config(), pretty: true);
         Console.WriteLine($"default config file created at {configFile}");
         return true;
     }

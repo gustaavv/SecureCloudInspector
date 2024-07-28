@@ -21,7 +21,7 @@ public class DbDao
         Db = JsonUtils.Read<Database>(dbFilePath).Result!;
     }
 
-    private async Task WriteDb()
+    public async Task WriteDb()
     {
         await JsonUtils.Write(DbFilePath, Db, true);
     }
