@@ -33,7 +33,7 @@ The decryption process is alike. After you download the encrypted folder, SCI de
 ## Detailed Encryption Mechanism
 
 <details>
-<summary>Click me</summary>
+<summary>Click me 👈</summary>
 
 First, let's talk about existing encryption tools/practices first.
 
