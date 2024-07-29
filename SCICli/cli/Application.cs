@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using CommandLine;
+using ConsoleTables;
 using SCICli.dao;
 using SCICli.util;
 using SCICore.api;
@@ -189,8 +190,20 @@ public static class Application
                 }
                 else if (opt.List)
                 {
-                    // TODO: use ConsoleTables 
-                    var listDatabases = indexDao.ListDatabases();
+                    var nameDbTuples = await indexDao.ListDatabases();
+
+                    var consoleTable = new ConsoleTable(new ConsoleTableOptions
+                    {
+                        Columns = new[] { "name", "source folder" },
+                        EnableCount = true
+                    });
+
+                    foreach (var (name, db) in nameDbTuples)
+                    {
+                        consoleTable.AddRow(name, db.SourceFolder);
+                    }
+
+                    consoleTable.Write();
                 }
 
                 break;

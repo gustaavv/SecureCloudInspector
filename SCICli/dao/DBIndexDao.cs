@@ -1,4 +1,5 @@
 ﻿using SCICli.entity;
+using SCICore.entity;
 using SCICore.util;
 
 namespace SCICli.dao;
@@ -38,14 +39,22 @@ public class DatabaseIndexDao
         await JsonUtils.Write(Path.Join(DbFolder, DbIndexFileName), Index, true);
     }
 
-    public List<(string name, string path)> ListDatabases()
+    public async Task<List<(string name, Database db)>> ListDatabases()
     {
-        var ans = new List<(string, string)>();
+        var ans = new List<(string, Database)>();
+
+        var tasks = new List<Task>();
 
         foreach (var (k, v) in Index.Name2DbMap)
         {
-            ans.Add((k, v));
+            tasks.Add(Task.Run(() =>
+            {
+                var database = JsonUtils.Read<Database>(v).Result!;
+                ans.Add((k, database));
+            }));
         }
+
+        await Task.WhenAll(tasks);
 
         return ans;
     }
