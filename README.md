@@ -8,47 +8,6 @@ often tedious. Therefore, **SecureCloudInspector** (**SCI**) comes to help you.
 Unlike other encryption tools, SCI **focuses on both data security and data recoverability** when it comes to cloud
 storage.
 
-# How to use
-
-SCI is currently based on WinRAR. **Install WinRAR before using this tool. If you do not like WinRAR, do not use this
-tool --- it simply cannot work.**
-
-## SCI-CLI command
-
-SCI-CLI works in **interactive mode**. So, all the commands are listed below, nothing else.
-
-```mermaid
-flowchart LR
-%% name convention for id:
-%% 'v' means verb
-%% 'o' means options
-%% 'e' means explanation
-%% o21 means the 1st option of the 2nd verb
-%% e21 means the explanation of o21
-    exe[SCICLI.exe]
-%% config
-    exe --> v1[config]
-    v1 --> o11("--init") -.- e11[[run this command first after downloading SCI-CLI]]
-%% database 
-    exe --> v2[db]
-    v2 --> o21("--create") -.- e21[[create a database]]
-    v2 --> o22("--rename") -.- e22[[rename a database]]
-    v2 --> o23("--delete") -.- e23[[delete a database]]
-    v2 --> o24("--list") -.- e24[[list all the databases]]
-%% password
-    exe --> v3[pwd]
-    v3 --> o32("--calculate") -.- e32[[get the password of an encrypted archive <br/> if users want to manually extract the archive]]
-%% encrypt
-    exe --> v4[enc] -.-e4[[update db and encrypt data incrementally]]
-%% decrypt
-    exe --> v5[dec] -.-e5[[decrypt data downloaded from cloud drives to a folder]]
-```
-
-E.g.
-```shell
-SCICLI.exe db --list
-```
-
 # What SCI is
 
 SCI is a command line tool that encrypt your data before uploading to cloud.
@@ -72,6 +31,9 @@ flowchart LR
 The decryption process is alike. After you download the encrypted folder, SCI decrypts your data.
 
 ## Detailed Encryption Mechanism
+
+<details>
+<summary>Click me</summary>
 
 First, let's talk about existing encryption tools/practices first.
 
@@ -140,11 +102,57 @@ recoverable. In addition, users can manually extract the archives even if SCI no
 Lastly, the metadata of a source folder(`pwd`,folder structure, name of each file etc.) is stored **in plaintext**. This
 follows the purpose of SCI as long as the cloud drive providers do not get these data.
 
+</details>
+
 # What SCI is not
 
 - A tool that follows every modern cryptography rule. Choose other tools that guarantee absolute data security if you
   prioritize it.
 - A cloud drive client.
+
+
+# How to use
+
+SCI is currently based on WinRAR. **Install WinRAR before using this tool. If you do not like WinRAR, do not use this
+tool --- it simply cannot work.**
+
+## SCI-CLI command
+
+SCI-CLI works in **interactive mode**. So, all the commands are listed below, nothing else.
+
+In SCI-CLI, a database means all information of a source folder.
+
+```mermaid
+flowchart LR
+%% name convention for id:
+%% 'v' means verb
+%% 'o' means options
+%% 'e' means explanation
+%% o21 means the 1st option of the 2nd verb
+%% e21 means the explanation of o21
+    exe[SCICLI.exe]
+%% config
+    exe --> v1[config]
+    v1 --> o11("--init") -.- e11[[run this command first after downloading SCI-CLI]]
+%% database 
+    exe --> v2[db]
+    v2 --> o21("--create") -.- e21[[create a database]]
+    v2 --> o22("--rename") -.- e22[[rename a database]]
+    v2 --> o23("--delete") -.- e23[[delete a database]]
+    v2 --> o24("--list") -.- e24[[list all the databases]]
+%% password
+    exe --> v3[pwd]
+    v3 --> o32("--calculate") -.- e32[[get the password of an encrypted archive <br/> if users want to manually extract the archive]]
+%% encrypt
+    exe --> v4[enc] -.-e4[[update db and encrypt data incrementally]]
+%% decrypt
+    exe --> v5[dec] -.-e5[[decrypt data downloaded from cloud drives to a folder]]
+```
+
+E.g.
+```shell
+SCICLI.exe db --list
+```
 
 # Name
 
