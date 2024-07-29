@@ -7,9 +7,9 @@ public class DatabaseIndexDao
 {
     public const string DbIndexFileName = "index.json";
 
-    private string DbFolder { get; set; }
+    public string DbFolder { get; set; }
 
-    private DatabaseIndex Index { get; set; }
+    public DatabaseIndex Index { get; set; }
 
 
     public DatabaseIndexDao(string dbFolder)
@@ -19,6 +19,11 @@ public class DatabaseIndexDao
         string p = Path.Join(DbFolder, DbIndexFileName);
         if (!File.Exists(p))
         {
+            if (!Directory.Exists(dbFolder))
+            {
+                Directory.CreateDirectory(dbFolder);
+            }
+
             Index = new DatabaseIndex();
             _ = WriteDbIndex();
         }
@@ -33,7 +38,7 @@ public class DatabaseIndexDao
         await JsonUtils.Write(Path.Join(DbFolder, DbIndexFileName), Index, true);
     }
 
-    public List<(string, string)> ListDatabases()
+    public List<(string name, string path)> ListDatabases()
     {
         var ans = new List<(string, string)>();
 
@@ -43,5 +48,10 @@ public class DatabaseIndexDao
         }
 
         return ans;
+    }
+
+    public Dictionary<string, string> GetIndex()
+    {
+        return Index.Name2DbMap;
     }
 }

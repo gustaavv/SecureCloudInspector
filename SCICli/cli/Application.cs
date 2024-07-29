@@ -2,6 +2,8 @@
 using CommandLine;
 using SCICli.dao;
 using SCICli.util;
+using SCICore.api;
+using SCICore.entity;
 using SCICore.util;
 
 namespace SCICli.cli;
@@ -57,9 +59,8 @@ public static class Application
                         return;
                     }
 
-
                     var rarPath = InputUtils.Read("input rar path:");
-                    var process = ProcessUtils.CreateProcess(rarPath!, "");
+                    var process = ProcessUtils.CreateProcess(rarPath, "");
                     var (success, output, error, exception) = ProcessUtils.RunProcess(process).Result;
                     if (success)
                     {
@@ -75,15 +76,125 @@ public static class Application
                 }
 
                 break;
-            case PasswordOptions opt:
-                break;
+
             case DatabaseOptions opt:
                 var indexDao = new DatabaseIndexDao(ConfigDao.GetDbFolder());
-                if (opt.List)
+                if (opt.Create)
                 {
+                    var db = new Database();
+                    var dbName = InputUtils.Read("db name: ");
+                    if (string.IsNullOrWhiteSpace(dbName))
+                    {
+                        Console.WriteLine("empty string is not valid");
+                        return;
+                    }
+
+                    if (indexDao.GetIndex().ContainsKey(dbName))
+                    {
+                        Console.WriteLine("a db with the same name has already existed");
+                        return;
+                    }
+
+                    if (DatabaseIndexDao.DbIndexFileName == $"{dbName}.json")
+                    {
+                        Console.WriteLine("this name is not allowed");
+                        return;
+                    }
+
+                    var sourceFolder = InputUtils.Read("source folder: ");
+                    sourceFolder = Path.GetFullPath(sourceFolder);
+                    db.SourceFolder = sourceFolder;
+
+                    if (!Directory.Exists(sourceFolder))
+                    {
+                        Console.WriteLine("this source folder doesn't exist");
+                        return;
+                    }
+
+                    var encryptedFolder = InputUtils.Read("encrypted folder: ");
+                    encryptedFolder = Path.GetFullPath(encryptedFolder);
+
+                    if (encryptedFolder.Contains(sourceFolder))
+                    {
+                        Console.WriteLine("source folder should not be a child folder of encrypted folder");
+                        return;
+                    }
+
+                    if (encryptedFolder.Contains(sourceFolder))
+                    {
+                        Console.WriteLine("encrypted folder should not be a child folder of source folder");
+                        return;
+                    }
+
+                    db.EncryptedFolder = encryptedFolder;
+
+                    var pwd = InputUtils.Read("user password:");
+
+                    if (string.IsNullOrWhiteSpace(pwd))
+                    {
+                        Console.WriteLine("empty string is not valid");
+                        return;
+                    }
+
+                    db.Password = pwd;
+                    var encryptScheme = new EncryptScheme();
+                    db.EncryptScheme = encryptScheme;
+
+                    var num = InputUtils.Read("password level? (1) per file (2) whole directory:");
+                    if (int.TryParse(num, out var pwdLevel))
+                    {
+                        if (pwdLevel is not (1 or 2))
+                        {
+                            Console.WriteLine("input 1 or 2 to choose the password level");
+                            return;
+                        }
+
+                        encryptScheme.PwdLevel = pwdLevel == 1 ? PasswordLevel.File : PasswordLevel.Db;
+                    }
+                    else
+                    {
+                        Console.WriteLine("input 1 or 2 to choose the password level");
+                        return;
+                    }
+
+                    encryptScheme.FileNamePattern = EncryptApi.MakePattern(15);
+                    encryptScheme.PwdPattern = EncryptApi.MakePattern(60);
+
+                    Console.WriteLine("confirm your input:");
+                    Console.WriteLine($"source folder: {db.SourceFolder}");
+                    Console.WriteLine($"encrypted folder: {db.EncryptedFolder}");
+                    Console.WriteLine($"password: {db.Password}");
+                    Console.WriteLine($"password level: {db.EncryptScheme.PwdLevel}");
+
+                    var choice = InputUtils.Read("[y/n]?");
+                    if (choice == "y")
+                    {
+                        var dbPath = Path.Join(indexDao.DbFolder, $"{dbName}.json");
+                        await JsonUtils.Write(dbPath, db);
+                        _ = new DbDao(dbPath); // validate db file creation
+                        indexDao.GetIndex()[dbName] = dbPath;
+                        _ = indexDao.WriteDbIndex();
+                        Console.WriteLine("create success");
+                    }
+                    else
+                    {
+                        Console.WriteLine("not created");
+                    }
+                }
+                else if (opt.Rename)
+                {
+                }
+                else if (opt.Delete)
+                {
+                }
+                else if (opt.List)
+                {
+                    // TODO: use ConsoleTables 
                     var listDatabases = indexDao.ListDatabases();
                 }
 
+                break;
+            case PasswordOptions opt:
                 break;
             case EncryptOptions opt:
                 break;

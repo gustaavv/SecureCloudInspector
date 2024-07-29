@@ -113,8 +113,10 @@ follows the purpose of SCI as long as the cloud drive providers do not get these
 
 # How to use
 
-SCI is currently based on WinRAR. **Install WinRAR before using this tool. If you do not like WinRAR, do not use this
+## Prerequisite
+1. SCI is currently based on WinRAR. **Install WinRAR before using this tool. If you do not like WinRAR, do not use this
 tool --- it simply cannot work.**
+2. SCI currently only works on **Windows 10/11**.
 
 ## SCI-CLI command
 

@@ -29,6 +29,6 @@ public class ConfigDao
     {
         return Path.IsPathFullyQualified(Config.DbFolder)
             ? Config.DbFolder
-            : Path.GetFullPath(Path.Join(ConfigFilePath, Config.DbFolder));
+            : Path.GetFullPath(Path.Join(Path.GetDirectoryName(ConfigFilePath), Config.DbFolder));
     }
 }

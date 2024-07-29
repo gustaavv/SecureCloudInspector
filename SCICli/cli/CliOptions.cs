@@ -23,6 +23,15 @@ public class PasswordOptions : GlobalOptions
 [Verb("db", HelpText = "")]
 public class DatabaseOptions : GlobalOptions
 {
+    [Option("create", Default = false, SetName = "create")]
+    public bool Create { get; set; }
+
+    [Option("rename", Default = false, SetName = "rename")]
+    public bool Rename { get; set; }
+
+    [Option("delete", Default = false, SetName = "delete")]
+    public bool Delete { get; set; }
+
     [Option("list", Default = false, SetName = "list")]
     public bool List { get; set; }
 }

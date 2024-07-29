@@ -54,7 +54,10 @@ public static class SciApi
         // get latest folder structure
         var newNode = await CalculateHashesWhenWalk(db.SourceFolder);
         // find archives can be reused
-        ReuseArchives(newNode, oldNode);
+        if (oldNode != null!)
+        {
+            ReuseArchives(newNode, oldNode);
+        }
         db.Node = newNode;
         // delete old archives cannot be reused
         DeleteOldArchives(db.Node, db.EncryptedFolder);
