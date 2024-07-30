@@ -168,7 +168,7 @@ public static class Application
                     Console.WriteLine($"password level: {db.EncryptScheme.PwdLevel}");
 
                     var choice = InputUtils.Read("[y/n]?");
-                    if (choice == "y")
+                    if (choice.ToLower() == "y")
                     {
                         var dbPath = Path.Join(indexDao.DbFolder, $"{dbName}.json");
                         await JsonUtils.Write(dbPath, db);
@@ -225,11 +225,35 @@ public static class Application
                     indexDao.GetIndex().Remove(oldDbName);
                     indexDao.GetIndex()[newDbName] = newDbFile;
                     _ = indexDao.WriteDbIndex();
-                    
+
                     Console.WriteLine($"rename succeed: {oldDbName} -> {newDbName}");
                 }
                 else if (opt.Delete)
                 {
+                    var dbName = InputUtils.Read("db name: ");
+                    if (!indexDao.GetIndex().ContainsKey(dbName))
+                    {
+                        Console.WriteLine("this db does not exist");
+                        return;
+                    }
+
+                    var dbDao = new DbDao(indexDao.GetIndex()[dbName]);
+
+                    Console.WriteLine($"source folder of this db: {dbDao.Db.SourceFolder}");
+                    var choice = InputUtils.Read("Confirm delete? [y/n]:");
+
+                    if (choice.ToLower() == "y")
+                    {
+                        indexDao.GetIndex().Remove(dbName);
+                        _ = indexDao.WriteDbIndex();
+                        File.Delete(dbDao.DbFilePath);
+                        Console.WriteLine(
+                            $"delete succeed. Feel free to delete the encrypted folder: {dbDao.Db.EncryptedFolder}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("not deleted");
+                    }
                 }
                 else if (opt.List)
                 {

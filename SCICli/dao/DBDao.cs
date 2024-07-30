@@ -5,9 +5,9 @@ namespace SCICli.dao;
 
 public class DbDao
 {
-    private string DbFilePath { get; set; }
+    public string DbFilePath { get; set; }
 
-    private Database Db { get; set; }
+    public Database Db { get; set; }
 
 
     public DbDao(string dbFilePath)
