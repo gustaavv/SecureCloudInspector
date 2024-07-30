@@ -184,6 +184,49 @@ public static class Application
                 }
                 else if (opt.Rename)
                 {
+                    var oldDbName = InputUtils.Read("db name: ");
+                    if (!indexDao.GetIndex().ContainsKey(oldDbName))
+                    {
+                        Console.WriteLine("this db does not exist");
+                        return;
+                    }
+
+                    var newDbName = InputUtils.Read("new db name: ");
+                    if (string.IsNullOrWhiteSpace(newDbName))
+                    {
+                        Console.WriteLine("empty string is not valid");
+                        return;
+                    }
+
+                    if (indexDao.GetIndex().ContainsKey(newDbName))
+                    {
+                        Console.WriteLine("this name already existed");
+                        return;
+                    }
+
+                    if (DatabaseIndexDao.DbIndexFileName == $"{newDbName}.json")
+                    {
+                        Console.WriteLine("this name is not allowed");
+                        return;
+                    }
+
+                    if (oldDbName == newDbName)
+                    {
+                        Console.WriteLine("no need to rename");
+                        return;
+                    }
+
+                    var oldDbFile = indexDao.GetIndex()[oldDbName];
+                    var newDbFile = Path.Join(Path.GetDirectoryName(oldDbFile), $"{newDbName}.json");
+
+                    File.Move(oldDbFile, newDbFile);
+                    _ = new DbDao(newDbFile); // validate db file move
+
+                    indexDao.GetIndex().Remove(oldDbName);
+                    indexDao.GetIndex()[newDbName] = newDbFile;
+                    _ = indexDao.WriteDbIndex();
+                    
+                    Console.WriteLine($"rename succeed: {oldDbName} -> {newDbName}");
                 }
                 else if (opt.Delete)
                 {
