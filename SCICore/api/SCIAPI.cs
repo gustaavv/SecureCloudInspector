@@ -58,6 +58,7 @@ public static class SciApi
         {
             ReuseArchives(newNode, oldNode);
         }
+
         db.Node = newNode;
         // delete old archives cannot be reused
         DeleteOldArchives(db.Node, db.EncryptedFolder);
@@ -111,19 +112,18 @@ public static class SciApi
         if (node.Type != ItemType.Dir)
             throw new Exception("node is not Dir type");
 
-        if (node.ArchiveName == null!)
-            return;
-
         var map = node.GetChildArchiveNameMap();
 
-        foreach (var f in Directory.GetFiles(curPath))
+        var files = Directory.GetFiles(curPath).Select(FsUtils.GetLastEntry).ToArray();
+        foreach (var f in files)
         {
             if (map.ContainsKey(f))
                 continue;
             File.Delete(Path.Join(curPath, f));
         }
 
-        foreach (var d in Directory.GetDirectories(curPath))
+        var dirs = Directory.GetDirectories(curPath).Select(FsUtils.GetLastEntry).ToArray();
+        foreach (var d in dirs)
         {
             if (map.ContainsKey(d))
             {
@@ -152,8 +152,8 @@ public static class SciApi
 
         // old archives and folders
         var set = new HashSet<string>();
-        Directory.GetFiles(encPath).ToList().ForEach(e => set.Add(e));
-        Directory.GetDirectories(encPath).ToList().ForEach(e => set.Add(e));
+        Directory.GetFiles(encPath).ToList().ForEach(e => set.Add(FsUtils.GetLastEntry(e)));
+        Directory.GetDirectories(encPath).ToList().ForEach(e => set.Add(FsUtils.GetLastEntry(e)));
 
         var makeRarTasks = new List<Task>();
         var callSubDirTasks = new List<Task>();

@@ -49,6 +49,10 @@ public static class Application
             }
         }
 
+        DatabaseIndexDao indexDao;
+        DbDao dbDao;
+        string dbName;
+
         switch (obj)
         {
             case ConfigOptions opt:
@@ -77,13 +81,12 @@ public static class Application
                 }
 
                 break;
-
             case DatabaseOptions opt:
-                var indexDao = new DatabaseIndexDao(ConfigDao.GetDbFolder());
+                indexDao = new DatabaseIndexDao(ConfigDao.GetDbFolder());
                 if (opt.Create)
                 {
                     var db = new Database();
-                    var dbName = InputUtils.Read("db name: ");
+                    dbName = InputUtils.Read("db name: ");
                     if (string.IsNullOrWhiteSpace(dbName))
                     {
                         Console.WriteLine("empty string is not valid");
@@ -230,14 +233,14 @@ public static class Application
                 }
                 else if (opt.Delete)
                 {
-                    var dbName = InputUtils.Read("db name: ");
+                    dbName = InputUtils.Read("db name: ");
                     if (!indexDao.GetIndex().ContainsKey(dbName))
                     {
                         Console.WriteLine("this db does not exist");
                         return;
                     }
 
-                    var dbDao = new DbDao(indexDao.GetIndex()[dbName]);
+                    dbDao = new DbDao(indexDao.GetIndex()[dbName]);
 
                     Console.WriteLine($"source folder of this db: {dbDao.Db.SourceFolder}");
                     var choice = InputUtils.Read("Confirm delete? [y/n]:");
@@ -275,10 +278,70 @@ public static class Application
 
                 break;
             case PasswordOptions opt:
+                indexDao = new DatabaseIndexDao(ConfigDao.GetDbFolder());
+
+                if (opt.Calculate)
+                {
+                    dbName = InputUtils.Read("db name: ");
+                    if (!indexDao.GetIndex().ContainsKey(dbName))
+                    {
+                        Console.WriteLine("this db does not exist");
+                        return;
+                    }
+
+                    dbDao = new DbDao(indexDao.GetIndex()[dbName]);
+
+                    var pwdLevel = dbDao.Db.EncryptScheme.PwdLevel;
+                    Console.WriteLine($"password level: {pwdLevel}");
+
+                    if (pwdLevel == PasswordLevel.Db)
+                    {
+                        var pwd = await EncryptApi.MakeArchivePwd(dbDao.Db, null);
+                        Console.WriteLine($"password for {dbName} is: {pwd}");
+                    }
+                    else if (pwdLevel == PasswordLevel.File)
+                    {
+                        var filepath = InputUtils.Read("which archive? input the absolute path: ");
+                        filepath = Path.GetFullPath(filepath);
+
+                        if (!File.Exists(filepath))
+                        {
+                            Console.WriteLine("this archive does not exist");
+                            return;
+                        }
+
+                        if (!filepath.Contains(dbDao.Db.EncryptedFolder))
+                        {
+                            Console.WriteLine("this archive does not belong to this db.");
+                            return;
+                        }
+
+                        var virtualPath = filepath.Substring(dbDao.Db.EncryptedFolder.Length);
+                        virtualPath = virtualPath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+                        var root = dbDao.Db.Node;
+                        var child = root.GetChildBypath(virtualPath, false);
+                        if (child == null)
+                        {
+                            Console.WriteLine("such file is not found in the db. run `enc` first to track this file");
+                            return;
+                        }
+
+                        var pwd = await EncryptApi.MakeArchivePwd(dbDao.Db, child.FileName);
+                        Console.WriteLine($"password for {child.ArchiveName} is: {pwd}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"unknown password level: {pwdLevel}");
+                    }
+                }
+
                 break;
-            case EncryptOptions opt:
+            case EncryptOptions:
+                await Encrypt();
                 break;
-            case DecryptOptions opt:
+            case DecryptOptions:
+                await Decrypt();
                 break;
             default:
                 Console.WriteLine("unknown option");
@@ -311,6 +374,99 @@ public static class Application
                     ConfigDao = new ConfigDao(ConfigUtils.GetDefaultConfigPath());
                 }
             }
+        }
+    }
+
+
+    private static async Task Encrypt()
+    {
+        ArchiveUtils.RarPath = ConfigDao.Config.RarPath;
+
+        var indexDao = new DatabaseIndexDao(ConfigDao.GetDbFolder());
+
+        var dbName = InputUtils.Read("db name: ");
+        if (!indexDao.GetIndex().ContainsKey(dbName))
+        {
+            Console.WriteLine("this db does not exist");
+            return;
+        }
+
+        var dbDao = new DbDao(indexDao.GetIndex()[dbName]);
+
+        var sourceFolder = dbDao.Db.SourceFolder;
+        if (!Directory.Exists(sourceFolder))
+        {
+            Console.WriteLine($"source folder does not exist: {sourceFolder}. Consider create a new db.");
+            return;
+        }
+
+        var encryptedFolder = dbDao.Db.EncryptedFolder;
+        if (!Directory.Exists(encryptedFolder))
+        {
+            Console.WriteLine($"create encrypted folder: {encryptedFolder}");
+            Directory.CreateDirectory(encryptedFolder);
+        }
+
+        var choice = InputUtils.Read("Confirm encrypt? [y/n]:");
+        if (choice.ToLower() == "y")
+        {
+            Console.WriteLine("please wait patiently...");
+            await SciApi.EncryptData(dbDao.Db);
+            _ = dbDao.WriteDb();
+            Console.WriteLine("encrypt success");
+        }
+        else
+        {
+            Console.WriteLine("not encrypt");
+        }
+    }
+
+    private static async Task Decrypt()
+    {
+        ArchiveUtils.RarPath = ConfigDao.Config.RarPath;
+
+        var indexDao = new DatabaseIndexDao(ConfigDao.GetDbFolder());
+
+        var dbName = InputUtils.Read("db name: ");
+        if (!indexDao.GetIndex().ContainsKey(dbName))
+        {
+            Console.WriteLine("this db does not exist");
+            return;
+        }
+
+        var dbDao = new DbDao(indexDao.GetIndex()[dbName]);
+
+        var encFolder = InputUtils.Read("encrypted folder path:");
+        if (!Directory.Exists(encFolder))
+        {
+            Console.WriteLine("this encrypted folder does not exist");
+            return;
+        }
+
+        var decFolder = InputUtils.Read("decrypted folder path:");
+        if (!Directory.Exists(decFolder))
+        {
+            Directory.CreateDirectory(decFolder);
+            Console.WriteLine($"create decrypted folder: {decFolder}");
+        }
+        else if (new DirectoryInfo(decFolder).GetFiles().Length > 0 ||
+                 new DirectoryInfo(decFolder).GetDirectories().Length > 0)
+        {
+            Console.WriteLine("There are items in this decrypted folder, choose another one.");
+            return;
+        }
+
+
+        var choice = InputUtils.Read("Confirm decrypt? [y/n]:");
+        if (choice.ToLower() == "y")
+        {
+            Console.WriteLine("please wait patiently...");
+            await SciApi.DecryptData(encFolder, decFolder, dbDao.Db);
+            Console.WriteLine("decrypt success");
+        }
+        else
+        {
+            Console.WriteLine("not decrypt");
         }
     }
 

@@ -168,4 +168,52 @@ public record Node
 
         return map;
     }
+
+    /// <summary>
+    /// get a child node in the tree rooted by this node.
+    /// </summary>
+    /// <param name="path">
+    /// the path representing the child node. This path should begin with the root's name. <br/>
+    /// E.g. path = "/a/b" means the root's name is "a" and the method will return its child "b". 
+    /// path "a/b" is also ok. Do remember this is not a filepath, items like "." and ".." will be
+    /// treated as files.
+    /// </param>
+    /// <param name="byFile">If set to true, path consists of file names.
+    /// If set to false, path consists of archive names.</param>
+    /// <returns> the child node if found. Else, null will be returned.</returns>
+    public Node? GetChildBypath(string path, bool byFile)
+    {
+        var list = new List<string>() { byFile ? FileName : ArchiveName };
+        path.Split('/').Where(s => !string.IsNullOrWhiteSpace(s)).ToList().ForEach(s => list.Add(s));
+        
+        return GetChildBypath(this, list.ToArray(), 0, byFile);
+    }
+
+    private static Node? GetChildBypath(Node root, string[] path, int cur, bool byFile)
+    {
+        if (cur >= path.Length)
+        {
+            return null;
+        }
+
+        if (path[cur] != (byFile ? root.FileName : root.ArchiveName))
+        {
+            return null;
+        }
+
+        if (cur == path.Length - 1)
+        {
+            return root;
+        }
+
+        foreach (var child in root.Children)
+        {
+            if ((byFile ? child.FileName : child.ArchiveName) == path[cur + 1])
+            {
+                return GetChildBypath(child, path, cur + 1, byFile);
+            }
+        }
+
+        return null;
+    }
 }

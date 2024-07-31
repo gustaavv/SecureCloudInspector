@@ -18,6 +18,9 @@ public class ConfigOptions : GlobalOptions
 [Verb("pwd", HelpText = "")]
 public class PasswordOptions : GlobalOptions
 {
+    [Option("calculate", Default = false, SetName = "calculate",
+        HelpText = "get the password of an encrypted archive if users want to manually extract the archive")]
+    public bool Calculate { get; set; }
 }
 
 [Verb("db", HelpText = "")]
