@@ -162,7 +162,7 @@ public record Node
 
         foreach (var child in Children)
         {
-            if (child.ArchiveName == null) continue;
+            if (child.ArchiveName == null!) continue;
             map[child.ArchiveName] = child;
         }
 

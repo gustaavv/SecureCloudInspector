@@ -25,8 +25,7 @@ public static class Application
         await parserResult.WithNotParsedAsync(HandleError);
     }
 
-    private static ConfigDao ConfigDao { get; set; }
-
+    private static ConfigDao ConfigDao { get; set; } = null!;
 
     private static async Task Run(object obj)
     {
@@ -49,231 +48,31 @@ public static class Application
             }
         }
 
-        DatabaseIndexDao indexDao;
-        DbDao dbDao;
-        string dbName;
-
         switch (obj)
         {
             case ConfigOptions opt:
                 if (opt.Init)
                 {
-                    if (ConfigDao.Config.Init)
-                    {
-                        Console.WriteLine("SCI-CLI has already been initialized.");
-                        return;
-                    }
-
-                    var rarPath = InputUtils.Read("input rar path:");
-                    var process = ProcessUtils.CreateProcess(rarPath, "");
-                    var (success, output, error, exception) = ProcessUtils.RunProcess(process).Result;
-                    if (success)
-                    {
-                        ConfigDao.Config.RarPath = rarPath;
-                        ConfigDao.Config.Init = true;
-                        _ = ConfigDao.WriteConfig();
-                        Console.WriteLine("init succeed");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"{rarPath} not a valid path");
-                    }
+                    await ConfigInit();
                 }
 
                 break;
             case DatabaseOptions opt:
-                indexDao = new DatabaseIndexDao(ConfigDao.GetDbFolder());
                 if (opt.Create)
                 {
-                    var db = new Database();
-                    dbName = InputUtils.Read("db name: ");
-                    if (string.IsNullOrWhiteSpace(dbName))
-                    {
-                        Console.WriteLine("empty string is not valid");
-                        return;
-                    }
-
-                    if (indexDao.GetIndex().ContainsKey(dbName))
-                    {
-                        Console.WriteLine("a db with the same name has already existed");
-                        return;
-                    }
-
-                    if (DatabaseIndexDao.DbIndexFileName == $"{dbName}.json")
-                    {
-                        Console.WriteLine("this name is not allowed");
-                        return;
-                    }
-
-                    var sourceFolder = InputUtils.Read("source folder: ");
-                    sourceFolder = Path.GetFullPath(sourceFolder);
-                    db.SourceFolder = sourceFolder;
-
-                    if (!Directory.Exists(sourceFolder))
-                    {
-                        Console.WriteLine("this source folder doesn't exist");
-                        return;
-                    }
-
-                    var encryptedFolder = InputUtils.Read("encrypted folder: ");
-                    encryptedFolder = Path.GetFullPath(encryptedFolder);
-
-                    if (encryptedFolder.Contains(sourceFolder))
-                    {
-                        Console.WriteLine("source folder should not be a child folder of encrypted folder");
-                        return;
-                    }
-
-                    if (encryptedFolder.Contains(sourceFolder))
-                    {
-                        Console.WriteLine("encrypted folder should not be a child folder of source folder");
-                        return;
-                    }
-
-                    db.EncryptedFolder = encryptedFolder;
-
-                    var pwd = InputUtils.Read("user password:");
-
-                    if (string.IsNullOrWhiteSpace(pwd))
-                    {
-                        Console.WriteLine("empty string is not valid");
-                        return;
-                    }
-
-                    db.Password = pwd;
-                    var encryptScheme = new EncryptScheme();
-                    db.EncryptScheme = encryptScheme;
-
-                    var num = InputUtils.Read("password level? (1) per file (2) whole directory:");
-                    if (int.TryParse(num, out var pwdLevel))
-                    {
-                        if (pwdLevel is not (1 or 2))
-                        {
-                            Console.WriteLine("input 1 or 2 to choose the password level");
-                            return;
-                        }
-
-                        encryptScheme.PwdLevel = pwdLevel == 1 ? PasswordLevel.File : PasswordLevel.Db;
-                    }
-                    else
-                    {
-                        Console.WriteLine("input 1 or 2 to choose the password level");
-                        return;
-                    }
-
-                    encryptScheme.FileNamePattern = EncryptApi.MakePattern(15);
-                    encryptScheme.PwdPattern = EncryptApi.MakePattern(60);
-
-                    Console.WriteLine("confirm your input:");
-                    Console.WriteLine($"source folder: {db.SourceFolder}");
-                    Console.WriteLine($"encrypted folder: {db.EncryptedFolder}");
-                    Console.WriteLine($"password: {db.Password}");
-                    Console.WriteLine($"password level: {db.EncryptScheme.PwdLevel}");
-
-                    var choice = InputUtils.Read("[y/n]?");
-                    if (choice.ToLower() == "y")
-                    {
-                        var dbPath = Path.Join(indexDao.DbFolder, $"{dbName}.json");
-                        await JsonUtils.Write(dbPath, db);
-                        _ = new DbDao(dbPath); // validate db file creation
-                        indexDao.GetIndex()[dbName] = dbPath;
-                        _ = indexDao.WriteDbIndex();
-                        Console.WriteLine("create success");
-                    }
-                    else
-                    {
-                        Console.WriteLine("not created");
-                    }
+                    await DataBaseCreate();
                 }
                 else if (opt.Rename)
                 {
-                    var oldDbName = InputUtils.Read("db name: ");
-                    if (!indexDao.GetIndex().ContainsKey(oldDbName))
-                    {
-                        Console.WriteLine("this db does not exist");
-                        return;
-                    }
-
-                    var newDbName = InputUtils.Read("new db name: ");
-                    if (string.IsNullOrWhiteSpace(newDbName))
-                    {
-                        Console.WriteLine("empty string is not valid");
-                        return;
-                    }
-
-                    if (indexDao.GetIndex().ContainsKey(newDbName))
-                    {
-                        Console.WriteLine("this name already existed");
-                        return;
-                    }
-
-                    if (DatabaseIndexDao.DbIndexFileName == $"{newDbName}.json")
-                    {
-                        Console.WriteLine("this name is not allowed");
-                        return;
-                    }
-
-                    if (oldDbName == newDbName)
-                    {
-                        Console.WriteLine("no need to rename");
-                        return;
-                    }
-
-                    var oldDbFile = indexDao.GetIndex()[oldDbName];
-                    var newDbFile = Path.Join(Path.GetDirectoryName(oldDbFile), $"{newDbName}.json");
-
-                    File.Move(oldDbFile, newDbFile);
-                    _ = new DbDao(newDbFile); // validate db file move
-
-                    indexDao.GetIndex().Remove(oldDbName);
-                    indexDao.GetIndex()[newDbName] = newDbFile;
-                    _ = indexDao.WriteDbIndex();
-
-                    Console.WriteLine($"rename succeed: {oldDbName} -> {newDbName}");
+                    await DataBaseRename();
                 }
                 else if (opt.Delete)
                 {
-                    dbName = InputUtils.Read("db name: ");
-                    if (!indexDao.GetIndex().ContainsKey(dbName))
-                    {
-                        Console.WriteLine("this db does not exist");
-                        return;
-                    }
-
-                    dbDao = new DbDao(indexDao.GetIndex()[dbName]);
-
-                    Console.WriteLine($"source folder of this db: {dbDao.Db.SourceFolder}");
-                    var choice = InputUtils.Read("Confirm delete? [y/n]:");
-
-                    if (choice.ToLower() == "y")
-                    {
-                        indexDao.GetIndex().Remove(dbName);
-                        _ = indexDao.WriteDbIndex();
-                        File.Delete(dbDao.DbFilePath);
-                        Console.WriteLine(
-                            $"delete succeed. Feel free to delete the encrypted folder: {dbDao.Db.EncryptedFolder}");
-                    }
-                    else
-                    {
-                        Console.WriteLine("not deleted");
-                    }
+                    await DataBaseDelete();
                 }
                 else if (opt.List)
                 {
-                    var nameDbTuples = await indexDao.ListDatabases();
-
-                    var consoleTable = new ConsoleTable(new ConsoleTableOptions
-                    {
-                        Columns = new[] { "name", "source folder" },
-                        EnableCount = true
-                    });
-
-                    foreach (var (name, db) in nameDbTuples)
-                    {
-                        consoleTable.AddRow(name, db.SourceFolder);
-                    }
-
-                    consoleTable.Write();
+                    await DataBaseList();
                 }
 
                 break;
@@ -328,6 +127,234 @@ public static class Application
         }
     }
 
+    private static async Task ConfigInit()
+    {
+        if (ConfigDao.Config.Init)
+        {
+            Console.WriteLine("SCI-CLI has already been initialized.");
+            return;
+        }
+
+        var rarPath = InputUtils.Read("input rar path:");
+        var process = ProcessUtils.CreateProcess(rarPath, "");
+        var (success, _, _, _) = ProcessUtils.RunProcess(process).Result;
+        if (success)
+        {
+            ConfigDao.Config.RarPath = rarPath;
+            ConfigDao.Config.Init = true;
+            await ConfigDao.WriteConfig();
+            Console.WriteLine("init succeed");
+        }
+        else
+        {
+            Console.WriteLine($"{rarPath} not a valid path");
+        }
+    }
+
+    private static async Task DataBaseCreate()
+    {
+        var indexDao = new DatabaseIndexDao(ConfigDao.GetDbFolder());
+
+        var db = new Database();
+        var dbName = InputUtils.Read("db name: ");
+        if (string.IsNullOrWhiteSpace(dbName))
+        {
+            Console.WriteLine("empty string is not valid");
+            return;
+        }
+
+        if (indexDao.GetIndex().ContainsKey(dbName))
+        {
+            Console.WriteLine("a db with the same name has already existed");
+            return;
+        }
+
+        if (DatabaseIndexDao.DbIndexFileName == $"{dbName}.json")
+        {
+            Console.WriteLine("this name is not allowed");
+            return;
+        }
+
+        var sourceFolder = InputUtils.Read("source folder: ");
+        sourceFolder = Path.GetFullPath(sourceFolder);
+        db.SourceFolder = sourceFolder;
+
+        if (!Directory.Exists(sourceFolder))
+        {
+            Console.WriteLine("this source folder doesn't exist");
+            return;
+        }
+
+        var encryptedFolder = InputUtils.Read("encrypted folder: ");
+        encryptedFolder = Path.GetFullPath(encryptedFolder);
+
+        if (encryptedFolder.Contains(sourceFolder))
+        {
+            Console.WriteLine("source folder should not be a child folder of encrypted folder");
+            return;
+        }
+
+        if (encryptedFolder.Contains(sourceFolder))
+        {
+            Console.WriteLine("encrypted folder should not be a child folder of source folder");
+            return;
+        }
+
+        db.EncryptedFolder = encryptedFolder;
+
+        var pwd = InputUtils.Read("user password:");
+
+        if (string.IsNullOrWhiteSpace(pwd))
+        {
+            Console.WriteLine("empty string is not valid");
+            return;
+        }
+
+        db.Password = pwd;
+        var encryptScheme = new EncryptScheme();
+        db.EncryptScheme = encryptScheme;
+
+        var num = InputUtils.Read("password level? (1) per file (2) whole directory:");
+        if (int.TryParse(num, out var pwdLevel))
+        {
+            if (pwdLevel is not (1 or 2))
+            {
+                Console.WriteLine("input 1 or 2 to choose the password level");
+                return;
+            }
+
+            encryptScheme.PwdLevel = pwdLevel == 1 ? PasswordLevel.File : PasswordLevel.Db;
+        }
+        else
+        {
+            Console.WriteLine("input 1 or 2 to choose the password level");
+            return;
+        }
+
+        encryptScheme.FileNamePattern = EncryptApi.MakePattern(15);
+        encryptScheme.PwdPattern = EncryptApi.MakePattern(60);
+
+        Console.WriteLine("confirm your input:");
+        Console.WriteLine($"source folder: {db.SourceFolder}");
+        Console.WriteLine($"encrypted folder: {db.EncryptedFolder}");
+        Console.WriteLine($"password: {db.Password}");
+        Console.WriteLine($"password level: {db.EncryptScheme.PwdLevel}");
+
+        var choice = InputUtils.Read("[y/n]?");
+        if (choice.ToLower() == "y")
+        {
+            var dbPath = Path.Join(indexDao.DbFolder, $"{dbName}.json");
+            await JsonUtils.Write(dbPath, db);
+            _ = new DbDao(dbPath); // validate db file creation
+            indexDao.GetIndex()[dbName] = dbPath;
+            await indexDao.WriteDbIndex();
+            Console.WriteLine("create success");
+        }
+        else
+        {
+            Console.WriteLine("not created");
+        }
+    }
+
+    private static async Task DataBaseRename()
+    {
+        var indexDao = new DatabaseIndexDao(ConfigDao.GetDbFolder());
+
+        var oldDbName = InputUtils.Read("db name: ");
+        if (!indexDao.GetIndex().ContainsKey(oldDbName))
+        {
+            Console.WriteLine("this db does not exist");
+            return;
+        }
+
+        var newDbName = InputUtils.Read("new db name: ");
+        if (string.IsNullOrWhiteSpace(newDbName))
+        {
+            Console.WriteLine("empty string is not valid");
+            return;
+        }
+
+        if (indexDao.GetIndex().ContainsKey(newDbName))
+        {
+            Console.WriteLine("this name already existed");
+            return;
+        }
+
+        if (DatabaseIndexDao.DbIndexFileName == $"{newDbName}.json")
+        {
+            Console.WriteLine("this name is not allowed");
+            return;
+        }
+
+        if (oldDbName == newDbName)
+        {
+            Console.WriteLine("no need to rename");
+            return;
+        }
+
+        var oldDbFile = indexDao.GetIndex()[oldDbName];
+        var newDbFile = Path.Join(Path.GetDirectoryName(oldDbFile), $"{newDbName}.json");
+
+        File.Move(oldDbFile, newDbFile);
+        _ = new DbDao(newDbFile); // validate db file move
+
+        indexDao.GetIndex().Remove(oldDbName);
+        indexDao.GetIndex()[newDbName] = newDbFile;
+        await indexDao.WriteDbIndex();
+
+        Console.WriteLine($"rename succeed: {oldDbName} -> {newDbName}");
+    }
+
+    private static async Task DataBaseDelete()
+    {
+        var indexDao = new DatabaseIndexDao(ConfigDao.GetDbFolder());
+
+        var dbName = InputUtils.Read("db name: ");
+        if (!indexDao.GetIndex().ContainsKey(dbName))
+        {
+            Console.WriteLine("this db does not exist");
+            return;
+        }
+
+        var dbDao = new DbDao(indexDao.GetIndex()[dbName]);
+
+        Console.WriteLine($"source folder of this db: {dbDao.Db.SourceFolder}");
+        var choice = InputUtils.Read("Confirm delete? [y/n]:");
+
+        if (choice.ToLower() == "y")
+        {
+            indexDao.GetIndex().Remove(dbName);
+            await indexDao.WriteDbIndex();
+            File.Delete(dbDao.DbFilePath);
+            Console.WriteLine(
+                $"delete succeed. Feel free to delete the encrypted folder: {dbDao.Db.EncryptedFolder}");
+        }
+        else
+        {
+            Console.WriteLine("not deleted");
+        }
+    }
+
+    private static async Task DataBaseList()
+    {
+        var indexDao = new DatabaseIndexDao(ConfigDao.GetDbFolder());
+
+        var nameDbTuples = await indexDao.ListDatabases();
+
+        var consoleTable = new ConsoleTable(new ConsoleTableOptions
+        {
+            Columns = new[] { "name", "source folder" },
+            EnableCount = true
+        });
+
+        foreach (var (name, db) in nameDbTuples)
+        {
+            consoleTable.AddRow(name, db.SourceFolder);
+        }
+
+        consoleTable.Write();
+    }
+
     private static async Task Encrypt()
     {
         ArchiveUtils.RarPath = ConfigDao.Config.RarPath;
@@ -362,7 +389,7 @@ public static class Application
         {
             Console.WriteLine("please wait patiently...");
             await SciApi.EncryptData(dbDao.Db);
-            _ = dbDao.WriteDb();
+            await dbDao.WriteDb();
             Console.WriteLine("encrypt success");
         }
         else
