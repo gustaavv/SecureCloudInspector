@@ -142,16 +142,14 @@ flowchart LR
     v2 --> o22("--rename") -.- e22[[rename a database]]
     v2 --> o23("--delete") -.- e23[[delete a database]]
     v2 --> o24("--list") -.- e24[[list all the databases]]
-%% password
-    exe --> v3[pwd]
-    v3 --> o32("--calculate") -.- e32[[get the password of an encrypted archive <br/> if users want to manually extract the archive]]
 %% encrypt
-    exe --> v4[enc] -.-e4[[update db and encrypt data incrementally]]
+    exe --> v3[enc] -.- e3[[update db and encrypt data incrementally]]
 %% decrypt
-    exe --> v5[dec] -.-e5[[decrypt data downloaded from cloud drives to a folder]]
+    exe --> v4[dec] -.- e4[[decrypt data downloaded from cloud drives to a folder]]
 %% util
-    exe --> v6[util]
-    v6 --> o61("--cmp_dir") -.-e61[[compare two directories, useful when <br/> comparing source folder and decrypted folder]]
+    exe --> v5[util]
+    v5 --> o51("--cmp_dir") -.- e51[[compare two directories, useful when <br/> comparing source folder and decrypted folder]]
+    v5 --> o52("--cal_pwd") -.- e52[[calculate the password of an encrypted archive <br/> if users want to manually extract the archive]]
 ```
 
 E.g.

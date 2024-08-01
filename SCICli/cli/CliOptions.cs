@@ -15,14 +15,6 @@ public class ConfigOptions : GlobalOptions
     public bool Init { get; set; }
 }
 
-[Verb("pwd", HelpText = "")]
-public class PasswordOptions : GlobalOptions
-{
-    [Option("calculate", Default = false, SetName = "calculate",
-        HelpText = "get the password of an encrypted archive if users want to manually extract the archive")]
-    public bool Calculate { get; set; }
-}
-
 [Verb("db", HelpText = "")]
 public class DatabaseOptions : GlobalOptions
 {
@@ -54,4 +46,8 @@ public class UtilOptions : GlobalOptions
 {
     [Option("cmp_dir", Default = false, SetName = "cmp_dir")]
     public bool CompareDir { get; set; }
+
+    [Option("cal_pwd", Default = false, SetName = "cal_pwd",
+        HelpText = "calculate the password of an encrypted archive if users want to manually extract the archive")]
+    public bool CalculatePwd { get; set; }
 }

@@ -277,66 +277,6 @@ public static class Application
                 }
 
                 break;
-            case PasswordOptions opt:
-                indexDao = new DatabaseIndexDao(ConfigDao.GetDbFolder());
-
-                if (opt.Calculate)
-                {
-                    dbName = InputUtils.Read("db name: ");
-                    if (!indexDao.GetIndex().ContainsKey(dbName))
-                    {
-                        Console.WriteLine("this db does not exist");
-                        return;
-                    }
-
-                    dbDao = new DbDao(indexDao.GetIndex()[dbName]);
-
-                    var pwdLevel = dbDao.Db.EncryptScheme.PwdLevel;
-                    Console.WriteLine($"password level: {pwdLevel}");
-
-                    if (pwdLevel == PasswordLevel.Db)
-                    {
-                        var pwd = await EncryptApi.MakeArchivePwd(dbDao.Db, null);
-                        Console.WriteLine($"password for {dbName} is: {pwd}");
-                    }
-                    else if (pwdLevel == PasswordLevel.File)
-                    {
-                        var filepath = InputUtils.Read("which archive? input the absolute path: ");
-                        filepath = Path.GetFullPath(filepath);
-
-                        if (!File.Exists(filepath))
-                        {
-                            Console.WriteLine("this archive does not exist");
-                            return;
-                        }
-
-                        if (!filepath.Contains(dbDao.Db.EncryptedFolder))
-                        {
-                            Console.WriteLine("this archive does not belong to this db.");
-                            return;
-                        }
-
-                        var virtualPath = filepath.Substring(dbDao.Db.EncryptedFolder.Length);
-                        virtualPath = virtualPath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-
-                        var root = dbDao.Db.Node;
-                        var child = root.GetChildBypath(virtualPath, false);
-                        if (child == null)
-                        {
-                            Console.WriteLine("such file is not found in the db. run `enc` first to track this file");
-                            return;
-                        }
-
-                        var pwd = await EncryptApi.MakeArchivePwd(dbDao.Db, child.FileName);
-                        Console.WriteLine($"password for {child.ArchiveName} is: {pwd}");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"unknown password level: {pwdLevel}");
-                    }
-                }
-
-                break;
             case EncryptOptions:
                 await Encrypt();
                 break;
@@ -347,6 +287,10 @@ public static class Application
                 if (opt.CompareDir)
                 {
                     await UtilCompareDir();
+                }
+                else if (opt.CalculatePwd)
+                {
+                    await UtilCalculatePwd();
                 }
 
                 break;
@@ -484,6 +428,64 @@ public static class Application
         var result = await FsApi.CompareDir(f1, f2);
         var msg = result ? "the same" : "different";
         Console.WriteLine($"The two folders are {msg}.");
+    }
+
+    private static async Task UtilCalculatePwd()
+    {
+        var indexDao = new DatabaseIndexDao(ConfigDao.GetDbFolder());
+
+        var dbName = InputUtils.Read("db name: ");
+        if (!indexDao.GetIndex().ContainsKey(dbName))
+        {
+            Console.WriteLine("this db does not exist");
+            return;
+        }
+
+        var dbDao = new DbDao(indexDao.GetIndex()[dbName]);
+
+        var pwdLevel = dbDao.Db.EncryptScheme.PwdLevel;
+        Console.WriteLine($"password level: {pwdLevel}");
+
+        if (pwdLevel == PasswordLevel.Db)
+        {
+            var pwd = await EncryptApi.MakeArchivePwd(dbDao.Db, null);
+            Console.WriteLine($"password for {dbName} is: {pwd}");
+        }
+        else if (pwdLevel == PasswordLevel.File)
+        {
+            var filepath = InputUtils.Read("which archive? input the absolute path: ");
+            filepath = Path.GetFullPath(filepath);
+
+            if (!File.Exists(filepath))
+            {
+                Console.WriteLine("this archive does not exist");
+                return;
+            }
+
+            if (!filepath.Contains(dbDao.Db.EncryptedFolder))
+            {
+                Console.WriteLine("this archive does not belong to this db.");
+                return;
+            }
+
+            var virtualPath = filepath.Substring(dbDao.Db.EncryptedFolder.Length);
+            virtualPath = virtualPath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            var root = dbDao.Db.Node;
+            var child = root.GetChildBypath(virtualPath, false);
+            if (child == null)
+            {
+                Console.WriteLine("such file is not found in the db. run `enc` first to track this file");
+                return;
+            }
+
+            var pwd = await EncryptApi.MakeArchivePwd(dbDao.Db, child.FileName);
+            Console.WriteLine($"password for {child.ArchiveName} is: {pwd}");
+        }
+        else
+        {
+            Console.WriteLine($"unknown password level: {pwdLevel}");
+        }
     }
 
     private static async Task HandleError(IEnumerable<Error> errors)
