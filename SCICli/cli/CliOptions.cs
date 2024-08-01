@@ -48,3 +48,10 @@ public class EncryptOptions : GlobalOptions
 public class DecryptOptions : GlobalOptions
 {
 }
+
+[Verb("util", HelpText = "")]
+public class UtilOptions : GlobalOptions
+{
+    [Option("cmp_dir", Default = false, SetName = "cmp_dir")]
+    public bool CompareDir { get; set; }
+}

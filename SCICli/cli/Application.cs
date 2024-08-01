@@ -343,6 +343,13 @@ public static class Application
             case DecryptOptions:
                 await Decrypt();
                 break;
+            case UtilOptions opt:
+                if (opt.CompareDir)
+                {
+                    await UtilCompareDir();
+                }
+
+                break;
             default:
                 Console.WriteLine("unknown option");
                 break;
@@ -376,7 +383,6 @@ public static class Application
             }
         }
     }
-
 
     private static async Task Encrypt()
     {
@@ -468,6 +474,16 @@ public static class Application
         {
             Console.WriteLine("not decrypt");
         }
+    }
+
+    private static async Task UtilCompareDir()
+    {
+        var f1 = InputUtils.Read("folder 1:");
+        var f2 = InputUtils.Read("folder 2:");
+
+        var result = await FsApi.CompareDir(f1, f2);
+        var msg = result ? "the same" : "different";
+        Console.WriteLine($"The two folders are {msg}.");
     }
 
     private static async Task HandleError(IEnumerable<Error> errors)

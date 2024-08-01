@@ -149,6 +149,9 @@ flowchart LR
     exe --> v4[enc] -.-e4[[update db and encrypt data incrementally]]
 %% decrypt
     exe --> v5[dec] -.-e5[[decrypt data downloaded from cloud drives to a folder]]
+%% util
+    exe --> v6[util]
+    v6 --> o61("--cmp_dir") -.-e61[[compare two directories, useful when <br/> comparing source folder and decrypted folder]]
 ```
 
 E.g.
@@ -165,16 +168,9 @@ Finding a proper abbreviation is also the target (maybe the main target 🤣).
 
 # Why C#?
 
-I have a good knowledge of Python and Java before.
+I have a good knowledge of Python and Java before developing this project. But Python lacks performance and Java is hard to use when developing GUI;
 
-- Python lacks performance;
-- Java is hard to use when developing GUI;
+C# have good performances and it is way better than Java in terms of developing a Windows program, developing a GUI program (it seems so) and coding experience;
 
-While C#
-
-- Have good performance;
-- Coding experience is better than Java;
-- Easier to develop a GUI program (it seems so);
-
-Since C# resembles Java, it is easy for me to learn. I think it's a good opportunity to practice coding in C#.
+Since C# resembles Java, it's a good opportunity for me to practice coding in C#.
 
