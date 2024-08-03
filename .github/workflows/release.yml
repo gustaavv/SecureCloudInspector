@@ -35,7 +35,7 @@ jobs:
         run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
       - name: Make artifacts
-        run: zip ./publish/SCICli-${{ env.TAG }}-win64.zip ./publish/SCICli.exe
+        run: zip -j ./publish/SCICli-${{ env.TAG }}-win64.zip ./publish/SCICli.exe
 
       - name: Generate checksum
         run: |
