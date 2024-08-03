@@ -42,9 +42,10 @@ jobs:
           echo "## Checksum for SCICli-${{ env.TAG }}-win64.zip" >> body.md
           echo "| Checksum | Value |" >> body.md
           echo "| -------- | ----- |" >> body.md
-          echo "| sha256   | $(sha256sum ./publish/SCICli.exe | awk '{print $1}') |" >> body.md
-          echo "| sha1   | $(sha1sum ./publish/SCICli.exe | awk '{print $1}') |" >> body.md
-          echo "| md5   | $(md5sum ./publish/SCICli.exe | awk '{print $1}') |" >> body.md
+          zipPath="./publish/SCICli-${{ env.TAG }}-win64.zip"
+          echo "| sha256   | $(sha256sum ${zipPath} | awk '{print $1}') |" >> body.md
+          echo "| sha1   | $(sha1sum ${zipPath} | awk '{print $1}') |" >> body.md
+          echo "| md5   | $(md5sum ${zipPath} | awk '{print $1}') |" >> body.md
 
       - name: Upload to GitHub release
         uses: ncipollo/release-action@v1
