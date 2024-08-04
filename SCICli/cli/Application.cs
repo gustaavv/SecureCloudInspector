@@ -60,19 +60,19 @@ public static class Application
             case DatabaseOptions opt:
                 if (opt.Create)
                 {
-                    await DataBaseCreate();
+                    await DatabaseCreate();
                 }
                 else if (opt.Rename)
                 {
-                    await DataBaseRename();
+                    await DatabaseRename();
                 }
                 else if (opt.Delete)
                 {
-                    await DataBaseDelete();
+                    await DatabaseDelete();
                 }
                 else if (opt.List)
                 {
-                    await DataBaseList();
+                    await DatabaseList();
                 }
                 else if (opt.Search)
                 {
@@ -155,7 +155,7 @@ public static class Application
         }
     }
 
-    private static async Task DataBaseCreate()
+    private static async Task DatabaseCreate()
     {
         var indexDao = new DatabaseIndexDao(ConfigDao.GetDbFolder());
 
@@ -260,7 +260,7 @@ public static class Application
         }
     }
 
-    private static async Task DataBaseRename()
+    private static async Task DatabaseRename()
     {
         var indexDao = new DatabaseIndexDao(ConfigDao.GetDbFolder());
 
@@ -309,7 +309,7 @@ public static class Application
         Console.WriteLine($"rename succeed: {oldDbName} -> {newDbName}");
     }
 
-    private static async Task DataBaseDelete()
+    private static async Task DatabaseDelete()
     {
         var indexDao = new DatabaseIndexDao(ConfigDao.GetDbFolder());
 
@@ -339,7 +339,7 @@ public static class Application
         }
     }
 
-    private static async Task DataBaseList()
+    private static async Task DatabaseList()
     {
         var indexDao = new DatabaseIndexDao(ConfigDao.GetDbFolder());
 
