@@ -29,6 +29,9 @@ public class DatabaseOptions : GlobalOptions
 
     [Option("list", Default = false, SetName = "list")]
     public bool List { get; set; }
+
+    [Option("search", Default = false, SetName = "search")]
+    public bool Search { get; set; }
 }
 
 [Verb("enc", HelpText = "")]

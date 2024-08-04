@@ -123,6 +123,7 @@ flowchart LR
     v2 --> o22("--rename") -.- e22[[rename a database]]
     v2 --> o23("--delete") -.- e23[[delete a database]]
     v2 --> o24("--list") -.- e24[[list all the databases]]
+    v2 --> o25("--search") -.- e25[[search files in a database, useful when <br/> users want to download a specific file <br/> from cloud drives]]
 %% encrypt
     exe --> v3[enc] -.- e3[[update db and encrypt data incrementally]]
 %% decrypt

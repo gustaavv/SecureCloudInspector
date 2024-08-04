@@ -74,6 +74,10 @@ public static class Application
                 {
                     await DataBaseList();
                 }
+                else if (opt.Search)
+                {
+                    await DatabaseSearch();
+                }
 
                 break;
             case EncryptOptions:
@@ -350,6 +354,41 @@ public static class Application
         foreach (var (name, db) in nameDbTuples)
         {
             consoleTable.AddRow(name, db.SourceFolder);
+        }
+
+        consoleTable.Write();
+    }
+
+    private static async Task DatabaseSearch()
+    {
+        var indexDao = new DatabaseIndexDao(ConfigDao.GetDbFolder());
+
+        var dbName = InputUtils.Read("db name: ");
+        if (!indexDao.GetIndex().ContainsKey(dbName))
+        {
+            Console.WriteLine("this db does not exist");
+            return;
+        }
+
+        var dbDao = new DbDao(indexDao.GetIndex()[dbName]);
+
+        var input = InputUtils.Read("search keywords (if multiple, separate them with spaces): ");
+        var keywords = input.Split(' ')
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .Select(s => s.ToLower())
+            .ToArray();
+
+        var results = dbDao.Db.Node.Search(keywords);
+        var consoleTable = new ConsoleTable(new ConsoleTableOptions
+            {
+                Columns = new[] { "path in source folder", "path in encrypted folder" },
+                EnableCount = true
+            }
+        );
+
+        foreach (var (_, srcPath, encPath) in results)
+        {
+            consoleTable.AddRow(srcPath, encPath);
         }
 
         consoleTable.Write();

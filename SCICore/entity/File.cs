@@ -1,4 +1,6 @@
-﻿namespace SCICore.entity;
+﻿using System.Text;
+
+namespace SCICore.entity;
 
 public enum ItemType
 {
@@ -185,7 +187,7 @@ public record Node
     {
         var list = new List<string>() { byFile ? FileName : ArchiveName };
         path.Split('/').Where(s => !string.IsNullOrWhiteSpace(s)).ToList().ForEach(s => list.Add(s));
-        
+
         return GetChildBypath(this, list.ToArray(), 0, byFile);
     }
 
@@ -215,5 +217,43 @@ public record Node
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Search the file tree rooted by this node.
+    /// </summary>
+    /// <param name="keywords">an array of keywords to match filenames</param>
+    /// <returns>a list of tuples containing matched nodes and their corresponding paths in the file tree.</returns>
+    public List<(Node node, string srcPath, string encPath)> Search(string[] keywords)
+    {
+        var ans = new List<(Node, string, string)>();
+        Search(this, new StringBuilder(""), new StringBuilder(""), keywords, ans);
+        return ans;
+    }
+
+    private static void Search(Node cur, StringBuilder srcPath, StringBuilder encPath,
+        string[] keywords, List<(Node node, string srcPath, string encPath)> ans)
+    {
+        foreach (var kw in keywords)
+        {
+            if (cur.FileName.ToLower().Contains(kw))
+            {
+                ans.Add((cur, srcPath.ToString(), encPath.ToString()));
+                break;
+            }
+        }
+
+        var oldEncLen = encPath.Length;
+        var oldSrcLen = srcPath.Length;
+        foreach (var child in cur.Children)
+        {
+            encPath.Append($"/{child.ArchiveName}");
+            srcPath.Append($"/{child.FileName}");
+
+            Search(child, srcPath, encPath, keywords, ans);
+
+            srcPath.Remove(oldSrcLen, srcPath.Length - oldSrcLen);
+            encPath.Remove(oldEncLen, encPath.Length - oldEncLen);
+        }
     }
 }
