@@ -12,8 +12,6 @@
   <img src="https://img.shields.io/github/license/gustaavv/SecureCloudInspector" alt="license" />
 </a>
 
-<br/><br/>
-
 > call this tool **SCI** for short.
 
 Encrypting your data before uploading to cloud drives should be a common practice. However, managing this process is often tedious. Therefore, **SecureCloudInspector** (**SCI**) comes to help you.
