@@ -1,5 +1,18 @@
 # SecureCloudInspector
 
+<a href="https://github.com/gustaavv/SecureCloudInspector/releases">
+  <img src="https://img.shields.io/github/v/release/gustaavv/SecureCloudInspector" alt="latest release" />
+</a>
+
+<a href="https://github.com/gustaavv/SecureCloudInspector/commits/master/">
+  <img src="https://img.shields.io/github/last-commit/gustaavv/SecureCloudInspector" alt="latest commit" />
+</a>
+
+<a href="https://github.com/gustaavv/SecureCloudInspector/blob/master/LICENSE">
+  <img src="https://img.shields.io/github/license/gustaavv/SecureCloudInspector" alt="license" />
+</a>
+
+
 > call this tool **SCI** for short.
 
 Encrypting your data before uploading to cloud drives should be a common practice. However, managing this process is often tedious. Therefore, **SecureCloudInspector** (**SCI**) comes to help you.
