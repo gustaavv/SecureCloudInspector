@@ -12,6 +12,7 @@
   <img src="https://img.shields.io/github/license/gustaavv/SecureCloudInspector" alt="license" />
 </a>
 
+---
 
 > call this tool **SCI** for short.
 
