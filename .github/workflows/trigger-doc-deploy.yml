@@ -5,6 +5,10 @@ on:
     paths:
       - 'docs/**'
       - 'mkdocs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 env:
   DEPLOY_BRANCH: docs
