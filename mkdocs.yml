@@ -1,6 +1,37 @@
 site_name: SCI Document
+site_url: https://gustaavv.github.io/SecureCloudInspector
+repo_url: https://github.com/gustaavv/SecureCloudInspector
+site_author: Gustaavv
+copyright: Copyright © 2024 Gustaavv
 
 nav:
-  - Home: index.md
+  - Home:
+      - index.md
+      - License: license.md
+  - Getting Started:
+      - gettingStarted/gettingStarted.md
+  - User Guide:
+      - Desktop: userGuide/desktop.md
+      - Cli: userGuide/cli.md
+      - Config Location: userGuide/configLocation.md
+  - Architecture:
+      - Encrypt Scheme: architecture/encryptScheme.md
+      - Developer Guide: architecture/developerGuide.md
+  - Others:
+      - others/others.md
 
-theme: readthedocs
+theme:
+  name: material
+  color_mode: auto
+  user_color_mode_toggle: true
+  font:
+    code: JetBrains Mono
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - search.share
