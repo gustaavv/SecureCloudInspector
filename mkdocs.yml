@@ -9,7 +9,7 @@ nav:
       - index.md
       - License: license.md
   - Getting Started:
-      - gettingStarted/index.md
+      - Prerequisite: gettingStarted/prerequisite.md
   - User Guide:
       - Desktop: userGuide/desktop.md
       - Cli: userGuide/cli.md
@@ -68,6 +68,8 @@ markdown_extensions:
   - pymdownx.mark
   - pymdownx.tilde
   - pymdownx.keys
+  - admonition
+  - pymdownx.details
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
