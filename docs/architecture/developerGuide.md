@@ -1,4 +1,4 @@
-﻿# Developer Guide
+﻿# :fontawesome-solid-code: Developer Guide
 
 The whole project is developed on Windows 10.
 
