@@ -10,15 +10,16 @@ nav:
       - License: license.md
   - Getting Started:
       - Prerequisite: gettingStarted/prerequisite.md
+      - Concepts: gettingStarted/concepts.md
   - User Guide:
-      - Desktop: userGuide/desktop.md
       - Cli: userGuide/cli.md
+      - Desktop: userGuide/desktop.md
       - Config Location: userGuide/configLocation.md
   - Architecture:
       - Encryption Mechanism: architecture/encryptionMechanism.md
       - Developer Guide: architecture/developerGuide.md
   - Others:
-      - others/others.md
+      - others/index.md
 
 theme:
   name: material
@@ -51,6 +52,9 @@ theme:
     - search.share
     - header.autohide
     - navigation.footer
+    - content.code.copy
+    - content.code.select
+    - content.tabs.link
 
 extra:
   social:
@@ -58,16 +62,23 @@ extra:
       link: https://github.com/gustaavv/SecureCloudInspector
 
 markdown_extensions:
+  - attr_list
+  - md_in_html
   - footnotes
   - toc:
       permalink: true
       toc_depth: 3
   - tables
+  - pymdownx.arithmatex:
+      generic: true
   - pymdownx.betterem
   - pymdownx.caret
   - pymdownx.mark
   - pymdownx.tilde
   - pymdownx.keys
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - admonition
   - pymdownx.details
   - pymdownx.superfences:
@@ -75,3 +86,15 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
