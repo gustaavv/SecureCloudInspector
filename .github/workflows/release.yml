@@ -40,6 +40,7 @@ jobs:
       - name: Add release note
         run: |
           cat ./releaseNotes/${{ env.TAG }}.md >> body.md
+          echo "" >> body.md
 
       - name: Generate checksum
         run: |
