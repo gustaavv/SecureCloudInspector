@@ -37,6 +37,10 @@ jobs:
       - name: Make artifacts
         run: zip -j ./publish/SCICli-${{ env.TAG }}-win64.zip ./publish/SCICli.exe
 
+      - name: Add release note
+        run: |
+          cat ./releaseNotes/${{ env.TAG }}.md >> body.md
+
       - name: Generate checksum
         run: |
           echo "## Checksum for SCICli-${{ env.TAG }}-win64.zip" >> body.md
