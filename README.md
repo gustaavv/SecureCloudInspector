@@ -36,6 +36,13 @@ flowchart LR
 
 The decryption process is alike. After you download the encrypted folder, SCI decrypts your data.
 
+```mermaid
+flowchart LR
+    C[cloud drive] -- download --> B
+    subgraph "local filesystem (can be another PC)"
+        B[encrypted folder] -- SCI --> A[decrypted folder]
+    end
+```
 
 ## Quick Links
 

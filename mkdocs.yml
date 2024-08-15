@@ -10,6 +10,7 @@ nav:
       - License: license.md
   - Getting Started:
       - Prerequisite: gettingStarted/prerequisite.md
+      - Encryption Overview: gettingStarted/encryptionOverview.md
       - Concepts: gettingStarted/concepts.md
   - User Guide:
       - Cli: userGuide/cli.md

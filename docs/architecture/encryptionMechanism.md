@@ -1,5 +1,7 @@
 ﻿# :simple-letsencrypt: Encryption Mechanism
 
+How SCI encrypts your data? Why SCI is designed in this way?
+
 ## Existing tools 
 
 First, let's talk about existing encryption tools/practices.
@@ -42,36 +44,38 @@ SCI's encryption is on file level (like Cryptomator), using an archive to encryp
 
 Here is an example:
 
-Source folder:
+=== "Source folder"
 
-```
-.
-└── film
-    ├── documentary
-    │   ├── film1.avi
-    │   └── film2.avi
-    └── action
-        └── film3.avi
-```
+    ```
+    .
+    └── film
+        ├── documentary
+        │   ├── film1.avi
+        │   └── film2.avi
+        └── action
+            └── film3.avi
+    ```
 
-Encrypted folder:
+=== "Encrypted folder"
 
-```
-.
-└── d0607f7a
-    ├── 3708de48
-    │   ├── 79bb81ea.rar
-    │   └── 7c62a2d7.rar
-    └── bd938c68
-        └── a2bea7e8.rar
-```
+    ```
+    .
+    └── d0607f7a
+        ├── 3708de48
+        │   ├── 79bb81ea.rar
+        │   └── 7c62a2d7.rar
+        └── bd938c68
+            └── a2bea7e8.rar
+    ```
 
 ???+ note
 
     You may notice (really?🤨) the encrypted names are the first 4 bytes of the sha256 result of the filename. Don't worry. This is just an example. The real encrypted names are different.
 
+SCI treats cloud drives as extra **backup** drives, aiming to **archiving data (i.e. cold data)**. If your data are frequently modified (i.e. hot data), SCI still works, though extra steps will be needed.
+
 In terms of data security, **the purpose of SCI is to be secure against cloud drive providers (nobody else)**. There is a password for each source folder, inputted by the user, say `pwd`. The real password for every archive is a function `pwd_func(md5(pwd), sha1(pwd), sha256(pwd), filename)` (filename is also hashed first). So, `pwd` can be short and easy to remember, while the archive's password is hard to brute-force attack.
 
 In terms of data recoverability, SCI takes advantage of rar files' recovery record. Therefore, every archive itself is recoverable. In addition, users can manually extract the archives even if SCI no longer exists.
 
-Lastly, the [databases](../gettingStarted/concepts.md#Database) are stored **in plaintext**. This follows the purpose of SCI as long as the cloud drive providers do not get these files.
+Lastly, the [databases](../gettingStarted/concepts.md#database) are stored **in plaintext**. This follows the purpose of SCI as long as the cloud drive providers do not get these files.

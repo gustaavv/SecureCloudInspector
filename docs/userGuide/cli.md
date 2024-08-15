@@ -35,8 +35,6 @@ flowchart LR
     v2 --> o23("--delete") -.- e23[[delete a database]]
     v2 --> o24("--list") -.- e24[[list all the databases]]
     v2 --> o25("--search") -.- e25[[search files in a database, useful when <br/> users want to download a specific file <br/> from cloud drives]]
-    v2 --> o26("--export") -.- e26[[export databases to a zip file]]
-    v2 --> o27("--import") -.- e27[[import databases through a zip file]]
 %% encrypt
     exe --> v3[enc] -.- e3[[update db and encrypt data incrementally]]
 %% decrypt
@@ -49,8 +47,8 @@ flowchart LR
 
 E.g. If you want to list all the databases:
 
-```shell
-SCICLI.exe db --list
+```
+.\SCICLI.exe db --list
 ```
 
 
