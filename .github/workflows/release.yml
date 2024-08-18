@@ -21,15 +21,10 @@ jobs:
         with:
           dotnet-version: '6.0.x'
       
-      #      - name: Install dependencies
-      #        run: dotnet restore
-
-      - name: Build
-        #        run: dotnet build --configuration Release --no-restore
-        run: dotnet build --configuration Release
-
-      - name: Publish
-        run: dotnet publish ./SCICli/SCICli.csproj --configuration Release --output ./publish
+      - name: Build and publish
+        run: |
+          dotnet build --configuration Release
+          dotnet publish ./SCICli/SCICli.csproj --configuration Release --output ./publish
 
       - name: Get tag name
         run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
@@ -37,7 +32,7 @@ jobs:
       - name: Make artifacts
         run: zip -j ./publish/SCICli-${{ env.TAG }}-win64.zip ./publish/SCICli.exe
 
-      - name: Add release note
+      - name: Copy release note
         run: |
           cat ./releaseNotes/${{ env.TAG }}.md >> body.md
           echo "" >> body.md
@@ -51,6 +46,34 @@ jobs:
           echo "| sha256   | $(sha256sum ${zipPath} | awk '{print $1}') |" >> body.md
           echo "| sha1   | $(sha1sum ${zipPath} | awk '{print $1}') |" >> body.md
           echo "| md5   | $(md5sum ${zipPath} | awk '{print $1}') |" >> body.md
+          echo "" >> body.md
+
+      - name: VirusTotal Scan
+        run: |
+          pip install vt-py
+          
+          python -c "
+          
+          import vt
+          client = vt.Client('${{ secrets.VIRUSTOTAL_API_KEY }}')
+
+          def scan(filepath):
+            with open(filepath, 'rb') as f:
+                analysis = client.scan_file(f)
+            # print(f'analysis id for {filepath}: ', analysis.id)
+
+            file_id = client.get_object(f'/analyses/{analysis.id}/item').id
+            # print(f'file id for {filepath}:', file_id)
+
+            url = f'https://www.virustotal.com/gui/file/{file_id}'
+            # print('url for {filepath}: ', url)
+            return url
+
+          print(f'## SECURITY')
+          print(f'VirusTotal Scan:')
+          print(f'- [SCICli.exe]({scan('./publish/SCICli.exe')})')
+          
+          " >> body.md
 
       - name: Upload to GitHub release
         uses: ncipollo/release-action@v1
