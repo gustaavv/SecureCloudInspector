@@ -48,35 +48,6 @@ jobs:
           echo "| md5   | $(md5sum ${zipPath} | awk '{print $1}') |" >> body.md
           echo "" >> body.md
 
-      - name: VirusTotal Scan
-        env:
-          VIRUSTOTAL_API_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
-        run: |
-          pip install vt-py
-          
-          python -c "
-          
-          import vt
-          client = vt.Client('${VIRUSTOTAL_API_KEY}')
-
-          def scan(filepath):
-            with open(filepath, 'rb') as f:
-                analysis = client.scan_file(f)
-            # print(f'analysis id for {filepath}: ', analysis.id)
-
-            file_id = client.get_object(f'/analyses/{analysis.id}/item').id
-            # print(f'file id for {filepath}:', file_id)
-
-            url = f'https://www.virustotal.com/gui/file/{file_id}'
-            # print('url for {filepath}: ', url)
-            return url
-
-          print(f'## SECURITY')
-          print(f'VirusTotal Scan:')
-          print('- [SCICli.exe]({})'.format(scan('./publish/SCICli.exe')))
-          
-          " >> body.md
-
       - name: Upload to GitHub release
         uses: ncipollo/release-action@v1
         with:
