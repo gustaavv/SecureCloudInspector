@@ -49,13 +49,15 @@ jobs:
           echo "" >> body.md
 
       - name: VirusTotal Scan
+        env:
+          VIRUSTOTAL_API_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
         run: |
           pip install vt-py
           
           python -c "
           
           import vt
-          client = vt.Client('${{ secrets.VIRUSTOTAL_API_KEY }}')
+          client = vt.Client('${VIRUSTOTAL_API_KEY}')
 
           def scan(filepath):
             with open(filepath, 'rb') as f:
