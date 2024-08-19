@@ -71,7 +71,7 @@ jobs:
 
           print(f'## SECURITY')
           print(f'VirusTotal Scan:')
-          print(f'- [SCICli.exe]({scan('./publish/SCICli.exe')})')
+          print(f'- [SCICli.exe]({scan(\'./publish/SCICli.exe\')})')
           
           " >> body.md
 
