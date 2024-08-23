@@ -17,8 +17,11 @@ nav:
       - Desktop: userGuide/desktop.md
       - Config Location: userGuide/configLocation.md
   - Architecture:
+      - Design Thinking: architecture/designThinking.md
       - Encryption Mechanism: architecture/encryptionMechanism.md
-      - Developer Guide: architecture/developerGuide.md
+  - Developer Guide:
+      - Roadmap: developerGuide/roadmap.md
+      - How to Contribute?: developerGuide/contribute.md
   - Others:
       - others/index.md
 
