@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SCICore", "SCICore\SCICore.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SCICli", "SCICli\SCICli.csproj", "{261A8C02-3759-4082-B578-F120D1AD864C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SCIDesktop", "SCIDesktop\SCIDesktop.csproj", "{EBA8EF9F-A427-4B86-806F-3D17CDEF199D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{261A8C02-3759-4082-B578-F120D1AD864C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{261A8C02-3759-4082-B578-F120D1AD864C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{261A8C02-3759-4082-B578-F120D1AD864C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBA8EF9F-A427-4B86-806F-3D17CDEF199D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBA8EF9F-A427-4B86-806F-3D17CDEF199D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBA8EF9F-A427-4B86-806F-3D17CDEF199D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBA8EF9F-A427-4B86-806F-3D17CDEF199D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
