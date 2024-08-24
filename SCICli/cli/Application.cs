@@ -1,9 +1,8 @@
 ﻿using System.Reflection;
 using CommandLine;
 using ConsoleTables;
-using SCICli.dao;
-using SCICli.util;
 using SCICore.api;
+using SCICore.dao;
 using SCICore.entity;
 using SCICore.util;
 

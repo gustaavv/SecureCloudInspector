@@ -1,4 +1,4 @@
-﻿namespace SCICli.entity;
+﻿namespace SCICore.entity;
 
 public record Config
 {

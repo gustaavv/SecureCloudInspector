@@ -1,7 +1,6 @@
-﻿using SCICli.entity;
-using SCICore.util;
+﻿using SCICore.entity;
 
-namespace SCICli.util;
+namespace SCICore.util;
 
 public static class ConfigUtils
 {

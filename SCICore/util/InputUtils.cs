@@ -1,4 +1,4 @@
-﻿namespace SCICli.util;
+﻿namespace SCICore.util;
 
 public static class InputUtils
 {

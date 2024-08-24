@@ -1,8 +1,7 @@
-﻿using SCICli.entity;
-using SCICore.entity;
+﻿using SCICore.entity;
 using SCICore.util;
 
-namespace SCICli.dao;
+namespace SCICore.dao;
 
 public class DatabaseIndexDao
 {
