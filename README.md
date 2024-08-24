@@ -49,4 +49,5 @@ flowchart LR
 - [Getting Started](https://gustaavv.github.io/SecureCloudInspector/gettingStarted/prerequisite/)
 - [SCI-CLI commands](https://gustaavv.github.io/SecureCloudInspector/userGuide/cli/)
 - [Detailed Encryption Mechanism](https://gustaavv.github.io/SecureCloudInspector/architecture/encryptionMechanism/)
+- [Developer Guide](https://gustaavv.github.io/SecureCloudInspector/developerGuide/roadmap/): Roadmap, how to contribute, etc.
 - [Others](https://gustaavv.github.io/SecureCloudInspector/others/)
