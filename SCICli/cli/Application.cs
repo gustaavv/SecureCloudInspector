@@ -249,7 +249,7 @@ public static class Application
             var dbPath = Path.Join(indexDao.DbFolder, $"{dbName}.json");
             await JsonUtils.Write(dbPath, db);
             _ = new DbDao(dbPath); // validate db file creation
-            indexDao.GetIndex()[dbName] = dbPath;
+            indexDao.GetIndex()[dbName].Filepath = dbPath;
             await indexDao.WriteDbIndex();
             Console.WriteLine("create success");
         }
@@ -295,14 +295,14 @@ public static class Application
             return;
         }
 
-        var oldDbFile = indexDao.GetIndex()[oldDbName];
+        var oldDbFile = indexDao.GetIndex()[oldDbName].Filepath;
         var newDbFile = Path.Join(Path.GetDirectoryName(oldDbFile), $"{newDbName}.json");
 
         File.Move(oldDbFile, newDbFile);
         _ = new DbDao(newDbFile); // validate db file move
 
         indexDao.GetIndex().Remove(oldDbName);
-        indexDao.GetIndex()[newDbName] = newDbFile;
+        indexDao.GetIndex()[newDbName].Filepath = newDbFile;
         await indexDao.WriteDbIndex();
 
         Console.WriteLine($"rename succeed: {oldDbName} -> {newDbName}");
@@ -319,7 +319,7 @@ public static class Application
             return;
         }
 
-        var dbDao = new DbDao(indexDao.GetIndex()[dbName]);
+        var dbDao = new DbDao(indexDao.GetIndex()[dbName].Filepath);
 
         Console.WriteLine($"source folder of this db: {dbDao.Db.SourceFolder}");
         var choice = InputUtils.Read("Confirm delete? [y/n]:");
@@ -369,7 +369,7 @@ public static class Application
             return;
         }
 
-        var dbDao = new DbDao(indexDao.GetIndex()[dbName]);
+        var dbDao = new DbDao(indexDao.GetIndex()[dbName].Filepath);
 
         var input = InputUtils.Read("search keywords (if multiple, separate them with spaces): ");
         var keywords = input.Split(' ')
@@ -406,7 +406,7 @@ public static class Application
             return;
         }
 
-        var dbDao = new DbDao(indexDao.GetIndex()[dbName]);
+        var dbDao = new DbDao(indexDao.GetIndex()[dbName].Filepath);
 
         var sourceFolder = dbDao.Db.SourceFolder;
         if (!Directory.Exists(sourceFolder))
@@ -449,7 +449,7 @@ public static class Application
             return;
         }
 
-        var dbDao = new DbDao(indexDao.GetIndex()[dbName]);
+        var dbDao = new DbDao(indexDao.GetIndex()[dbName].Filepath);
 
         var encFolder = InputUtils.Read("encrypted folder path:");
         if (!Directory.Exists(encFolder))
@@ -506,7 +506,7 @@ public static class Application
             return;
         }
 
-        var dbDao = new DbDao(indexDao.GetIndex()[dbName]);
+        var dbDao = new DbDao(indexDao.GetIndex()[dbName].Filepath);
 
         var pwdLevel = dbDao.Db.EncryptScheme.PwdLevel;
         Console.WriteLine($"password level: {pwdLevel}");

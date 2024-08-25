@@ -44,11 +44,11 @@ public class DatabaseIndexDao
 
         var tasks = new List<Task>();
 
-        foreach (var (k, v) in Index.Name2DbMap)
+        foreach (var (k, v) in Index.Map)
         {
             tasks.Add(Task.Run(() =>
             {
-                var database = JsonUtils.Read<Database>(v).Result!;
+                var database = JsonUtils.Read<Database>(v.Filepath).Result!;
                 ans.Add((k, database));
             }));
         }
@@ -58,8 +58,8 @@ public class DatabaseIndexDao
         return ans;
     }
 
-    public Dictionary<string, string> GetIndex()
+    public Dictionary<string, DatabaseRecord> GetIndex()
     {
-        return Index.Name2DbMap;
+        return Index.Map;
     }
 }
