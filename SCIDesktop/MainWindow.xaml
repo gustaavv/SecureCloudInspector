@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SCIDesktop"
+        xmlns:myControl="clr-namespace:SCIDesktop.control"
         mc:Ignorable="d"
         Title="SCI-Desktop"
         Height="750" Width="1200" MinWidth="800" MinHeight="450" WindowStartupLocation="CenterScreen">
@@ -15,11 +15,16 @@
                     <Setter Property="Height" Value="40" />
                 </Style>
             </TabControl.Resources>
-            <TabItem Header="Encryption"></TabItem>
-            <TabItem Header="Decryption"></TabItem>
-            <TabItem Header="Setting"></TabItem>
+            <TabItem Header="_Encryption">
+                <myControl:EncryptionControl />
+            </TabItem>
+            <TabItem Header="_Decryption">
+                <myControl:DecryptionControl />
+            </TabItem>
+            <TabItem Header="_Setting">
+                <myControl:SettingControl />
+            </TabItem>
         </TabControl>
 
-        <ContentControl DockPanel.Dock="Right"></ContentControl>
     </DockPanel>
 </Window>
