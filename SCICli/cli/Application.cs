@@ -249,6 +249,7 @@ public static class Application
             var dbPath = Path.Join(indexDao.DbFolder, $"{dbName}.json");
             await JsonUtils.Write(dbPath, db);
             _ = new DbDao(dbPath); // validate db file creation
+            indexDao.GetIndex()[dbName] = new DatabaseRecord();
             indexDao.GetIndex()[dbName].Filepath = dbPath;
             await indexDao.WriteDbIndex();
             Console.WriteLine("create success");
