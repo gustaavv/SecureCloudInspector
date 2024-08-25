@@ -1,5 +1,10 @@
 ﻿# Roadmap
 
+???+ info
+
+    It is intentional that I use docs to keep track of roadmap instead of using GitHub Projects.
+
+
 ```mermaid
 gantt
     title Roadmap
