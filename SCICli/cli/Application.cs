@@ -351,7 +351,7 @@ public static class Application
             EnableCount = true
         });
 
-        foreach (var (name, db) in nameDbTuples)
+        foreach (var (name, _, db) in nameDbTuples)
         {
             consoleTable.AddRow(name, db.SourceFolder);
         }

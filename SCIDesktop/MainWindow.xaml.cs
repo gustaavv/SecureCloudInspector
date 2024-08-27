@@ -18,7 +18,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         ConfigDao = configDao;
 
-        EncTab.Content = new EncryptionControl();
+        EncTab.Content = new EncryptionControl(ConfigDao);
         DecTab.Content = new DecryptionControl();
         SetTab.Content = new SettingControl(ConfigDao);
         AboutTab.Content = new AboutControl();

@@ -38,9 +38,9 @@ public class DatabaseIndexDao
         await JsonUtils.Write(Path.Join(DbFolder, DbIndexFileName), Index, true);
     }
 
-    public async Task<List<(string name, Database db)>> ListDatabases()
+    public async Task<List<(string name, DatabaseRecord record, Database db)>> ListDatabases()
     {
-        var ans = new List<(string, Database)>();
+        var ans = new List<(string, DatabaseRecord, Database)>();
 
         var tasks = new List<Task>();
 
@@ -49,7 +49,7 @@ public class DatabaseIndexDao
             tasks.Add(Task.Run(() =>
             {
                 var database = JsonUtils.Read<Database>(v.Filepath).Result!;
-                ans.Add((k, database));
+                ans.Add((k, v, database));
             }));
         }
 
