@@ -7,4 +7,17 @@
         <UseWPF>true</UseWPF>
     </PropertyGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\SCICore\SCICore.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Resource Include="asset\**\*"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
+        <PackageReference Include="SharpVectors" Version="1.8.4.2"/>
+    </ItemGroup>
+
 </Project>
