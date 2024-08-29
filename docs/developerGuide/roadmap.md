@@ -40,4 +40,5 @@ Tasks:
 ## Others
 
 Tasks:
+
 - i18n: Only when SCI has a large user base will I consider this. The main question is: if a translation is a language I can't speak, how can I merge that PR? -- I don't even know whether the translation is appropriate.
