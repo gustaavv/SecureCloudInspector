@@ -302,8 +302,15 @@ public static class Application
         File.Move(oldDbFile, newDbFile);
         _ = new DbDao(newDbFile); // validate db file move
 
+        var oldRecord = indexDao.GetIndex()[oldDbName];
         indexDao.GetIndex().Remove(oldDbName);
-        indexDao.GetIndex()[newDbName].Filepath = newDbFile;
+
+        var newRecord = new DatabaseRecord();
+        indexDao.GetIndex()[newDbName] = newRecord;
+        newRecord.Filepath = newDbFile;
+        newRecord.CreatedAt = oldRecord.CreatedAt;
+        newRecord.UpdatedAt = DateTime.Today;
+
         await indexDao.WriteDbIndex();
 
         Console.WriteLine($"rename succeed: {oldDbName} -> {newDbName}");

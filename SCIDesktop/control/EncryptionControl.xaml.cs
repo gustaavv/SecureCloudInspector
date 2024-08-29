@@ -81,28 +81,33 @@ public partial class EncryptionControl : UserControl
     private void InfoButton_OnClick(object sender, RoutedEventArgs e)
     {
         var button = sender as Button;
-        var dbInfo = (string)button!.Tag;
-        MessageBox.Show(dbInfo, "info");
+        var dbName = (string)button!.Tag;
+        MessageBox.Show(dbName, "info");
     }
 
     private void SearchButton_OnClick(object sender, RoutedEventArgs e)
     {
         var button = sender as Button;
-        var dbInfo = (string)button!.Tag;
-        MessageBox.Show(dbInfo, "search");
+        var dbName = (string)button!.Tag;
+        MessageBox.Show(dbName, "search");
     }
 
     private void RenameButton_OnClick(object sender, RoutedEventArgs e)
     {
         var button = sender as Button;
-        var dbInfo = (string)button!.Tag;
-        MessageBox.Show(dbInfo, "rename");
+        var dbName = (string)button!.Tag;
+
+        var renameDbWindow = new RenameDbWindow(dbName, IndexDao);
+        if (renameDbWindow.ShowDialog() == true)
+        {
+            RefreshDbList();
+        }
     }
 
     private void DeleteButton_OnClick(object sender, RoutedEventArgs e)
     {
         var button = sender as Button;
-        var dbInfo = (string)button!.Tag;
-        MessageBox.Show(dbInfo, "delete");
+        var dbName = (string)button!.Tag;
+        MessageBox.Show(dbName, "delete");
     }
 }
