@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -108,6 +109,17 @@ public partial class EncryptionControl : UserControl
     {
         var button = sender as Button;
         var dbName = (string)button!.Tag;
-        MessageBox.Show(dbName, "delete");
+
+        var result = MessageBox.Show($"Confirm delete {dbName}?", "Delete a database", MessageBoxButton.YesNo);
+        if (result != MessageBoxResult.Yes) return;
+
+        var dbFilePath = IndexDao.GetIndex()[dbName].Filepath;
+        File.Delete(dbFilePath);
+
+        IndexDao.GetIndex().Remove(dbName);
+        _ = Task.Run(IndexDao.WriteDbIndex);
+
+        MessageBox.Show($"{dbName} Deleted", "Delete a database");
+        RefreshDbList();
     }
 }
