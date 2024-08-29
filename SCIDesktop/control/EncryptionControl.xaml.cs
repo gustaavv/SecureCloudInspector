@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using SCICore.dao;
 using SCICore.entity;
+using SCIDesktop.window;
 
 namespace SCIDesktop.control;
 
@@ -52,5 +54,55 @@ public partial class EncryptionControl : UserControl
         }
 
         DbList.ItemsSource = list;
+    }
+
+
+    private void RefreshButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        RefreshDbList();
+        MessageBox.Show("Refreshed.", "Refresh DB List");
+    }
+
+    private void NewButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        var createDbWindow = new CreateDbWindow(IndexDao);
+        if (createDbWindow.ShowDialog() == true)
+        {
+            RefreshDbList();
+        }
+    }
+
+    private void ExportButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        MessageBox.Show("export DB");
+    }
+
+
+    private void InfoButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        var button = sender as Button;
+        var dbInfo = (string)button!.Tag;
+        MessageBox.Show(dbInfo, "info");
+    }
+
+    private void SearchButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        var button = sender as Button;
+        var dbInfo = (string)button!.Tag;
+        MessageBox.Show(dbInfo, "search");
+    }
+
+    private void RenameButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        var button = sender as Button;
+        var dbInfo = (string)button!.Tag;
+        MessageBox.Show(dbInfo, "rename");
+    }
+
+    private void DeleteButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        var button = sender as Button;
+        var dbInfo = (string)button!.Tag;
+        MessageBox.Show(dbInfo, "delete");
     }
 }
