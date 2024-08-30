@@ -12,23 +12,24 @@
         <StackPanel Orientation="Horizontal" Margin="10,0,10, 5">
             <StackPanel.Resources>
                 <Style TargetType="Button">
-                    <Setter Property="Margin" Value="0,0,5,0"></Setter>
+                    <Setter Property="Margin" Value="0,0,5,0" />
+                </Style>
+                <Style TargetType="svgc:SvgViewbox">
+                    <Setter Property="Width" Value="25" />
+                    <Setter Property="Height" Value="25" />
                 </Style>
             </StackPanel.Resources>
             <Button Name="RefreshButton" ToolTip="Refresh List" Click="RefreshButton_OnClick">
                 <svgc:SvgViewbox
-                    Source="pack://application:,,,/asset/icon/arrow-rotate-right-solid.svg"
-                    Width="16" Height="16" Stretch="Uniform" />
+                    Source="pack://application:,,,/asset/icon/arrow-rotate-right-solid.svg" />
             </Button>
             <Button Name="NewButton" ToolTip="New DB" Click="NewButton_OnClick">
                 <svgc:SvgViewbox
-                    Source="pack://application:,,,/asset/icon/plus-solid.svg"
-                    Width="16" Height="16" Stretch="Uniform" />
+                    Source="pack://application:,,,/asset/icon/plus-solid.svg" />
             </Button>
             <Button Name="ExportButton" ToolTip="Export DB" Click="ExportButton_OnClick">
                 <svgc:SvgViewbox
-                    Source="pack://application:,,,/asset/icon/upload-solid.svg"
-                    Width="16" Height="16" Stretch="Uniform" />
+                    Source="pack://application:,,,/asset/icon/upload-solid.svg" />
             </Button>
         </StackPanel>
 
@@ -40,10 +41,36 @@
             </ListView.Resources>
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Name" Width="120" DisplayMemberBinding="{Binding Name}" />
-                    <GridViewColumn Header="Source Folder" Width="250" DisplayMemberBinding="{Binding SourceFolder}" />
-                    <GridViewColumn Header="Encrypted Folder" Width="250"
-                                    DisplayMemberBinding="{Binding EncryptedFolder}" />
+                    <GridViewColumn Header="Name" Width="120">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}"
+                                           ToolTip="{Binding Name}"
+                                           TextTrimming="CharacterEllipsis" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Source Folder" Width="250">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding SourceFolder}"
+                                           ToolTip="{Binding SourceFolder}"
+                                           TextTrimming="CharacterEllipsis" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Encrypted Folder" Width="250">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding EncryptedFolder}"
+                                           ToolTip="{Binding EncryptedFolder}"
+                                           TextTrimming="CharacterEllipsis" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
                     <GridViewColumn Header="Created" Width="100"
                                     DisplayMemberBinding="{Binding CreatedAt, StringFormat=d}" />
                     <GridViewColumn Header="Updated" Width="100"
@@ -53,38 +80,39 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
+
                                     <StackPanel.Resources>
                                         <Style TargetType="Button">
                                             <Setter Property="Margin" Value="0,0,5,0"></Setter>
                                         </Style>
+                                        <Style TargetType="svgc:SvgViewbox">
+                                            <Setter Property="Width" Value="22" />
+                                            <Setter Property="Height" Value="22" />
+                                        </Style>
                                     </StackPanel.Resources>
+
                                     <Button Name="InfoButton" ToolTip="Detailed Info" Tag="{Binding Name}"
                                             Click="InfoButton_OnClick">
                                         <svgc:SvgViewbox
-                                            Source="pack://application:,,,/asset/icon/circle-info-solid.svg"
-                                            Width="16" Height="16" Stretch="Uniform" />
+                                            Source="pack://application:,,,/asset/icon/circle-info-solid.svg" />
                                     </Button>
 
                                     <Button Name="SearchButton" ToolTip="Search DB" Tag="{Binding Name}"
                                             Click="SearchButton_OnClick">
                                         <svgc:SvgViewbox
-                                            Source="pack://application:,,,/asset/icon/magnifying-glass-solid.svg"
-                                            Width="16" Height="16" Stretch="Uniform" />
+                                            Source="pack://application:,,,/asset/icon/magnifying-glass-solid.svg" />
                                     </Button>
 
                                     <Button Name="RenameButton" ToolTip="Rename DB" Tag="{Binding Name}"
                                             Click="RenameButton_OnClick">
                                         <svgc:SvgViewbox
-                                            Source="pack://application:,,,/asset/icon/pen-to-square-solid.svg"
-                                            Width="16" Height="16" Stretch="Uniform" />
-                                    </Button>
-                                    <Button Name="DeleteButton" ToolTip="Delete DB" Tag="{Binding Name}"
-                                            Click="DeleteButton_OnClick">
-                                        <svgc:SvgViewbox
-                                            Source="pack://application:,,,/asset/icon/trash-can-solid.svg"
-                                            Width="16" Height="16" Stretch="Uniform" />
+                                            Source="pack://application:,,,/asset/icon/pen-to-square-solid.svg" />
                                     </Button>
 
+                                    <Button Name="DeleteButton" ToolTip="Delete DB" Tag="{Binding Name}"
+                                            Click="DeleteButton_OnClick">
+                                        <svgc:SvgViewbox Source="pack://application:,,,/asset/icon/trash-can-solid.svg" />
+                                    </Button>
 
                                 </StackPanel>
 
