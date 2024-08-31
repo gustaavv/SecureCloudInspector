@@ -9,8 +9,8 @@
         Title="Create a Database" Height="450" Width="675" WindowStartupLocation="CenterScreen">
     <StackPanel Margin="10">
         <StackPanel.Resources>
-            <GridLength x:Key="Col1Width">150</GridLength>
-            <GridLength x:Key="Col2Width">450</GridLength>
+            <GridLength x:Key="Col1Width">180</GridLength>
+            <GridLength x:Key="Col2Width">370</GridLength>
         </StackPanel.Resources>
 
         <Grid Margin="0,10">

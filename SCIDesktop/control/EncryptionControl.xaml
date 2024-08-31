@@ -15,8 +15,8 @@
                     <Setter Property="Margin" Value="0,0,5,0" />
                 </Style>
                 <Style TargetType="svgc:SvgViewbox">
-                    <Setter Property="Width" Value="25" />
-                    <Setter Property="Height" Value="25" />
+                    <Setter Property="Width" Value="30" />
+                    <Setter Property="Height" Value="30" />
                 </Style>
             </StackPanel.Resources>
             <Button Name="RefreshButton" ToolTip="Refresh List" Click="RefreshButton_OnClick">
