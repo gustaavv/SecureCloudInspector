@@ -4,9 +4,9 @@ public record DatabaseRecord
 {
     public string Filepath { get; set; }
 
-    public DateTime? CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
-    public DateTime? UpdatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     public DatabaseRecord()
     {

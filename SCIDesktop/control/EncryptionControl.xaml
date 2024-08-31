@@ -71,12 +71,12 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
-                    <GridViewColumn Header="Created" Width="100"
+                    <GridViewColumn Header="Created" Width="120"
                                     DisplayMemberBinding="{Binding CreatedAt, StringFormat=d}" />
-                    <GridViewColumn Header="Updated" Width="100"
+                    <GridViewColumn Header="Updated" Width="120"
                                     DisplayMemberBinding="{Binding UpdatedAt, StringFormat=d}" />
 
-                    <GridViewColumn Header="Actions" Width="150">
+                    <GridViewColumn Header="Actions" Width="200">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -90,6 +90,12 @@
                                             <Setter Property="Height" Value="22" />
                                         </Style>
                                     </StackPanel.Resources>
+
+                                    <Button Name="EncryptButton" ToolTip="Encrypt" Tag="{Binding Name}"
+                                            Click="EncryptButton_OnClick">
+                                        <svgc:SvgViewbox
+                                            Source="pack://application:,,,/asset/icon/lock-solid.svg" />
+                                    </Button>
 
                                     <Button Name="InfoButton" ToolTip="Detailed Info" Tag="{Binding Name}"
                                             Click="InfoButton_OnClick">

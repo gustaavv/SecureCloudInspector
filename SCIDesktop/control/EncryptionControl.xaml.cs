@@ -4,8 +4,9 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using SCICore.api;
 using SCICore.dao;
-using SCICore.entity;
+using SCICore.util;
 using SCIDesktop.window;
 
 namespace SCIDesktop.control;
@@ -28,11 +29,11 @@ public partial class EncryptionControl : UserControl
         public string Name { get; set; }
         public string SourceFolder { get; set; }
         public string EncryptedFolder { get; set; }
-        public DateTime? CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
         public DbInfoRow(string name, string sourceFolder, string encryptedFolder,
-            DateTime? createdAt, DateTime? updatedAt)
+            DateTime createdAt, DateTime updatedAt)
         {
             Name = name;
             SourceFolder = sourceFolder;
@@ -90,7 +91,8 @@ public partial class EncryptionControl : UserControl
     {
         var button = sender as Button;
         var dbName = (string)button!.Tag;
-        MessageBox.Show(dbName, "search");
+        var searchDbWindow = new SearchDbWindow(IndexDao, dbName);
+        searchDbWindow.ShowDialog();
     }
 
     private void RenameButton_OnClick(object sender, RoutedEventArgs e)
@@ -121,5 +123,64 @@ public partial class EncryptionControl : UserControl
 
         MessageBox.Show($"{dbName} Deleted", "Delete a database");
         RefreshDbList();
+    }
+
+    private void EncryptButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        ArchiveUtils.RarPath = ConfigDao.Config.RarPath;
+
+        var button = sender as Button;
+        var dbName = (string)button!.Tag;
+        var dbDao = Task.Run(() => new DbDao(IndexDao.GetIndex()[dbName].Filepath)).Result;
+
+        var updatedAt = IndexDao.GetIndex()[dbName].UpdatedAt;
+
+        var span = DateTime.Now - updatedAt;
+        if (span.TotalDays < 1)
+        {
+            var messageBoxResult = MessageBox.Show("Less in 1 day after the last encryption, confirm do it again?",
+                "Confirm", MessageBoxButton.YesNo);
+            if (messageBoxResult != MessageBoxResult.Yes) return;
+        }
+
+        var sourceFolder = dbDao.Db.SourceFolder;
+        if (!Directory.Exists(sourceFolder))
+        {
+            MessageBox.Show($"Source folder does not exist: {sourceFolder}. This database may be broken", "Error",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+
+        var encryptedFolder = dbDao.Db.EncryptedFolder;
+        if (!Directory.Exists(encryptedFolder))
+        {
+            MessageBox.Show(
+                $"Encrypted folder does not exist: {encryptedFolder}. Modify this path in the detailed info page",
+                "Error",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+
+        var progressDialog = new ProgressDialog
+        {
+            Owner = Window.GetWindow(this)
+        };
+
+        progressDialog.Loaded += async (_, _) =>
+        {
+            await Task.Run(async () =>
+            {
+                await SciApi.EncryptData(dbDao.Db);
+                await dbDao.WriteDb();
+
+                IndexDao.GetIndex()[dbName].UpdatedAt = DateTime.Today;
+                await IndexDao.WriteDbIndex();
+            });
+
+            progressDialog.Close();
+            MessageBox.Show("Encryption Completed!", "Result");
+        };
+
+        progressDialog.ShowDialog();
     }
 }
