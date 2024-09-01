@@ -179,6 +179,8 @@ public partial class EncryptionControl : UserControl
 
             progressDialog.Close();
             MessageBox.Show("Encryption Completed!", "Result");
+            
+            RefreshDbList();
         };
 
         progressDialog.ShowDialog();
