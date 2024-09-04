@@ -1,4 +1,10 @@
-# SecureCloudInspector
+<div align="center">
+
+<img src="./icon.svg" alt="icon" height="300" width="300" >
+
+<h1>SecureCloudInspector</h1>
+
+<p>SCI is a tool to encrypt your data before uploading to cloud drives, focusing on both data security and data recoverability.</p>
 
 <a href="https://github.com/gustaavv/SecureCloudInspector/releases">
   <img src="https://img.shields.io/github/v/release/gustaavv/SecureCloudInspector" alt="latest release" />
@@ -12,13 +18,18 @@
   <img src="https://img.shields.io/github/license/gustaavv/SecureCloudInspector" alt="license" />
 </a>
 
+</div >
+
+
+## Introduction
+
 > call this tool **SCI** for short.
 
 Encrypting your data before uploading to cloud drives should be a common practice. However, managing this process is often tedious. Therefore, **SecureCloudInspector** (**SCI**) comes to help you.
 
 Unlike other encryption tools, SCI **focuses on both data security and data recoverability** when it comes to cloud storage.
 
-## Introduction
+
 
 SCI is a command line tool that encrypt your data before uploading to cloud.
 
