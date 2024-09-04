@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <StackPanel>
@@ -14,22 +14,19 @@
                 <Style TargetType="Button">
                     <Setter Property="Margin" Value="0,0,5,0" />
                 </Style>
-                <Style TargetType="svgc:SvgViewbox">
+                <Style TargetType="iconPacks:PackIconFontAwesome">
                     <Setter Property="Width" Value="30" />
                     <Setter Property="Height" Value="30" />
                 </Style>
             </StackPanel.Resources>
             <Button Name="RefreshButton" ToolTip="Refresh List" Click="RefreshButton_OnClick">
-                <svgc:SvgViewbox
-                    Source="pack://application:,,,/asset/icon/arrow-rotate-right-solid.svg" />
+                <iconPacks:PackIconFontAwesome Kind="ArrowRotateRightSolid" />
             </Button>
             <Button Name="NewButton" ToolTip="New DB" Click="NewButton_OnClick">
-                <svgc:SvgViewbox
-                    Source="pack://application:,,,/asset/icon/plus-solid.svg" />
+                <iconPacks:PackIconFontAwesome Kind="PlusSolid" />
             </Button>
             <Button Name="ExportButton" ToolTip="Export DB" Click="ExportButton_OnClick">
-                <svgc:SvgViewbox
-                    Source="pack://application:,,,/asset/icon/upload-solid.svg" />
+                <iconPacks:PackIconFontAwesome Kind="UploadSolid" />
             </Button>
         </StackPanel>
 
@@ -85,39 +82,36 @@
                                         <Style TargetType="Button">
                                             <Setter Property="Margin" Value="0,0,5,0"></Setter>
                                         </Style>
-                                        <Style TargetType="svgc:SvgViewbox">
+                                        <Style TargetType="iconPacks:PackIconFontAwesome">
                                             <Setter Property="Width" Value="22" />
                                             <Setter Property="Height" Value="22" />
                                         </Style>
+
                                     </StackPanel.Resources>
 
                                     <Button Name="EncryptButton" ToolTip="Encrypt" Tag="{Binding Name}"
                                             Click="EncryptButton_OnClick">
-                                        <svgc:SvgViewbox
-                                            Source="pack://application:,,,/asset/icon/lock-solid.svg" />
+                                        <iconPacks:PackIconFontAwesome Kind="LockSolid" />
                                     </Button>
 
                                     <Button Name="InfoButton" ToolTip="Detailed Info" Tag="{Binding Name}"
                                             Click="InfoButton_OnClick">
-                                        <svgc:SvgViewbox
-                                            Source="pack://application:,,,/asset/icon/circle-info-solid.svg" />
+                                        <iconPacks:PackIconFontAwesome Kind="CircleInfoSolid" />
                                     </Button>
 
                                     <Button Name="SearchButton" ToolTip="Search DB" Tag="{Binding Name}"
                                             Click="SearchButton_OnClick">
-                                        <svgc:SvgViewbox
-                                            Source="pack://application:,,,/asset/icon/magnifying-glass-solid.svg" />
+                                        <iconPacks:PackIconFontAwesome Kind="MagnifyingGlassSolid" />
                                     </Button>
 
                                     <Button Name="RenameButton" ToolTip="Rename DB" Tag="{Binding Name}"
                                             Click="RenameButton_OnClick">
-                                        <svgc:SvgViewbox
-                                            Source="pack://application:,,,/asset/icon/pen-to-square-solid.svg" />
+                                        <iconPacks:PackIconFontAwesome Kind="PenToSquareSolid" />
                                     </Button>
 
                                     <Button Name="DeleteButton" ToolTip="Delete DB" Tag="{Binding Name}"
                                             Click="DeleteButton_OnClick">
-                                        <svgc:SvgViewbox Source="pack://application:,,,/asset/icon/trash-can-solid.svg" />
+                                        <iconPacks:PackIconFontAwesome Kind="TrashCanSolid" />
                                     </Button>
 
                                 </StackPanel>

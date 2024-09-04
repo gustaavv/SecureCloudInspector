@@ -3,27 +3,33 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:SCIDesktop"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
-             xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
              Startup="App_OnStartup">
     <Application.Resources>
-        <!-- global font size -->
-        <system:Double x:Key="BaseFontSize">20</system:Double>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <!-- Theme setting -->
+                <ResourceDictionary
+                    Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/light.emerald.xaml" />
 
-        <Style TargetType="{x:Type Control}" x:Key="BaseStyle">
-            <Setter Property="FontSize" Value="{StaticResource BaseFontSize}" />
-        </Style>
-        <Style TargetType="Button" BasedOn="{StaticResource BaseStyle}" />
-        <Style TargetType="TextBox" BasedOn="{StaticResource BaseStyle}" />
-        <Style TargetType="ListView" BasedOn="{StaticResource BaseStyle}" />
+            </ResourceDictionary.MergedDictionaries>
 
-        <Style TargetType="TextBlock">
-            <Setter Property="FontSize" Value="{StaticResource BaseFontSize}"></Setter>
-        </Style>
+            <!-- global font size -->
+            <system:Double x:Key="BaseFontSize">20</system:Double>
 
-        <!-- others -->
-        <Style TargetType="svgc:SvgViewbox">
-            <Setter Property="Stretch" Value="Uniform" />
-        </Style>
+            <Style TargetType="{x:Type Control}" x:Key="BaseStyle">
+                <Setter Property="FontSize" Value="{StaticResource BaseFontSize}" />
+            </Style>
+            <Style TargetType="Button" BasedOn="{StaticResource BaseStyle}" />
+            <Style TargetType="TextBox" BasedOn="{StaticResource BaseStyle}" />
+            <Style TargetType="ListView" BasedOn="{StaticResource BaseStyle}" />
 
+            <Style TargetType="TextBlock">
+                <Setter Property="FontSize" Value="{StaticResource BaseFontSize}"></Setter>
+            </Style>
+
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

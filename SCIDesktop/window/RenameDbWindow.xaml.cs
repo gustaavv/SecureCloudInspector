@@ -2,12 +2,13 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using MahApps.Metro.Controls;
 using SCICore.dao;
 using SCICore.entity;
 
 namespace SCIDesktop.window;
 
-public partial class RenameDbWindow : Window
+public partial class RenameDbWindow : MetroWindow
 {
     private DatabaseIndexDao IndexDao { get; set; }
 

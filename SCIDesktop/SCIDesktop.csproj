@@ -16,7 +16,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
+        <PackageReference Include="MahApps.Metro" Version="2.4.10"/>
+        <PackageReference Include="MahApps.Metro.IconPacks.FontAwesome" Version="5.0.0"/>
+        <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1"/>
         <PackageReference Include="SharpVectors" Version="1.8.4.2"/>
     </ItemGroup>
 

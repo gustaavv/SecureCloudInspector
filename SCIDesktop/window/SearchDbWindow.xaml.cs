@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using MahApps.Metro.Controls;
 using SCICore.dao;
 using SCICore.entity;
 
 namespace SCIDesktop.window;
 
-public partial class SearchDbWindow : Window
+public partial class SearchDbWindow : MetroWindow
 {
     private DatabaseIndexDao IndexDao { get; set; }
 

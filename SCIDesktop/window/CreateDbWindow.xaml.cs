@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using MahApps.Metro.Controls;
 using Ookii.Dialogs.Wpf;
 using SCICore.api;
 using SCICore.dao;
@@ -11,7 +12,7 @@ using SCICore.util;
 
 namespace SCIDesktop.window;
 
-public partial class CreateDbWindow : Window
+public partial class CreateDbWindow : MetroWindow
 {
     private DatabaseIndexDao IndexDao { get; set; }
 
