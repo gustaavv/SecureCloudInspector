@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - '*'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -15,6 +16,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        
+      - name: Get tag name
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            TAG="${GITHUB_REF#refs/tags/}"
+            echo "Selected tag is: $TAG"
+            echo "TAG=$TAG" >> $GITHUB_ENV
+          else
+            echo "Error: This workflow requires a tag to be selected. Exiting..."
+            exit 1
+          fi
 
       - name: Setup DotNet Environment
         uses: actions/setup-dotnet@v4
@@ -25,9 +37,6 @@ jobs:
         run: |
           dotnet build --configuration Release
           dotnet publish ./SCICli/SCICli.csproj --configuration Release --output ./publish
-
-      - name: Get tag name
-        run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
       - name: Make artifacts
         run: zip -j ./publish/SCICli-${{ env.TAG }}-win64.zip ./publish/SCICli.exe
