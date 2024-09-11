@@ -26,6 +26,7 @@ nav:
       - others/index.md
 
 theme:
+  logo: icon.svg
   name: material
   font:
     code: JetBrains Mono
