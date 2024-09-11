@@ -6,10 +6,16 @@
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <StackPanel Margin="20">
-        <TextBlock HorizontalAlignment="Left" FontSize="30" Margin="0,0,0,10">Encryption</TextBlock>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Margin="0,10">
+        <TextBlock Grid.Row="0" HorizontalAlignment="Left" FontSize="30" Margin="0,0,0,10">Encryption</TextBlock>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,10">
             <StackPanel.Resources>
                 <Style TargetType="Button">
                     <Setter Property="Margin" Value="0,0,5,0" />
@@ -31,7 +37,7 @@
             </Button>
         </StackPanel>
 
-        <ListView Margin="0, 10" Name="DbList">
+        <ListView Grid.Row="2" Margin="0, 10" Name="DbList">
             <ListView.Resources>
                 <Style TargetType="{x:Type GridViewColumnHeader}">
                     <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -125,5 +131,5 @@
             </ListView.View>
         </ListView>
 
-    </StackPanel>
+    </Grid>
 </UserControl>
