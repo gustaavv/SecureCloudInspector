@@ -6,9 +6,19 @@
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                  mc:Ignorable="d"
-                 Title="SCI-Desktop"
+                 Icon="asset/icon.ico" ShowIconOnTitleBar="True"
+                 Title="SCI-Desktop" TitleCharacterCasing="Normal"
                  Height="720" Width="1280" MinHeight="720" MinWidth="1280"
                  WindowStartupLocation="CenterScreen">
+
+    <mah:MetroWindow.IconTemplate>
+        <DataTemplate>
+            <Image Margin="2,2,0,2"
+                   RenderOptions.BitmapScalingMode="HighQuality"
+                   Source="{Binding}" />
+        </DataTemplate>
+    </mah:MetroWindow.IconTemplate>
+
     <mah:MetroWindow.Resources>
         <DataTemplate x:Key="MenuItemTemplate" DataType="{x:Type mah:HamburgerMenuIconItem}">
             <Grid Height="48" ToolTip="{Binding Label}">
@@ -71,36 +81,4 @@
 
     </Grid>
 
-
-    <!-- <Grid> -->
-    <!--     <Grid.ColumnDefinitions> -->
-    <!--         <ColumnDefinition Width="150" /> -->
-    <!--         <ColumnDefinition Width="*" /> -->
-    <!--     </Grid.ColumnDefinitions> -->
-    <!-- -->
-    <!--     <Border Grid.Column="0"> -->
-    <!--         <Grid> -->
-    <!--             <Grid.Resources> -->
-    <!--                 <Style TargetType="Button"> -->
-    <!--                     <Setter Property="Height" Value="40"></Setter> -->
-    <!--                     <Setter Property="BorderBrush" Value="Black" /> -->
-    <!--                     <Setter Property="BorderThickness" Value="1" /> -->
-    <!--                 </Style> -->
-    <!--             </Grid.Resources> -->
-    <!--             <StackPanel> -->
-    <!--                 <Button Tag="EncryptionControl" Click="NavigationButton_OnClick">Encryption</Button> -->
-    <!--                 <Button Tag="DecryptionControl" Click="NavigationButton_OnClick">Decryption</Button> -->
-    <!--                 <Button Tag="SettingControl" Click="NavigationButton_OnClick">Setting</Button> -->
-    <!--                 <Button Tag="AboutControl" Click="NavigationButton_OnClick">About</Button> -->
-    <!--             </StackPanel> -->
-    <!--         </Grid> -->
-    <!--     </Border> -->
-    <!-- -->
-    <!--     <Border Grid.Column="1"> -->
-    <!--         <Grid> -->
-    <!--             <ContentControl Name="ContentControl" /> -->
-    <!--         </Grid> -->
-    <!--     </Border> -->
-    <!-- -->
-    <!-- </Grid> -->
 </mah:MetroWindow>

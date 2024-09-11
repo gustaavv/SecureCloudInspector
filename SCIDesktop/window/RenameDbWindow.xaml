@@ -6,7 +6,8 @@
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:local="clr-namespace:SCIDesktop.window"
                  mc:Ignorable="d"
-                 Title="Rename a Database" Height="200" Width="350" WindowStartupLocation="CenterScreen">
+                 Title="Rename a Database" TitleCharacterCasing="Normal"
+                 Height="200" Width="350" WindowStartupLocation="CenterScreen">
     <StackPanel Margin="10">
         <Grid HorizontalAlignment="Center">
             <Grid.RowDefinitions>
@@ -28,6 +29,10 @@
             <TextBlock Grid.Row="1" Grid.Column="0" Margin="10, 0">To: </TextBlock>
             <TextBox Grid.Row="1" Name="ToTextBox" Grid.Column="1"></TextBox>
         </Grid>
-        <Button HorizontalAlignment="Center" Height="30" Margin="0, 30" Click="SubmitButton_OnClick">Submit</Button>
+        <Button HorizontalAlignment="Center" Height="40" Margin="0, 30" Click="SubmitButton_OnClick"
+                Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
+                mah:ControlsHelper.ContentCharacterCasing="Normal">
+            Submit
+        </Button>
     </StackPanel>
 </mah:MetroWindow>

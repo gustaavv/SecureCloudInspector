@@ -4,9 +4,52 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:SCIDesktop.control"
+             xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-        <TextBlock HorizontalAlignment="Center">About page</TextBlock>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" HorizontalAlignment="Left" FontSize="30" Margin="0,0,0,10">About</TextBlock>
+
+        <Grid Grid.Row="1" Margin="0,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <svgc:SvgViewbox Grid.Row="0" Grid.Column="0"
+                             Source="pack://application:,,,/asset/icon.svg" Margin="0,10"
+                             Stretch="Uniform" Width="100" Height="100" HorizontalAlignment="Center" />
+
+            <TextBlock Grid.Row="0" Grid.Column="1" Margin="20,10" VerticalAlignment="Center">
+                <Bold FontSize="24">SecureCloudInspector</Bold>
+                <LineBreak />
+                <TextBlock>
+                    Desktop Version:
+                    <TextBlock
+                        Text="{Binding Version}">
+                    </TextBlock>
+                </TextBlock>
+            </TextBlock>
+
+
+        </Grid>
+
+        <Button Grid.Row="2" Width="200" HorizontalAlignment="Left" Margin="0,0"
+                Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
+                mah:ControlsHelper.ContentCharacterCasing="Normal"
+                Name="CheckUpdateButton" Click="CheckUpdateButton_OnClick">
+            Check Updates
+        </Button>
+
     </Grid>
 </UserControl>

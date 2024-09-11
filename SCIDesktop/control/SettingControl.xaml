@@ -4,18 +4,27 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d"
              d:DesignHeight="500" d:DesignWidth="1200">
-    <StackPanel>
-        <StackPanel.Resources>
+    <Grid Margin="20">
+        <Grid.Resources>
             <Style TargetType="iconPacks:PackIconFontAwesome">
                 <Setter Property="Width" Value="16" />
                 <Setter Property="Height" Value="16" />
             </Style>
-        </StackPanel.Resources>
-        <TextBlock HorizontalAlignment="Left" FontSize="30" Margin="10,5,10,10">Settings</TextBlock>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-        <GroupBox Margin="10,5,10,10" Header="Core Config">
+        <TextBlock Grid.Row="0" HorizontalAlignment="Left" FontSize="30" Margin="0,0,0,10">Settings</TextBlock>
+
+        <GroupBox Grid.Row="1" Margin="0,10" Header="Core Config"
+                  mah:ControlsHelper.ContentCharacterCasing="Normal">
             <StackPanel>
                 <Grid Margin="5,5,5,10">
                     <Grid.ColumnDefinitions>
@@ -60,10 +69,13 @@
             </StackPanel>
         </GroupBox>
 
-        <Button VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="5,5" Margin="0,5, 10,10" Height="40"
+        <Button Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
+                mah:ControlsHelper.ContentCharacterCasing="Normal"
+                Padding="5,5" Margin="0,10" Height="40"
                 Click="SaveButton_OnClick">
             Save Settings
         </Button>
 
-    </StackPanel>
+    </Grid>
 </UserControl>
