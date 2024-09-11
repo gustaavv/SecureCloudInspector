@@ -57,7 +57,7 @@
                     <Grid Grid.Column="1" Margin="20,0,0,0">
                         <Rectangle Fill="Gray" Opacity="0.3" />
                         <TextBox Name="DbFolderTextBox"
-                                 Text="{Binding Path=DbFolderPath, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"
+                                 Text="{Binding Path=DbFolderPath, Mode=OneWay}"
                                  IsReadOnly="True" Background="Transparent" />
                     </Grid>
 

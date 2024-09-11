@@ -16,12 +16,14 @@ public partial class SettingControl : UserControl
 
     public string DbFolderPath => ConfigDao.GetDbFolder();
 
+    public string? RarPath => ConfigDao.Config.RarPath;
+
     public SettingControl(ConfigDao configDao)
     {
         InitializeComponent();
 
         ConfigDao = configDao;
-        DataContext = ConfigDao.Config;
+        DataContext = this;
     }
 
     private void SaveButton_OnClick(object sender, RoutedEventArgs e)
