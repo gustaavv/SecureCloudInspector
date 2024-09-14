@@ -4,8 +4,8 @@ namespace SCICore.entity;
 
 public enum ItemType
 {
-    File,
-    Dir
+    File = 0,
+    Dir = 1
 }
 
 /// <summary>

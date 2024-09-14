@@ -6,8 +6,8 @@
 /// </summary>
 public enum PasswordLevel
 {
-    File,
-    Db
+    File = 0,
+    Db = 1
 }
 
 public record Pattern
@@ -60,30 +60,55 @@ public record EncryptScheme
     }
 }
 
+public enum DbType
+{
+    Normal = 0
+}
+
 public record Database
 {
+    public string Name { get; set; }
+
     public string SourceFolder { get; set; }
+
     public string EncryptedFolder { get; set; }
+
     public Node Node { get; set; }
+
     public EncryptScheme EncryptScheme { get; set; }
+
     public string Password { get; set; }
+
+    public DbType DbType { get; set; }
+
+    public DateTime CreatedAt { get; set; }
+
+    public DateTime UpdatedAt { get; set; }
 
     public Database()
     {
     }
 
     public Database(
+        string name,
         string sourceFolder,
         string encryptedFolder,
         Node node,
         EncryptScheme encryptScheme,
-        string password
+        string password,
+        DbType dbType,
+        DateTime createdAt,
+        DateTime updatedAt
     )
     {
+        Name = name;
         SourceFolder = sourceFolder;
         EncryptedFolder = encryptedFolder;
         Node = node;
         EncryptScheme = encryptScheme;
         Password = password;
+        DbType = dbType;
+        CreatedAt = createdAt;
+        UpdatedAt = updatedAt;
     }
 }
