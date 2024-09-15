@@ -8,19 +8,19 @@ using DbType = System.Data.DbType;
 
 namespace SCICore.dao;
 
-public class DbDao
+public class DatabaseDao
 {
     public string DbFilePath { get; set; }
 
     private string ConnectionString { get; set; }
 
-    static DbDao()
+    static DatabaseDao()
     {
         SqlMapper.AddTypeHandler(typeof(Node), new JsonTypeHandler<Node>());
         SqlMapper.AddTypeHandler(typeof(EncryptScheme), new JsonTypeHandler<EncryptScheme>());
     }
 
-    public DbDao(string dbFilePath)
+    public DatabaseDao(string dbFilePath)
     {
         DbFilePath = dbFilePath;
         ConnectionString = $"Data Source={dbFilePath};Version=3;";
