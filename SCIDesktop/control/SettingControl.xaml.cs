@@ -2,9 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
-using Ookii.Dialogs.Wpf;
 using SCICore.dao;
-using SCICore.util;
 
 namespace SCIDesktop.control;
 
@@ -14,11 +12,23 @@ public partial class SettingControl : UserControl
 
     private ConfigDao ConfigDao { get; set; }
 
-    public string EncDbPath => ConfigDao.Config.EncDbPath;
-    
-    public string DecDbPath => ConfigDao.Config.DecDbPath;
+    public string EncDbPath
+    {
+        get => ConfigDao.Config.EncDbPath;
+        set => ConfigDao.Config.EncDbPath = value;
+    }
 
-    public string? RarPath => ConfigDao.Config.RarPath;
+    public string DecDbPath
+    {
+        get => ConfigDao.Config.DecDbPath;
+        set => ConfigDao.Config.DecDbPath = value;
+    }
+
+    public string? RarPath
+    {
+        get => ConfigDao.Config.RarPath;
+        set => ConfigDao.Config.RarPath = value;
+    }
 
     public SettingControl(ConfigDao configDao)
     {
@@ -43,30 +53,27 @@ public partial class SettingControl : UserControl
         SettingChanged = false;
     }
 
-    private void ChooseRarButton_OnClick(object sender, RoutedEventArgs e)
+    private void ChooseFileButton_OnClick(object sender, RoutedEventArgs e)
     {
         OpenFileDialog openFileDialog = new OpenFileDialog
         {
-            Filter = "Executable files (*.exe)|*.exe",
-            Title = "Select the Path to rar.exe"
+            Filter = "All files (*.*)|*.*",
+            Title = "Select the filepath"
         };
         if (openFileDialog.ShowDialog() != true) return;
-        var newRarPath = openFileDialog.FileName;
 
-        var process = ProcessUtils.CreateProcess(newRarPath, "");
-        var (success, _, _, _) = Task.Run(() => ProcessUtils.RunProcess(process)).Result;
-        if (!success)
+        var button = sender as Button;
+        var property = (string)button!.Tag;
+        var propertyInfo = typeof(SettingControl).GetProperty(property)!;
+
+        var newFilePath = openFileDialog.FileName;
+        var oldFilePath = propertyInfo.GetValue(this);
+
+        if (oldFilePath != newFilePath)
         {
-            MessageBox.Show("Not a valid exe", "Selection Result", MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
-        }
-
-        var oldRarPath = ConfigDao.Config.RarPath;
-
-        if (oldRarPath != newRarPath)
-        {
-            ConfigDao.Config.RarPath = newRarPath;
-            RarPathTextBox.Text = newRarPath;
+            propertyInfo.SetValue(this, newFilePath);
+            var textBox = (TextBox)FindName($"{property}TextBox")!;
+            textBox.Text = newFilePath;
             SettingChanged = true;
         }
     }

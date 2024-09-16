@@ -7,6 +7,10 @@
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d"
              d:DesignHeight="500" d:DesignWidth="1200">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+    </UserControl.Resources>
+
     <Grid Margin="20">
         <Grid.Resources>
             <Style TargetType="iconPacks:PackIconFontAwesome">
@@ -23,10 +27,18 @@
 
         <TextBlock Grid.Row="0" HorizontalAlignment="Left" FontSize="30" Margin="0,0,0,10">Settings</TextBlock>
 
-        <GroupBox Grid.Row="1" Margin="0,10" Header="Core Config"
+        <CheckBox Grid.Row="1" Name="AdvancedCheckBox" Content="Advanced" />
+
+        <GroupBox Grid.Row="2" Margin="0,10" Header="Core Config"
                   mah:ControlsHelper.ContentCharacterCasing="Normal">
-            <StackPanel>
-                <Grid Margin="5,5,5,10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="5,5,5,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -40,36 +52,60 @@
                                  Background="Transparent" />
                     </Grid>
 
-                    <Button ToolTip="Choose file" Grid.Column="2" x:Name="ChooseRarButton" Margin="5,0,0,0"
-                            Click="ChooseRarButton_OnClick">
+                    <Button ToolTip="Choose file" Grid.Column="2" Margin="5,0,0,0" Tag="RarPath"
+                            Click="ChooseFileButton_OnClick">
                         <iconPacks:PackIconFontAwesome Kind="FileSolid" />
                     </Button>
                 </Grid>
 
-                <!-- <Grid Margin="5,5,5,10"> -->
-                <!--     <Grid.ColumnDefinitions> -->
-                <!--         <ColumnDefinition Width="*" /> -->
-                <!--         <ColumnDefinition Width="*" /> -->
-                <!--         <ColumnDefinition Width="Auto" /> -->
-                <!--     </Grid.ColumnDefinitions> -->
-                <!-- -->
-                <!--     <TextBlock Grid.Column="0">Path to DB Folder</TextBlock> -->
-                <!--     <Grid Grid.Column="1" Margin="20,0,0,0"> -->
-                <!--         <Rectangle Fill="Gray" Opacity="0.3" /> -->
-                <!--         <TextBox Name="DbFolderTextBox" -->
-                <!--                  Text="{Binding Path=DbFolderPath, Mode=OneWay}" -->
-                <!--                  IsReadOnly="True" Background="Transparent" /> -->
-                <!--     </Grid> -->
-                <!-- -->
-                <!--     <Button ToolTip="Choose Folder" Grid.Column="2" x:Name="ChooseDbFolderButton" Margin="5,0,0,0" -->
-                <!--             Click="ChooseDbFolderButton_OnClick"> -->
-                <!--         <iconPacks:PackIconFontAwesome Kind="FolderSolid" /> -->
-                <!--     </Button> -->
-                <!-- </Grid> -->
-            </StackPanel>
+                <Grid Grid.Row="1" Margin="5,5,5,10"
+                      Visibility="{Binding IsChecked, ElementName=AdvancedCheckBox, Converter={StaticResource BoolToVisConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0">Path to Enc.db</TextBlock>
+                    <Grid Grid.Column="1" Margin="20,0,0,0">
+                        <Rectangle Fill="Gray" Opacity="0.3" />
+                        <TextBox Name="EncDbPathTextBox" Text="{Binding Path= EncDbPath, Mode=OneWay}"
+                                 IsReadOnly="True"
+                                 Background="Transparent" />
+                    </Grid>
+
+                    <Button ToolTip="Choose file" Grid.Column="2" Margin="5,0,0,0" Tag="EncDbPath"
+                            Click="ChooseFileButton_OnClick">
+                        <iconPacks:PackIconFontAwesome Kind="FileSolid" />
+                    </Button>
+                </Grid>
+
+                <Grid Grid.Row="2" Margin="5,5,5,10"
+                      Visibility="{Binding IsChecked, ElementName=AdvancedCheckBox, Converter={StaticResource BoolToVisConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0">Path to Dec.db</TextBlock>
+                    <Grid Grid.Column="1" Margin="20,0,0,0">
+                        <Rectangle Fill="Gray" Opacity="0.3" />
+                        <TextBox Name="DecDbPathTextBox" Text="{Binding Path= DecDbPath, Mode=OneWay}"
+                                 IsReadOnly="True"
+                                 Background="Transparent" />
+                    </Grid>
+
+                    <Button ToolTip="Choose file" Grid.Column="2" Margin="5,0,0,0" Tag="DecDbPath"
+                            Click="ChooseFileButton_OnClick">
+                        <iconPacks:PackIconFontAwesome Kind="FileSolid" />
+                    </Button>
+                </Grid>
+
+            </Grid>
         </GroupBox>
 
-        <Button Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+        <Button Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Right"
                 Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
                 mah:ControlsHelper.ContentCharacterCasing="Normal"
                 Padding="5,5" Margin="0,10" Height="40"
