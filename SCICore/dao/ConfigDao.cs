@@ -24,11 +24,4 @@ public class ConfigDao
     {
         await JsonUtils.Write(ConfigFilePath, Config, force: true, pretty: true);
     }
-
-    public string GetDbFolder()
-    {
-        return Path.IsPathFullyQualified(Config.DbFolder)
-            ? Config.DbFolder
-            : Path.GetFullPath(Path.Join(Path.GetDirectoryName(ConfigFilePath), Config.DbFolder));
-    }
 }

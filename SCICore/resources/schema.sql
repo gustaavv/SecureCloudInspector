@@ -3,7 +3,7 @@ CREATE TABLE Database
     Name            TEXT PRIMARY KEY NOT NULL,
     SourceFolder    TEXT             NOT NULL,
     EncryptedFolder TEXT             NOT NULL,
-    Node            TEXT             NOT NULL, -- JSON string
+    Node            TEXT,                      -- JSON string
     EncryptScheme   TEXT             NOT NULL, -- JSON string
     Password        TEXT             NOT NULL,
     DbType          TEXT             NOT NULL, -- Enum

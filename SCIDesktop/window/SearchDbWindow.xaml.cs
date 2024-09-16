@@ -12,20 +12,20 @@ namespace SCIDesktop.window;
 
 public partial class SearchDbWindow : MetroWindow
 {
-    private DatabaseIndexDao IndexDao { get; set; }
+    private DatabaseDao DatabaseDao { get; set; }
 
-    public SearchDbWindow(DatabaseIndexDao indexDao, string dbName)
+    public SearchDbWindow(DatabaseDao databaseDao, string dbName)
     {
         InitializeComponent();
 
-        IndexDao = indexDao;
+        DatabaseDao = databaseDao;
 
-        var valueTuples = Task.Run(IndexDao.ListDatabases).Result;
-        ChooseDbComboBox.ItemsSource = valueTuples.Select(v => v.name).ToList();
+        var databases = DatabaseDao.SelectAll();
+        ChooseDbComboBox.ItemsSource = databases.Select(v => v.Name).ToList();
         ChooseDbComboBox.SelectedItem = dbName;
 
-        var dbDao = Task.Run(() => new DbDao(IndexDao.GetIndex()[dbName].Filepath)).Result;
-        if (dbDao.Db.Node == null!)
+        var db = DatabaseDao.SelectByName(dbName);
+        if (db.Node == null!)
         {
             EmptyDbTextBlock.Text = "This is an empty database, run encryption first.";
         }
@@ -70,16 +70,16 @@ public partial class SearchDbWindow : MetroWindow
         }
 
         var dbName = (string)ChooseDbComboBox.SelectedItem;
-        var dbDao = Task.Run(() => new DbDao(IndexDao.GetIndex()[dbName].Filepath)).Result;
+        var db = DatabaseDao.SelectByName(dbName);
 
         var keywords = input.Split(' ')
             .Where(s => !string.IsNullOrWhiteSpace(s))
             .Select(s => s.ToLower())
             .ToArray();
 
-        if (dbDao.Db.Node == null!) return;
+        if (db.Node == null!) return;
 
-        var results = dbDao.Db.Node.Search(keywords)
+        var results = db.Node.Search(keywords)
             .Select(t => new SearchResult(t.node.FileName, t.srcPath, t.encPath, t.node))
             .ToList();
         SearchResultList.ItemsSource = results;

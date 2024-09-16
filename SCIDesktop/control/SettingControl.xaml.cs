@@ -12,9 +12,11 @@ public partial class SettingControl : UserControl
 {
     private bool SettingChanged { get; set; } = false;
 
-    public ConfigDao ConfigDao { get; set; }
+    private ConfigDao ConfigDao { get; set; }
 
-    public string DbFolderPath => ConfigDao.GetDbFolder();
+    public string EncDbPath => ConfigDao.Config.EncDbPath;
+    
+    public string DecDbPath => ConfigDao.Config.DecDbPath;
 
     public string? RarPath => ConfigDao.Config.RarPath;
 
@@ -65,26 +67,6 @@ public partial class SettingControl : UserControl
         {
             ConfigDao.Config.RarPath = newRarPath;
             RarPathTextBox.Text = newRarPath;
-            SettingChanged = true;
-        }
-    }
-
-    private void ChooseDbFolderButton_OnClick(object sender, RoutedEventArgs e)
-    {
-        var dialog = new VistaFolderBrowserDialog
-        {
-            Description = "Select a DB Folder",
-            UseDescriptionForTitle = true, // Shows the description as the title
-            ShowNewFolderButton = true // Allows the user to create a new folder
-        };
-
-        if (dialog.ShowDialog() != true) return;
-        var newDbFolderPath = dialog.SelectedPath;
-
-        if (newDbFolderPath != DbFolderPath)
-        {
-            ConfigDao.Config.DbFolder = newDbFolderPath;
-            DbFolderTextBox.Text = newDbFolderPath;
             SettingChanged = true;
         }
     }

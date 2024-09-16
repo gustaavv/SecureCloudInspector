@@ -13,9 +13,15 @@ public record Config
     public string? RarPath { get; set; }
 
     /// <summary>
-    /// path to DB folder. Absolute or relative to config file's folder
+    /// Path to Encrypt Db File
     /// </summary>
-    public string DbFolder { get; set; } = "./DB";
+    public string EncDbPath { get; set; }
+
+
+    /// <summary>
+    /// Path to Decrypt Db File
+    /// </summary>
+    public string DecDbPath { get; set; }
 
     public Config()
     {

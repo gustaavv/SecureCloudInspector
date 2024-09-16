@@ -10,13 +10,13 @@ namespace SCIDesktop.window;
 
 public partial class RenameDbWindow : MetroWindow
 {
-    private DatabaseIndexDao IndexDao { get; set; }
+    private DatabaseDao DatabaseDao { get; set; }
 
-    public RenameDbWindow(string oldDbName, DatabaseIndexDao indexDao)
+    public RenameDbWindow(string oldDbName, DatabaseDao databaseDao)
     {
         InitializeComponent();
 
-        IndexDao = indexDao;
+        DatabaseDao = databaseDao;
         FromTextBox.Text = oldDbName;
     }
 
@@ -37,35 +37,16 @@ public partial class RenameDbWindow : MetroWindow
             return;
         }
 
-        if (IndexDao.GetIndex().ContainsKey(newDbName))
+        if (DatabaseDao.CheckNameExists(newDbName))
         {
             MessageBox.Show("This name already existed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
 
-        if (DatabaseIndexDao.DbIndexFileName == $"{newDbName}.json")
-        {
-            MessageBox.Show("This name is not allowed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
-        }
-
-        var oldDbFile = IndexDao.GetIndex()[oldDbName].Filepath;
-        var newDbFile = Path.Join(Path.GetDirectoryName(oldDbFile), $"{newDbName}.json");
-
-        File.Move(oldDbFile, newDbFile);
-        _ = Task.Run(() => new DbDao(newDbFile)); // validate db file move
-
-        var oldRecord = IndexDao.GetIndex()[oldDbName];
-        IndexDao.GetIndex().Remove(oldDbName);
-
-        var newRecord = new DatabaseRecord();
-        IndexDao.GetIndex()[newDbName] = newRecord;
-        newRecord.Filepath = newDbFile;
-        newRecord.CreatedAt = oldRecord.CreatedAt;
-        newRecord.UpdatedAt = DateTime.Today;
-
-
-        _ = Task.Run(IndexDao.WriteDbIndex);
+        var db = DatabaseDao.SelectByName(oldDbName);
+        DatabaseDao.Delete(oldDbName);
+        db.Name = newDbName;
+        DatabaseDao.Insert(db);
 
         MessageBox.Show("succeed");
         DialogResult = true;

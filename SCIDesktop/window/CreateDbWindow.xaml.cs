@@ -14,16 +14,16 @@ namespace SCIDesktop.window;
 
 public partial class CreateDbWindow : MetroWindow
 {
-    private DatabaseIndexDao IndexDao { get; set; }
+    private DatabaseDao DatabaseDao { get; set; }
 
-    public CreateDbWindow(DatabaseIndexDao indexDao)
+    public CreateDbWindow(DatabaseDao databaseDao)
     {
         InitializeComponent();
 
         PwdLevelComboBox.ItemsSource = Enum.GetValues(typeof(PasswordLevel));
         PwdLevelComboBox.SelectedItem = PasswordLevel.Db;
 
-        IndexDao = indexDao;
+        DatabaseDao = databaseDao;
     }
 
     private void ChooseFolderButton_OnClick(object sender, RoutedEventArgs e)
@@ -58,16 +58,10 @@ public partial class CreateDbWindow : MetroWindow
             return;
         }
 
-        if (IndexDao.GetIndex().ContainsKey(dbName))
+        if (DatabaseDao.CheckNameExists(dbName))
         {
             MessageBox.Show("A database with the same name has already existed.", "Error", MessageBoxButton.OK,
                 MessageBoxImage.Error);
-            return;
-        }
-
-        if (DatabaseIndexDao.DbIndexFileName == $"{dbName}.json")
-        {
-            MessageBox.Show("This database name is not allowed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
 
@@ -103,25 +97,14 @@ public partial class CreateDbWindow : MetroWindow
             return;
         }
 
-        var db = new Database(sourceFolder, encryptedFolder, null!, new EncryptScheme(), pwd);
+        var db = new Database(dbName, sourceFolder, encryptedFolder, null!, new EncryptScheme(), pwd, DbType.Normal,
+            DateTime.Today, DateTime.Today);
 
         db.EncryptScheme.PwdLevel = pwdLevel;
         db.EncryptScheme.FileNamePattern = EncryptApi.MakePattern(15);
         db.EncryptScheme.PwdPattern = EncryptApi.MakePattern(60);
 
-
-        var dbPath = Path.Join(IndexDao.DbFolder, $"{dbName}.json");
-        _ = Task.Run(() => JsonUtils.Write(dbPath, db));
-        _ = Task.Run(() => new DbDao(dbPath));
-
-        var dbRecord = new DatabaseRecord();
-        IndexDao.GetIndex()[dbName] = dbRecord;
-
-        dbRecord.Filepath = dbPath;
-        dbRecord.CreatedAt = DateTime.Today;
-        dbRecord.UpdatedAt = DateTime.Today;
-
-        _ = Task.Run(IndexDao.WriteDbIndex);
+        DatabaseDao.Insert(db);
 
         MessageBox.Show("succeed");
         DialogResult = true;

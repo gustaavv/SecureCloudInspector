@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,13 +15,13 @@ namespace SCIDesktop.control;
 public partial class EncryptionControl : UserControl
 {
     public ConfigDao ConfigDao { get; set; }
-    public DatabaseIndexDao IndexDao { get; set; }
+    public DatabaseDao DatabaseDao { get; set; }
 
     public EncryptionControl(ConfigDao configDao)
     {
         InitializeComponent();
         ConfigDao = configDao;
-        IndexDao = Task.Run(() => new DatabaseIndexDao(ConfigDao.GetDbFolder())).Result;
+        DatabaseDao = new DatabaseDao(configDao.Config.EncDbPath);
         RefreshDbList();
     }
 
@@ -45,15 +46,10 @@ public partial class EncryptionControl : UserControl
 
     private void RefreshDbList()
     {
-        var valueTuples = Task.Run(IndexDao.ListDatabases).Result;
-        var list = new List<DbInfoRow>();
-
-        foreach (var t in valueTuples)
-        {
-            var dbInfoRow = new DbInfoRow(t.name, t.db.SourceFolder, t.db.EncryptedFolder,
-                t.record.CreatedAt, t.record.UpdatedAt);
-            list.Add(dbInfoRow);
-        }
+        var databases = DatabaseDao.SelectAll();
+        var list = databases.Select(db =>
+                new DbInfoRow(db.Name, db.SourceFolder, db.EncryptedFolder, db.CreatedAt, db.UpdatedAt))
+            .ToList();
 
         DbList.ItemsSource = list;
     }
@@ -67,7 +63,7 @@ public partial class EncryptionControl : UserControl
 
     private void NewButton_OnClick(object sender, RoutedEventArgs e)
     {
-        var createDbWindow = new CreateDbWindow(IndexDao);
+        var createDbWindow = new CreateDbWindow(DatabaseDao);
         if (createDbWindow.ShowDialog() == true)
         {
             RefreshDbList();
@@ -91,7 +87,7 @@ public partial class EncryptionControl : UserControl
     {
         var button = sender as Button;
         var dbName = (string)button!.Tag;
-        var searchDbWindow = new SearchDbWindow(IndexDao, dbName);
+        var searchDbWindow = new SearchDbWindow(DatabaseDao, dbName);
         searchDbWindow.ShowDialog();
     }
 
@@ -100,7 +96,7 @@ public partial class EncryptionControl : UserControl
         var button = sender as Button;
         var dbName = (string)button!.Tag;
 
-        var renameDbWindow = new RenameDbWindow(dbName, IndexDao);
+        var renameDbWindow = new RenameDbWindow(dbName, DatabaseDao);
         if (renameDbWindow.ShowDialog() == true)
         {
             RefreshDbList();
@@ -115,11 +111,7 @@ public partial class EncryptionControl : UserControl
         var result = MessageBox.Show($"Confirm delete {dbName}?", "Delete a database", MessageBoxButton.YesNo);
         if (result != MessageBoxResult.Yes) return;
 
-        var dbFilePath = IndexDao.GetIndex()[dbName].Filepath;
-        File.Delete(dbFilePath);
-
-        IndexDao.GetIndex().Remove(dbName);
-        _ = Task.Run(IndexDao.WriteDbIndex);
+        DatabaseDao.Delete(dbName);
 
         MessageBox.Show($"{dbName} Deleted", "Delete a database");
         RefreshDbList();
@@ -131,9 +123,10 @@ public partial class EncryptionControl : UserControl
 
         var button = sender as Button;
         var dbName = (string)button!.Tag;
-        var dbDao = Task.Run(() => new DbDao(IndexDao.GetIndex()[dbName].Filepath)).Result;
 
-        var updatedAt = IndexDao.GetIndex()[dbName].UpdatedAt;
+        var db = DatabaseDao.SelectByName(dbName);
+
+        var updatedAt = db.UpdatedAt;
 
         var span = DateTime.Now - updatedAt;
         if (span.TotalDays < 1)
@@ -143,7 +136,7 @@ public partial class EncryptionControl : UserControl
             if (messageBoxResult != MessageBoxResult.Yes) return;
         }
 
-        var sourceFolder = dbDao.Db.SourceFolder;
+        var sourceFolder = db.SourceFolder;
         if (!Directory.Exists(sourceFolder))
         {
             MessageBox.Show($"Source folder does not exist: {sourceFolder}. This database may be broken", "Error",
@@ -151,7 +144,7 @@ public partial class EncryptionControl : UserControl
             return;
         }
 
-        var encryptedFolder = dbDao.Db.EncryptedFolder;
+        var encryptedFolder = db.EncryptedFolder;
         if (!Directory.Exists(encryptedFolder))
         {
             MessageBox.Show(
@@ -170,16 +163,14 @@ public partial class EncryptionControl : UserControl
         {
             await Task.Run(async () =>
             {
-                await SciApi.EncryptData(dbDao.Db);
-                await dbDao.WriteDb();
-
-                IndexDao.GetIndex()[dbName].UpdatedAt = DateTime.Today;
-                await IndexDao.WriteDbIndex();
+                await SciApi.EncryptData(db);
+                db.UpdatedAt = DateTime.Today;
+                DatabaseDao.Update(db);
             });
 
             progressDialog.Close();
             MessageBox.Show("Encryption Completed!", "Result");
-            
+
             RefreshDbList();
         };
 

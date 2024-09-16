@@ -36,7 +36,7 @@ public class DatabaseDao
     {
         if (File.Exists(DbFilePath))
         {
-            Console.WriteLine("using existing sqlite db");
+            Console.WriteLine($"using existing sqlite db: {DbFilePath}");
             return;
         }
 
@@ -59,7 +59,7 @@ public class DatabaseDao
         return reader.ReadToEnd();
     }
 
-    public int Insert(Database record)
+    public int Insert(Database db)
     {
         using var conn = CreateConnection();
         const string sql = @"
@@ -68,7 +68,7 @@ public class DatabaseDao
             ) VALUES (
                 @Name, @SourceFolder, @EncryptedFolder, @Node, @EncryptScheme, @Password, @DbType, @CreatedAt, @UpdatedAt
             )";
-        return conn.Execute(sql, record);
+        return conn.Execute(sql, db);
     }
 
     public IEnumerable<Database> SelectAll()
@@ -85,7 +85,7 @@ public class DatabaseDao
         return conn.QueryFirst<Database>(sql, new { Name = name });
     }
 
-    public int Update(Database record)
+    public int Update(Database db)
     {
         using var conn = CreateConnection();
         const string sql = @"
@@ -99,7 +99,7 @@ public class DatabaseDao
                 CreatedAt = @CreatedAt,
                 UpdatedAt = @UpdatedAt
             WHERE Name = @Name";
-        return conn.Execute(sql, record);
+        return conn.Execute(sql, db);
     }
 
     public int Delete(string name)

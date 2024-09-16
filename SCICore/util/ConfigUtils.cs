@@ -4,7 +4,11 @@ namespace SCICore.util;
 
 public static class ConfigUtils
 {
-    private const string ConfigFileName = "sci-config.json";
+    private const string ConfigFileName = "config.json";
+
+    private const string EncDbFileName = "enc.db";
+
+    private const string DecDbFileName = "dec.db";
 
     /// <summary>
     /// a list of directories that maybe contains config file, ordered by priority
@@ -12,7 +16,7 @@ public static class ConfigUtils
     private static readonly string[] ConfigDirs =
     {
         AppContext.BaseDirectory,
-        Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SCI-CLI")
+        Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SecureCloudInspector")
     };
 
 
@@ -40,7 +44,7 @@ public static class ConfigUtils
 
 
     /// <summary>
-    /// create config file at default location
+    /// create config file at default location if not existed
     /// </summary>
     public static async Task<bool> CreateDefaultConfig()
     {
@@ -55,7 +59,13 @@ public static class ConfigUtils
             Directory.CreateDirectory(ConfigDirs[^1]);
         }
 
-        await JsonUtils.Write(configFile, new Config(), pretty: true);
+        var config = new Config
+        {
+            EncDbPath = Path.Join(ConfigDirs[^1], EncDbFileName),
+            DecDbPath = Path.Join(ConfigDirs[^1], DecDbFileName)
+        };
+
+        await JsonUtils.Write(configFile, config, pretty: true);
         Console.WriteLine($"default config file created at {configFile}");
         return true;
     }
