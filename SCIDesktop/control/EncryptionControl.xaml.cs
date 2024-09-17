@@ -78,23 +78,20 @@ public partial class EncryptionControl : UserControl
 
     private void InfoButton_OnClick(object sender, RoutedEventArgs e)
     {
-        var button = sender as Button;
-        var dbName = (string)button!.Tag;
+        var dbName = ((DbInfoRow)DbList.SelectedItem).Name;
         MessageBox.Show(dbName, "info");
     }
 
     private void SearchButton_OnClick(object sender, RoutedEventArgs e)
     {
-        var button = sender as Button;
-        var dbName = (string)button!.Tag;
+        var dbName = ((DbInfoRow)DbList.SelectedItem).Name;
         var searchDbWindow = new SearchDbWindow(DatabaseDao, dbName);
         searchDbWindow.ShowDialog();
     }
 
     private void RenameButton_OnClick(object sender, RoutedEventArgs e)
     {
-        var button = sender as Button;
-        var dbName = (string)button!.Tag;
+        var dbName = ((DbInfoRow)DbList.SelectedItem).Name;
 
         var renameDbWindow = new RenameDbWindow(dbName, DatabaseDao);
         if (renameDbWindow.ShowDialog() == true)
@@ -105,8 +102,7 @@ public partial class EncryptionControl : UserControl
 
     private void DeleteButton_OnClick(object sender, RoutedEventArgs e)
     {
-        var button = sender as Button;
-        var dbName = (string)button!.Tag;
+        var dbName = ((DbInfoRow)DbList.SelectedItem).Name;
 
         var result = MessageBox.Show($"Confirm delete {dbName}?", "Delete a database", MessageBoxButton.YesNo);
         if (result != MessageBoxResult.Yes) return;
@@ -121,8 +117,7 @@ public partial class EncryptionControl : UserControl
     {
         ArchiveUtils.RarPath = ConfigDao.Config.RarPath;
 
-        var button = sender as Button;
-        var dbName = (string)button!.Tag;
+        var dbName = ((DbInfoRow)DbList.SelectedItem).Name;
 
         var db = DatabaseDao.SelectByName(dbName);
 
