@@ -9,7 +9,7 @@
                  mc:Ignorable="d"
                  TitleCharacterCasing="Normal"
                  Title="Create a Database" Height="450" Width="600" WindowStartupLocation="CenterScreen">
-    <Grid Margin="20">
+    <Grid Margin="{StaticResource ContentMargin}">
         <Grid.Resources>
             <Style TargetType="iconPacks:PackIconFontAwesome">
                 <Setter Property="Width" Value="16" />
@@ -35,11 +35,15 @@
         <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,10"> Name: </TextBlock>
         <TextBox Grid.Row="0" Grid.Column="1" Name="DbNameTextBox" Margin="5,10"></TextBox>
 
+
         <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,10">Source Folder:</TextBlock>
-        <Grid Grid.Row="1" Grid.Column="1" Margin="5,10">
-            <Rectangle Fill="Gray" Opacity="0.3" />
-            <TextBox Name="SourceFolderTextBox" IsReadOnly="True" Background="Transparent" />
-        </Grid>
+        <Border Grid.Row="1" Grid.Column="1" Margin="5,10" CornerRadius="{StaticResource GlobalCornerRadius}">
+            <Border.Background>
+                <SolidColorBrush Color="Gray" Opacity="0.3" />
+            </Border.Background>
+            <TextBox Name="SourceFolderTextBox" IsReadOnly="True"
+                     Margin="5,0" Background="Transparent" BorderThickness="0" />
+        </Border>
         <Button ToolTip="Choose Folder" Grid.Row="1" Grid.Column="2" Tag="SourceFolder" Margin="0,10"
                 Click="ChooseFolderButton_OnClick">
             <iconPacks:PackIconFontAwesome Kind="FolderSolid" />
@@ -47,25 +51,30 @@
 
 
         <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,10">Encrypted Folder:</TextBlock>
-        <Grid Grid.Row="2" Grid.Column="1" Margin="5,10">
-            <Rectangle Fill="Gray" Opacity="0.3" />
-            <TextBox Name="EncryptedFolderTextBox" IsReadOnly="True" Background="Transparent" />
-        </Grid>
+        <Border Grid.Row="2" Grid.Column="1" Margin="5,10" CornerRadius="{StaticResource GlobalCornerRadius}">
+            <Border.Background>
+                <SolidColorBrush Color="Gray" Opacity="0.3" />
+            </Border.Background>
+            <TextBox Name="EncryptedFolderTextBox" IsReadOnly="True"
+                     Margin="5,0" Background="Transparent" BorderThickness="0" />
+        </Border>
         <Button Grid.Row="2" Grid.Column="2" ToolTip="Choose Folder" Tag="EncryptedFolder" Margin="0,10"
                 Click="ChooseFolderButton_OnClick">
             <iconPacks:PackIconFontAwesome Kind="FolderSolid" />
         </Button>
 
+
         <TextBlock Grid.Row="3" Grid.Column="0" Margin="0,10">User Password:</TextBlock>
-        <PasswordBox Grid.Row="3" Grid.Column="1" Name="PasswordBox" MaxLength="30" Margin="5,10"/>
+        <PasswordBox Grid.Row="3" Grid.Column="1" Name="PasswordBox" MaxLength="30" Margin="5,10" />
+
 
         <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,10">Password Level:</TextBlock>
-        <ComboBox Grid.Row="4" Grid.Column="1" Name="PwdLevelComboBox" Margin="5,10"></ComboBox>
+        <ComboBox Grid.Row="4" Grid.Column="1" Name="PwdLevelComboBox" Margin="5,10" />
+
 
         <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Name="SubmitButton" Margin="0,20" Padding="5"
                 VerticalAlignment="Bottom" HorizontalAlignment="Center"
-                Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
-                mah:ControlsHelper.ContentCharacterCasing="Normal"
+                Style="{StaticResource AccentButton}"
                 Click="SubmitButton_OnClick">
             Submit
         </Button>

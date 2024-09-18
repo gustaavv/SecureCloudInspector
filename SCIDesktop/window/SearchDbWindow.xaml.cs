@@ -14,6 +14,8 @@ public partial class SearchDbWindow : MetroWindow
 {
     private DatabaseDao DatabaseDao { get; set; }
 
+    private const string EmptyDbMsg = "This is an empty database, run encryption first.";
+
     public SearchDbWindow(DatabaseDao databaseDao, string dbName)
     {
         InitializeComponent();
@@ -27,7 +29,7 @@ public partial class SearchDbWindow : MetroWindow
         var db = DatabaseDao.SelectByName(dbName);
         if (db.Node == null!)
         {
-            EmptyDbTextBlock.Text = "This is an empty database, run encryption first.";
+            EmptyDbTextBlock.Text = EmptyDbMsg;
         }
 
         Loaded += (_, _) => KeyWordsTextBox.Focus();
@@ -77,7 +79,11 @@ public partial class SearchDbWindow : MetroWindow
             .Select(s => s.ToLower())
             .ToArray();
 
-        if (db.Node == null!) return;
+        if (db.Node == null!)
+        {
+            EmptyDbTextBlock.Text = EmptyDbMsg;
+            return;
+        }
 
         var results = db.Node.Search(keywords)
             .Select(t => new SearchResult(t.node.FileName, t.srcPath, t.encPath, t.node))
@@ -89,5 +95,10 @@ public partial class SearchDbWindow : MetroWindow
     {
         var button = sender as Button;
         var node = (Node)button!.Tag;
+    }
+
+    private void ChooseDbComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        EmptyDbTextBlock.Text = "";
     }
 }

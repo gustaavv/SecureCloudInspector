@@ -3,31 +3,70 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:SCIDesktop"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              Startup="App_OnStartup">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
-                <!-- Theme setting -->
                 <ResourceDictionary
                     Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/light.emerald.xaml" />
-
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- global font size -->
+            <CornerRadius x:Key="GlobalCornerRadius">6</CornerRadius>
             <system:Double x:Key="BaseFontSize">20</system:Double>
+            <system:Double x:Key="HeaderFontSize">30</system:Double>
+            <Thickness x:Key="ContentMargin">20</Thickness>
 
-            <Style TargetType="{x:Type Control}" x:Key="BaseStyle">
+
+            <Style TargetType="Button" BasedOn="{StaticResource MahApps.Styles.Button}">
+                <Setter Property="FontSize" Value="{StaticResource BaseFontSize}" />
+                <Setter Property="mah:ControlsHelper.CornerRadius" Value="{StaticResource GlobalCornerRadius}" />
+            </Style>
+
+            <Style TargetType="Button" x:Key="AccentButton"
+                   BasedOn="{StaticResource MahApps.Styles.Button.Square.Accent}">
+                <Setter Property="FontSize" Value="{StaticResource BaseFontSize}" />
+                <Setter Property="mah:ControlsHelper.CornerRadius" Value="{StaticResource GlobalCornerRadius}" />
+                <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal" />
+            </Style>
+
+            <Style TargetType="TextBox" BasedOn="{StaticResource MahApps.Styles.TextBox}">
+                <Setter Property="FontSize" Value="{StaticResource BaseFontSize}" />
+                <Setter Property="mah:ControlsHelper.CornerRadius" Value="{StaticResource GlobalCornerRadius}" />
+            </Style>
+
+            <Style TargetType="ListView" BasedOn="{StaticResource MahApps.Styles.ListView}">
+                <Setter Property="FontSize" Value="{StaticResource BaseFontSize}" />
+                <!-- <Setter Property="mah:ControlsHelper.CornerRadius" Value="{StaticResource GlobalCornerRadius}" /> -->
+            </Style>
+
+            <Style TargetType="PasswordBox" BasedOn="{StaticResource MahApps.Styles.PasswordBox}">
+                <Setter Property="FontSize" Value="{StaticResource BaseFontSize}" />
+                <Setter Property="mah:ControlsHelper.CornerRadius" Value="{StaticResource GlobalCornerRadius}" />
+            </Style>
+
+            <Style TargetType="TextBlock" BasedOn="{StaticResource MahApps.Styles.TextBlock}">
                 <Setter Property="FontSize" Value="{StaticResource BaseFontSize}" />
             </Style>
-            <Style TargetType="Button" BasedOn="{StaticResource BaseStyle}" />
-            <Style TargetType="TextBox" BasedOn="{StaticResource BaseStyle}" />
-            <Style TargetType="ListView" BasedOn="{StaticResource BaseStyle}" />
 
-            <Style TargetType="TextBlock">
-                <Setter Property="FontSize" Value="{StaticResource BaseFontSize}"></Setter>
+            <Style TargetType="GroupBox" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
+                <Setter Property="mah:ControlsHelper.CornerRadius" Value="{StaticResource GlobalCornerRadius}" />
+                <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal" />
+            </Style>
+
+            <Style TargetType="Expander" BasedOn="{StaticResource MahApps.Styles.Expander}">
+                <Setter Property="mah:ControlsHelper.CornerRadius" Value="{StaticResource GlobalCornerRadius}" />
+                <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal" />
+            </Style>
+
+            <Style TargetType="ComboBox" BasedOn="{StaticResource MahApps.Styles.ComboBox}">
+                <Setter Property="mah:ControlsHelper.CornerRadius" Value="{StaticResource GlobalCornerRadius}" />
+            </Style>
+            
+            <Style TargetType="CheckBox" BasedOn="{StaticResource MahApps.Styles.CheckBox.Win10}">
+                <Setter Property="mah:CheckBoxHelper.CheckCornerRadius" Value="{StaticResource GlobalCornerRadius}" />
             </Style>
 
         </ResourceDictionary>

@@ -9,59 +9,50 @@
                  mc:Ignorable="d"
                  MinHeight="700" MinWidth="800" Height="700" Width="1005"
                  Title="Search a database" TitleCharacterCasing="Normal" WindowStartupLocation="CenterScreen">
-    <Grid>
-        <Grid.Resources>
-            <system:Double x:Key="HeaderFontSize">30</system:Double>
-        </Grid.Resources>
-
+    <Grid Margin="{StaticResource ContentMargin}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
-            <TextBlock Margin="5, 0" FontSize="{StaticResource HeaderFontSize}">Search in:</TextBlock>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,5">
+            <TextBlock Margin="0" FontSize="{StaticResource HeaderFontSize}">Search in:</TextBlock>
 
-            <ComboBox Name="ChooseDbComboBox" Width="100" FontSize="{StaticResource HeaderFontSize}" Margin="5, 0">
-                <ComboBox.ItemContainerStyle>
-                    <Style TargetType="ComboBoxItem">
-                        <Setter Property="FontSize" Value="{StaticResource HeaderFontSize}" />
-                    </Style>
-                </ComboBox.ItemContainerStyle>
-            </ComboBox>
+            <ComboBox Name="ChooseDbComboBox" Width="100" Margin="10, 0"
+                      FontSize="{StaticResource HeaderFontSize}"
+                      SelectionChanged="ChooseDbComboBox_OnSelectionChanged" />
+
+            <TextBlock Margin="5, 0" Name="EmptyDbTextBlock" Foreground="Red" VerticalAlignment="Center" />
         </StackPanel>
 
-        <TextBlock Grid.Row="1" Margin="5, 0" Name="EmptyDbTextBlock" Foreground="Red" FontSize="16" />
 
-        <Grid Grid.Row="2" Margin="5">
+        <Grid Grid.Row="1" Margin="0,5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Margin="5,0">Keywords:</TextBlock>
-            <TextBox Name="KeyWordsTextBox" Grid.Column="1" Margin="5, 0" KeyDown="KeyWordsTextBox_OnKeyDown" />
-            <Button Name="SearchButton" Grid.Column="2" Margin="5,0" Click="SearchButton_OnClick"
-                    Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
-                    mah:ControlsHelper.ContentCharacterCasing="Normal">
+
+            <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,0">Keywords:</TextBlock>
+            <TextBox Name="KeyWordsTextBox" Grid.Column="1" Margin="0,0,10, 0" KeyDown="KeyWordsTextBox_OnKeyDown" />
+            <Button Name="SearchButton" Grid.Column="2" Click="SearchButton_OnClick"
+                    Style="{StaticResource AccentButton}">
                 Search
             </Button>
         </Grid>
 
-        <Expander Grid.Row="3" Margin="5" Header="Advanced Searching Options"
-                  mah:ControlsHelper.ContentCharacterCasing="Normal">
+        <Expander Grid.Row="2" Margin="0,5" Header="Advanced Searching Options">
             <TextBlock>TBD</TextBlock>
         </Expander>
 
-        <Separator Grid.Row="4" Margin="5" />
+        <Separator Grid.Row="3" Margin="0,5" />
 
-        <ListView Grid.Row="5" Margin="5" Name="SearchResultList"
+        <ListView Grid.Row="4" Margin="0,5" Name="SearchResultList"
                   ScrollViewer.VerticalScrollBarVisibility="Visible"
-                  ScrollViewer.CanContentScroll="False">
+                  ScrollViewer.CanContentScroll="False" BorderThickness="1">
             <ListView.Resources>
                 <Style TargetType="{x:Type GridViewColumnHeader}">
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
