@@ -32,6 +32,10 @@
                 <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal" />
             </Style>
 
+            <Style TargetType="mah:SplitButton" BasedOn="{StaticResource MahApps.Styles.SplitButton.WindowCommands}">
+                <Setter Property="mah:ControlsHelper.CornerRadius" Value="{StaticResource GlobalCornerRadius}" />
+            </Style>
+
             <Style TargetType="TextBox" BasedOn="{StaticResource MahApps.Styles.TextBox}">
                 <Setter Property="FontSize" Value="{StaticResource BaseFontSize}" />
                 <Setter Property="mah:ControlsHelper.CornerRadius" Value="{StaticResource GlobalCornerRadius}" />
@@ -64,7 +68,7 @@
             <Style TargetType="ComboBox" BasedOn="{StaticResource MahApps.Styles.ComboBox}">
                 <Setter Property="mah:ControlsHelper.CornerRadius" Value="{StaticResource GlobalCornerRadius}" />
             </Style>
-            
+
             <Style TargetType="CheckBox" BasedOn="{StaticResource MahApps.Styles.CheckBox.Win10}">
                 <Setter Property="mah:CheckBoxHelper.CheckCornerRadius" Value="{StaticResource GlobalCornerRadius}" />
             </Style>

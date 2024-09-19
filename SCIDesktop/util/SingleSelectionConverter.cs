@@ -4,11 +4,16 @@ using System.Windows.Data;
 
 namespace SCIDesktop.util;
 
-public class NullToBooleanConverter : IValueConverter
+public class SingleSelectionConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object parameter, CultureInfo culture)
     {
-        return value != null;
+        if (value is int selectedCount)
+        {
+            return selectedCount == 1;
+        }
+
+        return false;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

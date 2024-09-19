@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Win32;
 using SCICore.api;
 using SCICore.dao;
 using SCICore.util;
@@ -72,9 +74,28 @@ public partial class EncryptionControl : UserControl
 
     private void ExportButton_OnClick(object sender, RoutedEventArgs e)
     {
-        MessageBox.Show("export DB");
-    }
+        var saveFileDialog = new SaveFileDialog
+        {
+            Filter = "All files (*.*)|*.*",
+            Title = "Export File Location",
+            FileName = "export.zip"
+        };
+        if (saveFileDialog.ShowDialog() != true) return;
+        var path = saveFileDialog.FileName;
 
+        var names = DbList.SelectedItems.Cast<DbInfoRow>().Select(r => r.Name).ToList();
+        var databases = DatabaseDao.SelectByNames(names);
+        var json = JsonUtils.ToStr(databases);
+
+        var hashResult = Task.Run(() => HashUtils.ComputeStringHash(json)).Result;
+        var digest = JsonUtils.ToStr(hashResult);
+
+
+        _ = Task.Run(() => ArchiveUtils.CompressZipInMem(path,
+            new List<(string fileContent, string path)>(new[] { (json, "enc.db"), (digest, "digest.json") })));
+
+        MessageBox.Show("Export succeed", "Export");
+    }
 
     private void InfoButton_OnClick(object sender, RoutedEventArgs e)
     {

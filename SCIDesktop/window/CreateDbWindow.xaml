@@ -32,11 +32,11 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,10"> Name: </TextBlock>
+        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,10"> Name: </TextBlock>
         <TextBox Grid.Row="0" Grid.Column="1" Name="DbNameTextBox" Margin="5,10"></TextBox>
 
 
-        <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,10">Source Folder:</TextBlock>
+        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,10">Source Folder:</TextBlock>
         <Border Grid.Row="1" Grid.Column="1" Margin="5,10" CornerRadius="{StaticResource GlobalCornerRadius}">
             <Border.Background>
                 <SolidColorBrush Color="Gray" Opacity="0.3" />
@@ -50,7 +50,7 @@
         </Button>
 
 
-        <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,10">Encrypted Folder:</TextBlock>
+        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,10">Encrypted Folder:</TextBlock>
         <Border Grid.Row="2" Grid.Column="1" Margin="5,10" CornerRadius="{StaticResource GlobalCornerRadius}">
             <Border.Background>
                 <SolidColorBrush Color="Gray" Opacity="0.3" />
@@ -64,11 +64,11 @@
         </Button>
 
 
-        <TextBlock Grid.Row="3" Grid.Column="0" Margin="0,10">User Password:</TextBlock>
+        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="0,10">User Password:</TextBlock>
         <PasswordBox Grid.Row="3" Grid.Column="1" Name="PasswordBox" MaxLength="30" Margin="5,10" />
 
 
-        <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,10">Password Level:</TextBlock>
+        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Margin="0,10">Password Level:</TextBlock>
         <ComboBox Grid.Row="4" Grid.Column="1" Name="PwdLevelComboBox" Margin="5,10" />
 
 

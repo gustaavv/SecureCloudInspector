@@ -85,6 +85,13 @@ public class DatabaseDao
         return conn.QueryFirst<Database>(sql, new { Name = name });
     }
 
+    public IEnumerable<Database> SelectByNames(IEnumerable<string> names)
+    {
+        using var conn = CreateConnection();
+        const string sql = "SELECT * FROM Database WHERE Name IN @Names";
+        return conn.Query<Database>(sql, new { Names = names }).ToList();
+    }
+
     public int Update(Database db)
     {
         using var conn = CreateConnection();

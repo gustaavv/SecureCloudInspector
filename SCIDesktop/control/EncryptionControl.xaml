@@ -6,11 +6,13 @@
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:util="clr-namespace:SCIDesktop.util"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
 
     <UserControl.Resources>
-        <util:NullToBooleanConverter x:Key="NullToBooleanConverter" />
+        <util:SingleSelectionConverter x:Key="SingleSelectionConverter" />
+        <util:MultipleSelectionConverter x:Key="MultipleSelectionConverter" />
     </UserControl.Resources>
 
     <Grid Margin="{StaticResource ContentMargin}">
@@ -28,14 +30,16 @@
 
         <Grid Grid.Row="1" Margin="0,10">
             <Grid.Resources>
+                <Brush x:Key="HeaderButtonBackground">#E4E6E8</Brush>
+                <system:Double x:Key="HeaderIconLength">25</system:Double>
                 <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                     <Setter Property="Margin" Value="0,0,10,0" />
                     <Setter Property="Padding" Value="5,2" />
-                    <Setter Property="Background" Value="#E4E6E8" />
+                    <Setter Property="Background" Value="{StaticResource HeaderButtonBackground}" />
                 </Style>
                 <Style TargetType="iconPacks:PackIconFontAwesome">
-                    <Setter Property="Width" Value="25" />
-                    <Setter Property="Height" Value="25" />
+                    <Setter Property="Width" Value="{StaticResource HeaderIconLength}" />
+                    <Setter Property="Height" Value="{StaticResource HeaderIconLength}" />
                 </Style>
             </Grid.Resources>
 
@@ -47,7 +51,7 @@
 
             <StackPanel Orientation="Horizontal" Grid.Column="0">
                 <Button Name="EncryptButton" ToolTip="Encrypt" Click="EncryptButton_OnClick"
-                        IsEnabled="{Binding ElementName=DbList, Path=SelectedItem, Converter={StaticResource NullToBooleanConverter}}">
+                        IsEnabled="{Binding ElementName=DbList, Path=SelectedItems.Count, Converter={StaticResource SingleSelectionConverter}}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconFontAwesome Kind="LockSolid" Margin="2" />
                         <TextBlock Margin="2">Encrypt</TextBlock>
@@ -55,7 +59,7 @@
                 </Button>
 
                 <Button Name="InfoButton" ToolTip="Detailed Info" Click="InfoButton_OnClick"
-                        IsEnabled="{Binding ElementName=DbList, Path=SelectedItem, Converter={StaticResource NullToBooleanConverter}}">
+                        IsEnabled="{Binding ElementName=DbList, Path=SelectedItems.Count, Converter={StaticResource SingleSelectionConverter}}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconFontAwesome Kind="CircleInfoSolid" Margin="2" />
                         <TextBlock Margin="2">Info</TextBlock>
@@ -63,7 +67,7 @@
                 </Button>
 
                 <Button Name="SearchButton" ToolTip="Search DB" Click="SearchButton_OnClick"
-                        IsEnabled="{Binding ElementName=DbList, Path=SelectedItem, Converter={StaticResource NullToBooleanConverter}}">
+                        IsEnabled="{Binding ElementName=DbList, Path=SelectedItems.Count, Converter={StaticResource SingleSelectionConverter}}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconFontAwesome Kind="MagnifyingGlassSolid" Margin="2" />
                         <TextBlock Margin="2">Search</TextBlock>
@@ -71,7 +75,7 @@
                 </Button>
 
                 <Button Name="RenameButton" ToolTip="Rename DB" Click="RenameButton_OnClick"
-                        IsEnabled="{Binding ElementName=DbList, Path=SelectedItem, Converter={StaticResource NullToBooleanConverter}}">
+                        IsEnabled="{Binding ElementName=DbList, Path=SelectedItems.Count, Converter={StaticResource SingleSelectionConverter}}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconFontAwesome Kind="PenToSquareSolid" Margin="2" />
                         <TextBlock Margin="2">Rename</TextBlock>
@@ -79,15 +83,15 @@
                 </Button>
 
                 <Button Name="DeleteButton" ToolTip="Delete DB" Click="DeleteButton_OnClick"
-                        IsEnabled="{Binding ElementName=DbList, Path=SelectedItem, Converter={StaticResource NullToBooleanConverter}}">
+                        IsEnabled="{Binding ElementName=DbList, Path=SelectedItems.Count, Converter={StaticResource SingleSelectionConverter}}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconFontAwesome Kind="TrashCanSolid" Margin="2" />
                         <TextBlock Margin="2">Delete</TextBlock>
                     </StackPanel>
                 </Button>
-                
+
                 <Button Name="ExportButton" ToolTip="Export DB" Click="ExportButton_OnClick"
-                        IsEnabled="{Binding ElementName=DbList, Path=SelectedItem, Converter={StaticResource NullToBooleanConverter}}">
+                        IsEnabled="{Binding ElementName=DbList, Path=SelectedItems.Count, Converter={StaticResource MultipleSelectionConverter}}">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconFontAwesome Kind="UploadSolid" Margin="2" />
                         <TextBlock Margin="2">Export</TextBlock>
@@ -106,12 +110,12 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
-            
+
         </Grid>
 
         <Separator Grid.Row="2" Margin="0,5" />
 
-        <ListView Grid.Row="3" Margin="0, 10" Name="DbList" SelectionMode="Single" BorderThickness="1">
+        <ListView Grid.Row="3" Margin="0, 10" Name="DbList" BorderThickness="1">
             <ListView.Resources>
                 <Style TargetType="{x:Type GridViewColumnHeader}">
                     <Setter Property="HorizontalContentAlignment" Value="Left" />

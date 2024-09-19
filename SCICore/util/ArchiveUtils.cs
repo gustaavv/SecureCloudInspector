@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.IO.Compression;
+using System.Text;
 
 namespace SCICore.util;
 
@@ -105,7 +106,7 @@ public static class ArchiveUtils
 
         if (!File.Exists(archive))
         {
-            throw new FileNotFoundException($"'{RarPath}' is not a valid path for an archive");
+            throw new FileNotFoundException($"'{archive}' is not a valid path for an archive");
         }
 
         outputDir = outputDir.Trim();
@@ -138,5 +139,25 @@ public static class ArchiveUtils
         using var process = ProcessUtils.CreateProcess(RarPath, argument);
         var (res, output, error, exception) = await ProcessUtils.RunProcess(process);
         return res;
+    }
+
+    public static void CompressZipInMem(string target, List<(string fileContent, string path)> sources)
+    {
+        using var zipStream = new MemoryStream();
+
+        // must use strict `using` structure, inline `using` is wrong
+        using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Create, true))
+        {
+            foreach (var (fileContent, path) in sources)
+            {
+                var content = Encoding.UTF8.GetBytes(fileContent);
+                var entry = archive.CreateEntry(path);
+                using var entryStream = entry.Open();
+                entryStream.Write(content, 0, content.Length);
+            }
+        }
+
+        var zipData = zipStream.ToArray();
+        File.WriteAllBytes(target, zipData);
     }
 }
