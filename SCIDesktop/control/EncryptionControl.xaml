@@ -123,6 +123,19 @@
             </ListView.Resources>
             <ListView.View>
                 <GridView>
+                    <GridViewColumn Width="32">
+                        <GridViewColumn.HeaderContainerStyle> <!-- disable the resizing for the column -->
+                            <Style TargetType="GridViewColumnHeader">
+                                <Setter Property="IsEnabled" Value="False" />
+                            </Style>
+                        </GridViewColumn.HeaderContainerStyle>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox
+                                    IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=IsSelected, Mode=TwoWay}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn Header="Name" Width="120">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
@@ -157,7 +170,8 @@
                                     DisplayMemberBinding="{Binding CreatedAt, StringFormat=d}" />
                     <GridViewColumn Header="Updated" Width="120"
                                     DisplayMemberBinding="{Binding UpdatedAt, StringFormat=d}" />
-
+                    <GridViewColumn Header="Type" Width="90"
+                                    DisplayMemberBinding="{Binding DbType}" />
                 </GridView>
             </ListView.View>
         </ListView>

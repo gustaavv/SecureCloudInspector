@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using Microsoft.Win32;
 using SCICore.api;
 using SCICore.dao;
+using SCICore.entity;
 using SCICore.util;
 using SCIDesktop.window;
 
@@ -27,35 +28,11 @@ public partial class EncryptionControl : UserControl
         RefreshDbList();
     }
 
-    public class DbInfoRow
-    {
-        public string Name { get; set; }
-        public string SourceFolder { get; set; }
-        public string EncryptedFolder { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-
-        public DbInfoRow(string name, string sourceFolder, string encryptedFolder,
-            DateTime createdAt, DateTime updatedAt)
-        {
-            Name = name;
-            SourceFolder = sourceFolder;
-            EncryptedFolder = encryptedFolder;
-            CreatedAt = createdAt;
-            UpdatedAt = updatedAt;
-        }
-    }
-
     private void RefreshDbList()
     {
         var databases = DatabaseDao.SelectAll();
-        var list = databases.Select(db =>
-                new DbInfoRow(db.Name, db.SourceFolder, db.EncryptedFolder, db.CreatedAt, db.UpdatedAt))
-            .ToList();
-
-        DbList.ItemsSource = list;
+        DbList.ItemsSource = databases;
     }
-
 
     private void RefreshButton_OnClick(object sender, RoutedEventArgs e)
     {
@@ -83,13 +60,12 @@ public partial class EncryptionControl : UserControl
         if (saveFileDialog.ShowDialog() != true) return;
         var path = saveFileDialog.FileName;
 
-        var names = DbList.SelectedItems.Cast<DbInfoRow>().Select(r => r.Name).ToList();
+        var names = DbList.SelectedItems.Cast<Database>().Select(r => r.Name).ToList();
         var databases = DatabaseDao.SelectByNames(names);
         var json = JsonUtils.ToStr(databases);
 
         var hashResult = Task.Run(() => HashUtils.ComputeStringHash(json)).Result;
         var digest = JsonUtils.ToStr(hashResult);
-
 
         _ = Task.Run(() => ArchiveUtils.CompressZipInMem(path,
             new List<(string fileContent, string path)>(new[] { (json, "enc.db"), (digest, "digest.json") })));
@@ -99,20 +75,20 @@ public partial class EncryptionControl : UserControl
 
     private void InfoButton_OnClick(object sender, RoutedEventArgs e)
     {
-        var dbName = ((DbInfoRow)DbList.SelectedItem).Name;
+        var dbName = ((Database)DbList.SelectedItem).Name;
         MessageBox.Show(dbName, "info");
     }
 
     private void SearchButton_OnClick(object sender, RoutedEventArgs e)
     {
-        var dbName = ((DbInfoRow)DbList.SelectedItem).Name;
+        var dbName = ((Database)DbList.SelectedItem).Name;
         var searchDbWindow = new SearchDbWindow(DatabaseDao, dbName);
         searchDbWindow.ShowDialog();
     }
 
     private void RenameButton_OnClick(object sender, RoutedEventArgs e)
     {
-        var dbName = ((DbInfoRow)DbList.SelectedItem).Name;
+        var dbName = ((Database)DbList.SelectedItem).Name;
 
         var renameDbWindow = new RenameDbWindow(dbName, DatabaseDao);
         if (renameDbWindow.ShowDialog() == true)
@@ -123,7 +99,7 @@ public partial class EncryptionControl : UserControl
 
     private void DeleteButton_OnClick(object sender, RoutedEventArgs e)
     {
-        var dbName = ((DbInfoRow)DbList.SelectedItem).Name;
+        var dbName = ((Database)DbList.SelectedItem).Name;
 
         var result = MessageBox.Show($"Confirm delete {dbName}?", "Delete a database", MessageBoxButton.YesNo);
         if (result != MessageBoxResult.Yes) return;
@@ -138,7 +114,7 @@ public partial class EncryptionControl : UserControl
     {
         ArchiveUtils.RarPath = ConfigDao.Config.RarPath;
 
-        var dbName = ((DbInfoRow)DbList.SelectedItem).Name;
+        var dbName = ((Database)DbList.SelectedItem).Name;
 
         var db = DatabaseDao.SelectByName(dbName);
 
