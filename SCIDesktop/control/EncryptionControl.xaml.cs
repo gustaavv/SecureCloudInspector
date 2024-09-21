@@ -41,7 +41,7 @@ public partial class EncryptionControl : UserControl
 
     private void NewButton_OnClick(object sender, RoutedEventArgs e)
     {
-        var createDbWindow = new CreateDbWindow(DatabaseDao);
+        var createDbWindow = new CreateDbWindow(DatabaseDao, ConfigDao);
         if (createDbWindow.ShowDialog() == true)
         {
             RefreshDbList();

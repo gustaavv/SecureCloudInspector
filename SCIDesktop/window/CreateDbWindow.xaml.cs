@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using MahApps.Metro.Controls;
@@ -8,7 +7,6 @@ using Ookii.Dialogs.Wpf;
 using SCICore.api;
 using SCICore.dao;
 using SCICore.entity;
-using SCICore.util;
 
 namespace SCIDesktop.window;
 
@@ -16,7 +14,9 @@ public partial class CreateDbWindow : MetroWindow
 {
     private DatabaseDao DatabaseDao { get; set; }
 
-    public CreateDbWindow(DatabaseDao databaseDao)
+    private ConfigDao ConfigDao { get; set; }
+
+    public CreateDbWindow(DatabaseDao databaseDao, ConfigDao configDao)
     {
         InitializeComponent();
 
@@ -24,6 +24,7 @@ public partial class CreateDbWindow : MetroWindow
         PwdLevelComboBox.SelectedItem = PasswordLevel.Db;
 
         DatabaseDao = databaseDao;
+        ConfigDao = configDao;
     }
 
     private void ChooseFolderButton_OnClick(object sender, RoutedEventArgs e)
@@ -101,8 +102,8 @@ public partial class CreateDbWindow : MetroWindow
             DateTime.Today, DateTime.Today);
 
         db.EncryptScheme.PwdLevel = pwdLevel;
-        db.EncryptScheme.FileNamePattern = EncryptApi.MakePattern(15);
-        db.EncryptScheme.PwdPattern = EncryptApi.MakePattern(60);
+        db.EncryptScheme.FileNamePattern = EncryptApi.MakePattern((int)ConfigDao.Config.EncryptedFilenameLength);
+        db.EncryptScheme.PwdPattern = EncryptApi.MakePattern((int)ConfigDao.Config.EncryptedArchivePwdLength);
 
         DatabaseDao.Insert(db);
 
