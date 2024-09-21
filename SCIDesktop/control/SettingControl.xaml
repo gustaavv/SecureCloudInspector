@@ -17,6 +17,7 @@
                 <Setter Property="Width" Value="16" />
                 <Setter Property="Height" Value="16" />
             </Style>
+            <Thickness x:Key="GroupBoxRowMargin">5</Thickness>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -27,13 +28,16 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" HorizontalAlignment="Left" FontSize="{StaticResource HeaderFontSize}"
-                   Margin="0,0,0,10">
+                   Margin="0,0,0,5">
             Settings
         </TextBlock>
 
         <CheckBox Grid.Row="1" Name="AdvancedCheckBox" Content="Advanced" />
 
-        <GroupBox Grid.Row="2" Margin="0,10" Header="Core Config">
+        <GroupBox Grid.Row="2" Margin="0,10">
+            <GroupBox.Header>
+                <TextBlock Margin="5,0,0,0" Foreground="White">Core Config</TextBlock>
+            </GroupBox.Header>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -41,7 +45,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0" Margin="5,5,5,10">
+                <Grid Grid.Row="0" Margin="{StaticResource GroupBoxRowMargin}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -49,7 +53,7 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0" VerticalAlignment="Center">Path to rar.exe</TextBlock>
-                    <Border Grid.Column="1" Margin="20,0,0,0" CornerRadius="{StaticResource GlobalCornerRadius}">
+                    <Border Grid.Column="1" CornerRadius="{StaticResource GlobalCornerRadius}">
                         <Border.Background>
                             <SolidColorBrush Color="Gray" Opacity="0.3" />
                         </Border.Background>
@@ -57,13 +61,13 @@
                                  Margin="5,0" Background="Transparent" BorderThickness="0" />
                     </Border>
 
-                    <Button ToolTip="Choose file" Grid.Column="2" Margin="5,0,0,0" Tag="RarPath"
+                    <Button ToolTip="Choose file" Grid.Column="2" Margin="10,0,0,0" Tag="RarPath"
                             Click="ChooseFileButton_OnClick">
                         <iconPacks:PackIconFontAwesome Kind="FileSolid" />
                     </Button>
                 </Grid>
 
-                <Grid Grid.Row="1" Margin="5,5,5,10"
+                <Grid Grid.Row="1" Margin="{StaticResource GroupBoxRowMargin}"
                       Visibility="{Binding IsChecked, ElementName=AdvancedCheckBox, Converter={StaticResource BoolToVisConverter}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -73,7 +77,7 @@
 
                     <TextBlock Grid.Column="0" VerticalAlignment="Center">Path to Enc.db</TextBlock>
 
-                    <Border Grid.Column="1" Margin="20,0,0,0" CornerRadius="{StaticResource GlobalCornerRadius}">
+                    <Border Grid.Column="1" CornerRadius="{StaticResource GlobalCornerRadius}">
                         <Border.Background>
                             <SolidColorBrush Color="Gray" Opacity="0.3" />
                         </Border.Background>
@@ -81,13 +85,13 @@
                                  Margin="5,0" Background="Transparent" BorderThickness="0" />
                     </Border>
 
-                    <Button ToolTip="Choose file" Grid.Column="2" Margin="5,0,0,0" Tag="EncDbPath"
+                    <Button ToolTip="Choose file" Grid.Column="2" Margin="10,0,0,0" Tag="EncDbPath"
                             Click="ChooseFileButton_OnClick">
                         <iconPacks:PackIconFontAwesome Kind="FileSolid" />
                     </Button>
                 </Grid>
 
-                <Grid Grid.Row="2" Margin="5,5,5,10"
+                <Grid Grid.Row="2" Margin="{StaticResource GroupBoxRowMargin}"
                       Visibility="{Binding IsChecked, ElementName=AdvancedCheckBox, Converter={StaticResource BoolToVisConverter}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -97,7 +101,7 @@
 
                     <TextBlock Grid.Column="0" VerticalAlignment="Center">Path to Dec.db</TextBlock>
 
-                    <Border Grid.Column="1" Margin="20,0,0,0" CornerRadius="{StaticResource GlobalCornerRadius}">
+                    <Border Grid.Column="1" CornerRadius="{StaticResource GlobalCornerRadius}">
                         <Border.Background>
                             <SolidColorBrush Color="Gray" Opacity="0.3" />
                         </Border.Background>
@@ -105,7 +109,7 @@
                                  Margin="5,0" Background="Transparent" BorderThickness="0" />
                     </Border>
 
-                    <Button ToolTip="Choose file" Grid.Column="2" Margin="5,0,0,0" Tag="DecDbPath"
+                    <Button ToolTip="Choose file" Grid.Column="2" Margin="10,0,0,0" Tag="DecDbPath"
                             Click="ChooseFileButton_OnClick">
                         <iconPacks:PackIconFontAwesome Kind="FileSolid" />
                     </Button>
@@ -114,45 +118,44 @@
             </Grid>
         </GroupBox>
 
-        <GroupBox Grid.Row="3" Margin="0,10" Header="Encrypt Config">
+        <GroupBox Grid.Row="3" Margin="0,10">
+            <GroupBox.Header>
+                <TextBlock Margin="5,0,0,0" Foreground="White">Encrypt Config</TextBlock>
+            </GroupBox.Header>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0" Margin="5,5,5,10">
+                <Grid Grid.Row="0" Margin="{StaticResource GroupBoxRowMargin}">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0" VerticalAlignment="Center">Create Digest When Export</TextBlock>
 
-                    <CheckBox Grid.Column="2" Margin="5,0,0,0" HorizontalAlignment="Right"
+                    <CheckBox Grid.Column="1" Margin="0,0,-100,0" HorizontalAlignment="Right"
                               Tag="CreateDigestWhenExport"
                               Unchecked="CheckBox_OnCheckedChanged" Checked="CheckBox_OnCheckedChanged"
                               IsChecked="{Binding Path=CreateDigestWhenExport, Mode=OneWay}" />
                 </Grid>
 
-                <Grid Grid.Row="1" Margin="5,5,5,10">
+                <Grid Grid.Row="1" Margin="{StaticResource GroupBoxRowMargin}">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0" VerticalAlignment="Center">Verify Digest When Import</TextBlock>
 
-                    <CheckBox Grid.Column="2" Margin="5,0,0,0"
+                    <CheckBox Grid.Column="1" Margin="0,0,-100,0"
                               Tag="VerifyDigestWhenImport"
                               Unchecked="CheckBox_OnCheckedChanged" Checked="CheckBox_OnCheckedChanged"
                               IsChecked="{Binding Path=VerifyDigestWhenImport, Mode=OneWay}" />
                 </Grid>
-
             </Grid>
-
 
         </GroupBox>
 
