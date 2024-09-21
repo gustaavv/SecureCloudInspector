@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -64,11 +63,16 @@ public partial class EncryptionControl : UserControl
         var databases = DatabaseDao.SelectByNames(names);
         var json = JsonUtils.ToStr(databases);
 
-        var hashResult = Task.Run(() => HashUtils.ComputeStringHash(json)).Result;
-        var digest = JsonUtils.ToStr(hashResult);
+        var sources = new List<(string fileContent, string path)> { (json, "db.json") };
 
-        _ = Task.Run(() => ArchiveUtils.CompressZipInMem(path,
-            new List<(string fileContent, string path)>(new[] { (json, "enc.db"), (digest, "digest.json") })));
+        if (ConfigDao.Config.CreateDigestWhenExport)
+        {
+            var hashResult = Task.Run(() => HashUtils.ComputeStringHash(json)).Result;
+            var digest = JsonUtils.ToStr(hashResult);
+            sources.Add((digest, "digest.json"));
+        }
+
+        _ = Task.Run(() => ArchiveUtils.CompressZipInMem(path, sources));
 
         MessageBox.Show("Export succeed", "Export");
     }

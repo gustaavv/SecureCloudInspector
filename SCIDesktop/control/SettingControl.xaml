@@ -23,6 +23,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" HorizontalAlignment="Left" FontSize="{StaticResource HeaderFontSize}"
@@ -47,7 +48,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0">Path to rar.exe</TextBlock>
+                    <TextBlock Grid.Column="0" VerticalAlignment="Center">Path to rar.exe</TextBlock>
                     <Border Grid.Column="1" Margin="20,0,0,0" CornerRadius="{StaticResource GlobalCornerRadius}">
                         <Border.Background>
                             <SolidColorBrush Color="Gray" Opacity="0.3" />
@@ -70,7 +71,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0">Path to Enc.db</TextBlock>
+                    <TextBlock Grid.Column="0" VerticalAlignment="Center">Path to Enc.db</TextBlock>
 
                     <Border Grid.Column="1" Margin="20,0,0,0" CornerRadius="{StaticResource GlobalCornerRadius}">
                         <Border.Background>
@@ -94,7 +95,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0">Path to Dec.db</TextBlock>
+                    <TextBlock Grid.Column="0" VerticalAlignment="Center">Path to Dec.db</TextBlock>
 
                     <Border Grid.Column="1" Margin="20,0,0,0" CornerRadius="{StaticResource GlobalCornerRadius}">
                         <Border.Background>
@@ -113,7 +114,49 @@
             </Grid>
         </GroupBox>
 
-        <Button Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+        <GroupBox Grid.Row="3" Margin="0,10" Header="Encrypt Config">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="5,5,5,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" VerticalAlignment="Center">Create Digest When Export</TextBlock>
+
+                    <CheckBox Grid.Column="2" Margin="5,0,0,0" HorizontalAlignment="Right"
+                              Tag="CreateDigestWhenExport"
+                              Unchecked="CheckBox_OnCheckedChanged" Checked="CheckBox_OnCheckedChanged"
+                              IsChecked="{Binding Path=CreateDigestWhenExport, Mode=OneWay}" />
+                </Grid>
+
+                <Grid Grid.Row="1" Margin="5,5,5,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" VerticalAlignment="Center">Verify Digest When Import</TextBlock>
+
+                    <CheckBox Grid.Column="2" Margin="5,0,0,0"
+                              Tag="VerifyDigestWhenImport"
+                              Unchecked="CheckBox_OnCheckedChanged" Checked="CheckBox_OnCheckedChanged"
+                              IsChecked="{Binding Path=VerifyDigestWhenImport, Mode=OneWay}" />
+                </Grid>
+
+            </Grid>
+
+
+        </GroupBox>
+
+        <Button Grid.Row="4" VerticalAlignment="Bottom" HorizontalAlignment="Right"
                 Style="{StaticResource AccentButton}"
                 Padding="5" Margin="0,10"
                 Click="SaveButton_OnClick">

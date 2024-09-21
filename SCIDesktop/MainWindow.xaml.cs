@@ -26,7 +26,7 @@ public partial class MainWindow : MetroWindow
         ConfigDao = configDao;
 
         EncryptionControl = new EncryptionControl(ConfigDao);
-        DecryptionControl = new DecryptionControl();
+        DecryptionControl = new DecryptionControl(ConfigDao);
         SettingControl = new SettingControl(ConfigDao);
         AboutControl = new AboutControl();
 

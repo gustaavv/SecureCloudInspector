@@ -4,7 +4,9 @@
              xmlns:local="clr-namespace:SCIDesktop"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-             Startup="App_OnStartup">
+             xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf"
+             Startup="App_OnStartup"
+             DispatcherUnhandledException="App_OnDispatcherUnhandledException">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -52,6 +54,10 @@
             </Style>
 
             <Style TargetType="TextBlock" BasedOn="{StaticResource MahApps.Styles.TextBlock}">
+                <Setter Property="FontSize" Value="{StaticResource BaseFontSize}" />
+            </Style>
+
+            <Style TargetType="emoji:TextBlock">
                 <Setter Property="FontSize" Value="{StaticResource BaseFontSize}" />
             </Style>
 

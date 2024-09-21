@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using SCICore.dao;
 using SCICore.util;
+using SCIDesktop.window;
 
 namespace SCIDesktop
 {
@@ -37,6 +39,14 @@ namespace SCIDesktop
             }
 
             return new ConfigDao(ConfigUtils.GetDefaultConfigPath());
+        }
+
+        private void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            var exceptionWindow = new ExceptionWindow(e.Exception);
+            exceptionWindow.ShowDialog();
+            // shutdown the program?
+            e.Handled = true;
         }
     }
 }

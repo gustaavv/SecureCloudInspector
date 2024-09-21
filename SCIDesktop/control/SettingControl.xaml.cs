@@ -30,6 +30,18 @@ public partial class SettingControl : UserControl
         set => ConfigDao.Config.RarPath = value;
     }
 
+    public bool CreateDigestWhenExport
+    {
+        get => ConfigDao.Config.CreateDigestWhenExport;
+        set => ConfigDao.Config.CreateDigestWhenExport = value;
+    }
+
+    public bool VerifyDigestWhenImport
+    {
+        get => ConfigDao.Config.VerifyDigestWhenImport;
+        set => ConfigDao.Config.VerifyDigestWhenImport = value;
+    }
+
     public SettingControl(ConfigDao configDao)
     {
         InitializeComponent();
@@ -76,5 +88,15 @@ public partial class SettingControl : UserControl
             textBox.Text = newFilePath;
             SettingChanged = true;
         }
+    }
+
+    private void CheckBox_OnCheckedChanged(object sender, RoutedEventArgs e)
+    {
+        var checkBox = sender as CheckBox;
+        var property = (string)checkBox!.Tag;
+
+        var propertyInfo = typeof(SettingControl).GetProperty(property)!;
+        propertyInfo.SetValue(this, checkBox.IsChecked);
+        SettingChanged = true;
     }
 }

@@ -3,9 +3,151 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:util="clr-namespace:SCIDesktop.util"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <util:SingleSelectionConverter x:Key="SingleSelectionConverter" />
+    </UserControl.Resources>
+
     <Grid Margin="{StaticResource ContentMargin}">
-        <TextBlock HorizontalAlignment="Left" FontSize="{StaticResource HeaderFontSize}"> Decryption</TextBlock>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" HorizontalAlignment="Left" FontSize="{StaticResource HeaderFontSize}"
+                   Margin="0,0,0,10">
+            Decryption
+        </TextBlock>
+
+        <Grid Grid.Row="1" Margin="0,10">
+            <Grid.Resources>
+                <Brush x:Key="HeaderButtonBackground">#E4E6E8</Brush>
+                <system:Double x:Key="HeaderIconLength">25</system:Double>
+                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                    <Setter Property="Margin" Value="0,0,10,0" />
+                    <Setter Property="Padding" Value="5,2" />
+                    <Setter Property="Background" Value="{StaticResource HeaderButtonBackground}" />
+                </Style>
+                <Style TargetType="iconPacks:PackIconFontAwesome">
+                    <Setter Property="Width" Value="{StaticResource HeaderIconLength}" />
+                    <Setter Property="Height" Value="{StaticResource HeaderIconLength}" />
+                </Style>
+            </Grid.Resources>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" /> <!-- For left buttons -->
+                <ColumnDefinition Width="*" />   <!-- Flexible space between left and right buttons -->
+                <ColumnDefinition Width="Auto" /> <!-- For right buttons -->
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <Button Name="DecryptButton" ToolTip="Decrypt" Click="DecryptButton_OnClick"
+                        IsEnabled="{Binding ElementName=DbList, Path=SelectedItems.Count, Converter={StaticResource SingleSelectionConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconFontAwesome Kind="LockOpenSolid" Margin="2" />
+                        <TextBlock Margin="2">Decrypt</TextBlock>
+                    </StackPanel>
+                </Button>
+
+                <Button Name="InfoButton" ToolTip="Detailed Info" Click="InfoButton_OnClick"
+                        IsEnabled="{Binding ElementName=DbList, Path=SelectedItems.Count, Converter={StaticResource SingleSelectionConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconFontAwesome Kind="CircleInfoSolid" Margin="2" />
+                        <TextBlock Margin="2">Info</TextBlock>
+                    </StackPanel>
+                </Button>
+
+                <Button Name="SearchButton" ToolTip="Search DB" Click="SearchButton_OnClick"
+                        IsEnabled="{Binding ElementName=DbList, Path=SelectedItems.Count, Converter={StaticResource SingleSelectionConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconFontAwesome Kind="MagnifyingGlassSolid" Margin="2" />
+                        <TextBlock Margin="2">Search</TextBlock>
+                    </StackPanel>
+                </Button>
+
+                <Button Name="DeleteButton" ToolTip="Delete DB" Click="DeleteButton_OnClick"
+                        IsEnabled="{Binding ElementName=DbList, Path=SelectedItems.Count, Converter={StaticResource SingleSelectionConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconFontAwesome Kind="TrashCanSolid" Margin="2" />
+                        <TextBlock Margin="2">Delete</TextBlock>
+                    </StackPanel>
+                </Button>
+
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Grid.Column="2">
+                <!-- copy button styles manually to this button since it has a style property -->
+                <Button Name="ImportButton" ToolTip="Import DB" Click="ImportButton_OnClick"
+                        HorizontalAlignment="Right"
+                        Style="{StaticResource AccentButton}"
+                        BorderThickness="1" Padding="5,2">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconFontAwesome Kind="DownloadSolid" Margin="2" />
+                        <TextBlock Margin="2">Import</TextBlock>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+        </Grid>
+
+        <Separator Grid.Row="2" Margin="0,5" />
+
+        <ListView Grid.Row="3" Margin="0, 10" Name="DbList" BorderThickness="1">
+            <ListView.Resources>
+                <Style TargetType="{x:Type GridViewColumnHeader}">
+                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                </Style>
+            </ListView.Resources>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="32">
+                        <GridViewColumn.HeaderContainerStyle> <!-- disable the resizing for the column -->
+                            <Style TargetType="GridViewColumnHeader">
+                                <Setter Property="IsEnabled" Value="False" />
+                            </Style>
+                        </GridViewColumn.HeaderContainerStyle>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox
+                                    IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=IsSelected, Mode=TwoWay}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Name" Width="120">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}"
+                                           ToolTip="{Binding Name}"
+                                           TextTrimming="CharacterEllipsis" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Source Folder" Width="250">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding SourceFolder}"
+                                           ToolTip="{Binding SourceFolder}"
+                                           TextTrimming="CharacterEllipsis" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Created" Width="120"
+                                    DisplayMemberBinding="{Binding CreatedAt, StringFormat=d}" />
+                    <GridViewColumn Header="Updated" Width="120"
+                                    DisplayMemberBinding="{Binding UpdatedAt, StringFormat=d}" />
+                    <GridViewColumn Header="Type" Width="90"
+                                    DisplayMemberBinding="{Binding DbType}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+
     </Grid>
 </UserControl>

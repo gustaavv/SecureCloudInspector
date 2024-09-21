@@ -1,0 +1,47 @@
+﻿<mah:MetroWindow x:Class="SCIDesktop.window.ExceptionWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:local="clr-namespace:SCIDesktop.window"
+                 xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                 mc:Ignorable="d"
+                 TitleCharacterCasing="Normal"
+                 WindowStartupLocation="CenterScreen"
+                 Title="Exception Window" Height="450" Width="800">
+    <Grid Margin="{StaticResource ContentMargin}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Margin="0,0,0,10">An error happened:</TextBlock>
+
+        <Grid Grid.Row="1" Margin="0,10">
+            <TextBox Name="ExInfoTextBox" AcceptsReturn="True" IsReadOnly="True" Panel.ZIndex="0" />
+            <Button Name="CopyButton" Click="CopyButton_OnClick" ToolTip="Copy Error Message"
+                    HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5"
+                    Panel.ZIndex="1">
+                <iconPacks:PackIconFontAwesome Kind="CopySolid" Width="25" Height="25" />
+            </Button>
+
+            <TextBlock Name="NotificationTextBlock" Margin="0,10,45,0"
+                       HorizontalAlignment="Right" VerticalAlignment="Top"
+                       Visibility="Collapsed" Panel.ZIndex="1">
+                Copied to clipboard!
+            </TextBlock>
+        </Grid>
+
+        <emoji:TextBlock Grid.Row="2" Margin="0,10">
+            Don't worry, submit an
+            <Hyperlink NavigateUri="https://github.com/gustaavv/SecureCloudInspector/issues/new"
+                       RequestNavigate="Hyperlink_OnRequestNavigate">
+                issue
+            </Hyperlink>
+            to get the problem solved🤗.
+        </emoji:TextBlock>
+    </Grid>
+</mah:MetroWindow>

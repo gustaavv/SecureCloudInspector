@@ -23,6 +23,17 @@ public record Config
     /// </summary>
     public string DecDbPath { get; set; }
 
+    /// <summary>
+    /// Create digest about databases when exporting
+    /// </summary>
+    public bool CreateDigestWhenExport { get; set; } = true;
+
+
+    /// <summary>
+    /// Verifying digest when importing databases
+    /// </summary>
+    public bool VerifyDigestWhenImport { get; set; } = true;
+
     public Config()
     {
     }
