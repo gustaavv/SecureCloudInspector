@@ -42,6 +42,18 @@ public partial class SettingControl : UserControl
         set => ConfigDao.Config.VerifyDigestWhenImport = value;
     }
 
+    public uint EncryptedFilenameLength
+    {
+        get => ConfigDao.Config.EncryptedFilenameLength;
+        set => ConfigDao.Config.EncryptedFilenameLength = value;
+    }
+
+    public uint EncryptedArchivePwdLength
+    {
+        get => ConfigDao.Config.EncryptedArchivePwdLength;
+        set => ConfigDao.Config.EncryptedArchivePwdLength = value;
+    }
+
     public SettingControl(ConfigDao configDao)
     {
         InitializeComponent();
@@ -52,6 +64,30 @@ public partial class SettingControl : UserControl
 
     private void SaveButton_OnClick(object sender, RoutedEventArgs e)
     {
+        if (VerifyDigestWhenImportCheckBox.IsChecked != VerifyDigestWhenImport)
+        {
+            VerifyDigestWhenImport = VerifyDigestWhenImportCheckBox.IsChecked == true;
+            SettingChanged = true;
+        }
+
+        if (CreateDigestWhenExportCheckBox.IsChecked != CreateDigestWhenExport)
+        {
+            CreateDigestWhenExport = CreateDigestWhenExportCheckBox.IsChecked == true;
+            SettingChanged = true;
+        }
+
+        if ((uint)EncryptedFilenameLengthSlider.Value != EncryptedFilenameLength)
+        {
+            EncryptedFilenameLength = (uint)EncryptedFilenameLengthSlider.Value;
+            SettingChanged = true;
+        }
+
+        if ((uint)EncryptedArchivePwdLengthSlider.Value != EncryptedArchivePwdLength)
+        {
+            EncryptedArchivePwdLength = (uint)EncryptedArchivePwdLengthSlider.Value;
+            SettingChanged = true;
+        }
+
         if (SettingChanged)
         {
             _ = Task.Run(ConfigDao.WriteConfig);
@@ -90,13 +126,10 @@ public partial class SettingControl : UserControl
         }
     }
 
-    private void CheckBox_OnCheckedChanged(object sender, RoutedEventArgs e)
+    private void SliderResetButton_OnClick(object sender, RoutedEventArgs e)
     {
-        var checkBox = sender as CheckBox;
-        var property = (string)checkBox!.Tag;
-
-        var propertyInfo = typeof(SettingControl).GetProperty(property)!;
-        propertyInfo.SetValue(this, checkBox.IsChecked);
-        SettingChanged = true;
+        var property = ((sender as Button)!.Tag as string)!;
+        var slider = (FindName($"{property}Slider") as Slider)!;
+        slider.Value = (uint)typeof(SettingControl).GetProperty(property)!.GetValue(this)!;
     }
 }

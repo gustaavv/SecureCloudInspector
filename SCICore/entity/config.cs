@@ -34,6 +34,10 @@ public record Config
     /// </summary>
     public bool VerifyDigestWhenImport { get; set; } = true;
 
+    public uint EncryptedFilenameLength { get; set; } = 15;
+
+    public uint EncryptedArchivePwdLength { get; set; } = 60;
+
     public Config()
     {
     }

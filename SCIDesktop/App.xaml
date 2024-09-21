@@ -79,6 +79,14 @@
                 <Setter Property="mah:CheckBoxHelper.CheckCornerRadius" Value="{StaticResource GlobalCornerRadius}" />
             </Style>
 
+            <Style TargetType="Slider" BasedOn="{StaticResource MahApps.Styles.Slider.Win10}">
+                <Setter Property="mah:SliderHelper.EnableMouseWheel" Value="MouseHover" />
+                <Setter Property="mah:SliderHelper.ChangeValueBy" Value="LargeChange" />
+                <Setter Property="TickPlacement" Value="TopLeft" />
+                <Setter Property="TickFrequency" Value="1" />
+                <Setter Property="IsSnapToTickEnabled" Value="True" />
+            </Style>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

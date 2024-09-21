@@ -126,6 +126,8 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0" Margin="{StaticResource GroupBoxRowMargin}">
@@ -137,8 +139,7 @@
                     <TextBlock Grid.Column="0" VerticalAlignment="Center">Create Digest When Export</TextBlock>
 
                     <CheckBox Grid.Column="1" Margin="0,0,-100,0" HorizontalAlignment="Right"
-                              Tag="CreateDigestWhenExport"
-                              Unchecked="CheckBox_OnCheckedChanged" Checked="CheckBox_OnCheckedChanged"
+                              Name="CreateDigestWhenExportCheckBox"
                               IsChecked="{Binding Path=CreateDigestWhenExport, Mode=OneWay}" />
                 </Grid>
 
@@ -151,9 +152,51 @@
                     <TextBlock Grid.Column="0" VerticalAlignment="Center">Verify Digest When Import</TextBlock>
 
                     <CheckBox Grid.Column="1" Margin="0,0,-100,0"
-                              Tag="VerifyDigestWhenImport"
-                              Unchecked="CheckBox_OnCheckedChanged" Checked="CheckBox_OnCheckedChanged"
+                              Name="VerifyDigestWhenImportCheckBox"
                               IsChecked="{Binding Path=VerifyDigestWhenImport, Mode=OneWay}" />
+                </Grid>
+
+                <Grid Grid.Row="2" Margin="{StaticResource GroupBoxRowMargin}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" VerticalAlignment="Center">Encrypted Filename Length</TextBlock>
+
+                    <DockPanel Grid.Column="1">
+                        <TextBlock DockPanel.Dock="Left" Margin="10, 0"
+                                   Text="{Binding ElementName=EncryptedFilenameLengthSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" />
+                        <Slider Width="200" Orientation="Horizontal" Margin="10, 0"
+                                Name="EncryptedFilenameLengthSlider"
+                                Minimum="12" Maximum="25" SmallChange="1" LargeChange="3"
+                                Value="{Binding Path=EncryptedFilenameLength, Mode=OneWay}" />
+                        <Button ToolTip="Reset" Click="SliderResetButton_OnClick" Tag="EncryptedFilenameLength">
+                            <iconPacks:FontAwesome Kind="ArrowRotateRightSolid" />
+                        </Button>
+                    </DockPanel>
+                </Grid>
+
+                <Grid Grid.Row="3" Margin="{StaticResource GroupBoxRowMargin}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" VerticalAlignment="Center">Encrypted Archive Password Length</TextBlock>
+
+                    <DockPanel Grid.Column="1">
+                        <TextBlock DockPanel.Dock="Left" Margin="10, 0"
+                                   Text="{Binding ElementName=EncryptedArchivePwdLengthSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" />
+                        <Slider Width="200" Orientation="Horizontal" Margin="10, 0"
+                                Name="EncryptedArchivePwdLengthSlider"
+                                Minimum="50" Maximum="80" SmallChange="1" LargeChange="5"
+                                Value="{Binding Path=EncryptedArchivePwdLength, Mode=OneWay}" />
+                        <Button ToolTip="Reset" Click="SliderResetButton_OnClick" Tag="EncryptedArchivePwdLength">
+                            <iconPacks:FontAwesome Kind="ArrowRotateRightSolid" />
+                        </Button>
+                    </DockPanel>
+
                 </Grid>
             </Grid>
 
