@@ -118,6 +118,13 @@ public partial class EncryptionControl : UserControl
     {
         ArchiveUtils.RarPath = ConfigDao.Config.RarPath;
 
+        if (!File.Exists(ArchiveUtils.RarPath))
+        {
+            MessageBox.Show("Set RAR path in the settings.", "Error",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+
         var dbName = ((Database)DbList.SelectedItem).Name;
 
         var db = DatabaseDao.SelectByName(dbName);
