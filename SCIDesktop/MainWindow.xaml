@@ -75,7 +75,9 @@
 
 
             <mah:HamburgerMenu.Content>
-                <ContentControl Name="ContentControl" />
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ContentControl Name="ContentControl" />
+                </ScrollViewer>
             </mah:HamburgerMenu.Content>
 
         </mah:HamburgerMenu>

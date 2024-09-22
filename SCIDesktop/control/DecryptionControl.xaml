@@ -129,7 +129,7 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
-                    <GridViewColumn Header="Source Folder" Width="250">
+                    <GridViewColumn Header="Source Folder" Width="600">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding SourceFolder}"

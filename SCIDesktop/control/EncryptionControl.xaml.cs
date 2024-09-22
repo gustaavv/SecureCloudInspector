@@ -52,7 +52,7 @@ public partial class EncryptionControl : UserControl
     {
         var saveFileDialog = new SaveFileDialog
         {
-            Filter = "All files (*.*)|*.*",
+            Filter = "ZIP Archive (*.zip)|*.zip",
             Title = "Export File Location",
             FileName = "export.zip"
         };

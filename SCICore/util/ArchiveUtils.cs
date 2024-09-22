@@ -160,4 +160,36 @@ public static class ArchiveUtils
         var zipData = zipStream.ToArray();
         File.WriteAllBytes(target, zipData);
     }
+
+    public static List<(string fileContent, string path)> ExtractZipInMem(string path)
+    {
+        if (!File.Exists(path))
+        {
+            throw new FileNotFoundException($"'{path}' is not a valid path for an archive");
+        }
+
+        var ans = new List<(string fileContent, string path)>();
+
+        var zipFileBytes = File.ReadAllBytes(path);
+        using var zipStream = new MemoryStream(zipFileBytes);
+
+        using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Read))
+        {
+            foreach (var entry in archive.Entries)
+            {
+                using var fileStream = new MemoryStream();
+                using (var entryStream = entry.Open())
+                {
+                    entryStream.CopyTo(fileStream);
+                }
+
+                var fileBytes = fileStream.ToArray();
+                var fileContent = Encoding.UTF8.GetString(fileBytes);
+
+                ans.Add((fileContent, entry.FullName));
+            }
+        }
+
+        return ans;
+    }
 }
