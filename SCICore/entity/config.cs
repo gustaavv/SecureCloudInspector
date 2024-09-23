@@ -71,6 +71,11 @@ public record Config
     /// </summary>
     public string BackupFolderPath { get; set; }
 
+    /// <summary>
+    /// Only used for DecryptWindow of SCI-Desktop
+    /// </summary>
+    public string PreferredDecryptedPath { get; set; }
+
     public Config()
     {
     }

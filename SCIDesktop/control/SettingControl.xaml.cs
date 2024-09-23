@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
+using Ookii.Dialogs.Wpf;
 using SCICore.dao;
 
 namespace SCIDesktop.control;
@@ -54,6 +55,12 @@ public partial class SettingControl : UserControl
         set => ConfigDao.Config.EncryptedArchivePwdLength = value;
     }
 
+    public string PreferredDecryptedPath
+    {
+        get => ConfigDao.Config.PreferredDecryptedPath;
+        set => ConfigDao.Config.PreferredDecryptedPath = value;
+    }
+
     public SettingControl(ConfigDao configDao)
     {
         InitializeComponent();
@@ -103,7 +110,7 @@ public partial class SettingControl : UserControl
 
     private void ChooseFileButton_OnClick(object sender, RoutedEventArgs e)
     {
-        OpenFileDialog openFileDialog = new OpenFileDialog
+        var openFileDialog = new OpenFileDialog
         {
             Filter = "All files (*.*)|*.*",
             Title = "Select the filepath"
@@ -125,6 +132,32 @@ public partial class SettingControl : UserControl
             SettingChanged = true;
         }
     }
+    
+    private void ChooseFolderButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        var dialog = new VistaFolderBrowserDialog
+        {
+            Description = "Select a Folder",
+            UseDescriptionForTitle = true,
+            ShowNewFolderButton = true
+        };
+        if (dialog.ShowDialog() != true) return;
+        
+        var button = sender as Button;
+        var property = (string)button!.Tag;
+        var propertyInfo = typeof(SettingControl).GetProperty(property)!;
+
+        var newFilePath = dialog.SelectedPath;
+        var oldFilePath = propertyInfo.GetValue(this);
+
+        if (oldFilePath != newFilePath)
+        {
+            propertyInfo.SetValue(this, newFilePath);
+            var textBox = (TextBox)FindName($"{property}TextBox")!;
+            textBox.Text = newFilePath;
+            SettingChanged = true;
+        }
+    }
 
     private void SliderResetButton_OnClick(object sender, RoutedEventArgs e)
     {
@@ -132,4 +165,6 @@ public partial class SettingControl : UserControl
         var slider = (FindName($"{property}Slider") as Slider)!;
         slider.Value = (uint)typeof(SettingControl).GetProperty(property)!.GetValue(this)!;
     }
+
+
 }

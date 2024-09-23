@@ -59,7 +59,9 @@ public partial class DecryptionControl : UserControl
 
     private void DecryptButton_OnClick(object sender, RoutedEventArgs e)
     {
-        throw new System.NotImplementedException();
+        var dbName = ((Database)DbList.SelectedItem).Name;
+        var decryptWindow = new DecryptWindow(DatabaseDao, dbName, ConfigDao);
+        decryptWindow.ShowDialog();
     }
 
     private void ImportButton_OnClick(object sender, RoutedEventArgs e)
