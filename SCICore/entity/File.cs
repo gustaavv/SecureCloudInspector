@@ -219,29 +219,96 @@ public record Node
         return null;
     }
 
+
+    /// <summary>
+    /// All the conditions are ORed, not ANDed.
+    /// </summary>
+    public class SearchCondition
+    {
+        public string[] Keywords { get; set; } = Array.Empty<string>();
+
+        public bool UseFileSize { get; set; } = false;
+
+        public long FileSizeLowerBound { get; set; } = 0L;
+
+        public long FileSizeUpperBound { get; set; } = long.MaxValue;
+
+        public bool UseArchiveSize { get; set; } = false;
+
+        public long ArchiveSizeLowerBound { get; set; } = 0L;
+
+        public long ArchiveSizeUpperBound { get; set; } = long.MaxValue;
+
+        public HashResult? FileHashResult { get; set; }
+
+        public HashResult? ArchiveHashResult { get; set; }
+
+        public ItemType? ItemType { get; set; }
+
+        public SearchCondition()
+        {
+        }
+    }
+
     /// <summary>
     /// Search the file tree rooted by this node.
     /// </summary>
-    /// <param name="keywords">an array of keywords to match filenames</param>
+    /// <param name="condition">a SearchRequest object</param>
     /// <returns>a list of tuples containing matched nodes and their corresponding paths in the file tree.</returns>
-    public List<(Node node, string srcPath, string encPath)> Search(string[] keywords)
+    public List<(Node node, string srcPath, string encPath)> Search(SearchCondition condition)
     {
         var ans = new List<(Node, string, string)>();
-        Search(this, new StringBuilder(""), new StringBuilder(""), keywords, ans);
+        Search(this, new StringBuilder(""), new StringBuilder(""), condition, ans);
         return ans;
     }
 
     private static void Search(Node cur, StringBuilder srcPath, StringBuilder encPath,
-        string[] keywords, List<(Node node, string srcPath, string encPath)> ans)
+        SearchCondition condition, List<(Node node, string srcPath, string encPath)> ans)
     {
-        foreach (var kw in keywords)
+        var hit = false;
+        foreach (var kw in condition.Keywords)
         {
-            if (cur.FileName.ToLower().Contains(kw))
+            if (cur.FileName.ToLower().Contains(kw) ||
+                (cur.ArchiveName != null && cur.ArchiveName.ToLower().Contains(kw)))
             {
+                hit = true;
                 ans.Add((cur, srcPath.ToString(), encPath.ToString()));
                 break;
             }
         }
+
+        if (!hit && condition.FileHashResult != null && condition.FileHashResult == cur.FileHashResult)
+        {
+            ans.Add((cur, srcPath.ToString(), encPath.ToString()));
+            hit = true;
+        }
+
+        if (!hit && condition.ArchiveHashResult != null && condition.ArchiveHashResult == cur.ArchiveHashResult)
+        {
+            ans.Add((cur, srcPath.ToString(), encPath.ToString()));
+            hit = true;
+        }
+
+        if (!hit && condition.ItemType != null && condition.ItemType == cur.Type)
+        {
+            ans.Add((cur, srcPath.ToString(), encPath.ToString()));
+            hit = true;
+        }
+
+        if (!hit && condition.UseFileSize && condition.FileSizeLowerBound <= cur.FileSize &&
+            cur.FileSize <= condition.FileSizeUpperBound)
+        {
+            ans.Add((cur, srcPath.ToString(), encPath.ToString()));
+            hit = true;
+        }
+
+        if (!hit && condition.UseArchiveSize && condition.ArchiveSizeLowerBound <= cur.ArchiveSize &&
+            cur.ArchiveSize <= condition.ArchiveSizeUpperBound)
+        {
+            ans.Add((cur, srcPath.ToString(), encPath.ToString()));
+            hit = true;
+        }
+
 
         var oldEncLen = encPath.Length;
         var oldSrcLen = srcPath.Length;
@@ -250,7 +317,7 @@ public record Node
             encPath.Append($"/{child.ArchiveName}");
             srcPath.Append($"/{child.FileName}");
 
-            Search(child, srcPath, encPath, keywords, ans);
+            Search(child, srcPath, encPath, condition, ans);
 
             srcPath.Remove(oldSrcLen, srcPath.Length - oldSrcLen);
             encPath.Remove(oldEncLen, encPath.Length - oldEncLen);

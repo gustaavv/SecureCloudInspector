@@ -85,7 +85,10 @@ public partial class SearchDbWindow : MetroWindow
             return;
         }
 
-        var results = db.Node.Search(keywords)
+        var results = db.Node.Search(new Node.SearchCondition
+            {
+                Keywords = keywords
+            })
             .Select(t => new SearchResult(t.node.FileName, t.srcPath, t.encPath, t.node))
             .ToList();
         SearchResultList.ItemsSource = results;

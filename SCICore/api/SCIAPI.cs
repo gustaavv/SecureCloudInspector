@@ -224,6 +224,9 @@ public static class SciApi
         await Task.WhenAll(finalTasks);
     }
 
+    /// <summary>
+    /// Useful when users download the entire encrypted folder, which is a rare case.
+    /// </summary>
     public static async Task DecryptData(string encFolder, string decFolder, Database db)
     {
         await DecryptData(encFolder, decFolder, db, db.Node);

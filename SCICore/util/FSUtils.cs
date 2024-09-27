@@ -40,4 +40,12 @@ public static class FsUtils
             Walk(d.FullName, func);
         }
     }
+
+    public static List<string> GetChildren(string dir, bool absolutePath = true)
+    {
+        var files = Directory.GetFiles(dir).Select(s => absolutePath ? s : GetLastEntry(s)).ToList();
+        var directories = Directory.GetDirectories(dir).Select(s => absolutePath ? s : GetLastEntry(s)).ToList();
+        files.AddRange(directories);
+        return files;
+    }
 }

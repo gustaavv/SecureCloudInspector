@@ -4,99 +4,177 @@
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:local="clr-namespace:SCIDesktop.window"
+                 xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf"
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                  mc:Ignorable="d"
                  TitleCharacterCasing="Normal" Title="Decrypt Window"
-                 MinHeight="700" MinWidth="800" Height="700" Width="800"
+                 MinHeight="700" MinWidth="450"
+                 Height="700" Width="450"
                  WindowStartupLocation="CenterScreen">
+    <mah:MetroWindow.Resources>
+    </mah:MetroWindow.Resources>
     <Grid Margin="{StaticResource ContentMargin}">
-        <Grid.Resources>
-            <Style TargetType="iconPacks:PackIconFontAwesome">
-                <Setter Property="Width" Value="25" />
-                <Setter Property="Height" Value="25" />
-            </Style>
-        </Grid.Resources>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Name="LeftColumnDefinition" Width="400" />
+            <ColumnDefinition Name="RightColumnDefinition" Width="*" />
+        </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-            <TextBlock Margin="0" FontSize="{StaticResource HeaderFontSize}">Decrypt using</TextBlock>
+        <ScrollViewer Grid.Column="0">
+            <Grid>
+                <Grid.Resources>
+                    <Style TargetType="iconPacks:PackIconFontAwesome">
+                        <Setter Property="Width" Value="25" />
+                        <Setter Property="Height" Value="25" />
+                    </Style>
+                </Grid.Resources>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <ComboBox Name="ChooseDbComboBox" Width="100" Margin="10, 0"
-                      FontSize="{StaticResource HeaderFontSize}" />
-        </StackPanel>
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Margin="0" FontSize="{StaticResource HeaderFontSize}">Decrypt using</TextBlock>
 
-        <Grid Grid.Row="1" Margin="0,10">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+                    <ComboBox Name="ChooseDbComboBox" Width="100" Margin="10, 0"
+                              FontSize="{StaticResource HeaderFontSize}" />
+                </StackPanel>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Encrypted File/Folder Path:</TextBlock>
 
-            <Border Grid.Row="0" Grid.Column="1" Margin="20,0,0, 5" CornerRadius="{StaticResource GlobalCornerRadius}">
-                <Border.Background>
-                    <SolidColorBrush Color="Gray" Opacity="0.3" />
-                </Border.Background>
-                <TextBox Name="EncFilePathTextBox" IsReadOnly="True" TextWrapping="Wrap"
-                         Margin="5,0" Background="Transparent" BorderThickness="0" />
-            </Border>
+                <TextBlock Grid.Row="1" Margin="0,5" VerticalAlignment="Center">Encrypted File/Folder Path:</TextBlock>
 
-            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center"
-                        Margin="0,10">
-                <Button Margin="5,0" Click="ChooseFileButton_OnClick">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconFontAwesome Kind="FileSolid" Margin="2" />
-                        <TextBlock Margin="2">Choose File</TextBlock>
-                    </StackPanel>
-                </Button>
+                <Border Grid.Row="2" Margin="0,5"
+                        CornerRadius="{StaticResource GlobalCornerRadius}">
+                    <Border.Background>
+                        <SolidColorBrush Color="Gray" Opacity="0.3" />
+                    </Border.Background>
+                    <TextBox Name="EncFilePathTextBox" IsReadOnly="True" TextWrapping="Wrap"
+                             Margin="5,0" Background="Transparent" BorderThickness="0" />
+                </Border>
 
-                <Button Margin="30, 0" Click="ChooseFolderButton_OnClick" Tag="EncFilePathTextBox">
+                <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center"
+                            Margin="0,5">
+                    <Button Click="ChooseFileButton_OnClick">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconFontAwesome Kind="FileSolid" Margin="2" />
+                            <TextBlock Margin="2">Choose File</TextBlock>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Margin="10, 0" Click="ChooseFolderButton_OnClick" Tag="EncFilePathTextBox">
+                        <StackPanel Orientation="Horizontal" Margin="5,0">
+                            <iconPacks:PackIconFontAwesome Kind="FolderSolid" Margin="2" />
+                            <TextBlock Margin="2">Choose Folder</TextBlock>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+
+                <TextBlock Grid.Row="4" Margin="0,5" VerticalAlignment="Center">Decrypt Folder Path:</TextBlock>
+
+                <Border Grid.Row="5" Margin="0,5"
+                        CornerRadius="{StaticResource GlobalCornerRadius}">
+                    <Border.Background>
+                        <SolidColorBrush Color="Gray" Opacity="0.3" />
+                    </Border.Background>
+                    <TextBox Name="DecryptPathTextBox" IsReadOnly="True" TextWrapping="WrapWithOverflow"
+                             Margin="5,0" Background="Transparent" BorderThickness="0" />
+                </Border>
+
+                <Button Grid.Row="6" HorizontalAlignment="Center" Margin="0,10"
+                        Click="ChooseFolderButton_OnClick" Tag="DecryptPathTextBox">
                     <StackPanel Orientation="Horizontal" Margin="5,0">
                         <iconPacks:PackIconFontAwesome Kind="FolderSolid" Margin="2" />
                         <TextBlock Margin="2">Choose Folder</TextBlock>
                     </StackPanel>
                 </Button>
-            </StackPanel>
 
+                <Expander Grid.Row="7" Header="Decrypt Options" Margin="0,10">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,5" VerticalAlignment="Center">Decrypt Folder Path:</TextBlock>
+                        <CheckBox Grid.Row="0" IsChecked="False" Margin="5"
+                                  Name="OverwriteModeCheckBox">
+                            Overwrite Existing Files
+                        </CheckBox>
+                    </Grid>
+                </Expander>
 
-            <Border Grid.Row="2" Grid.Column="1" Margin="20,5,0, 5" CornerRadius="{StaticResource GlobalCornerRadius}">
-                <Border.Background>
-                    <SolidColorBrush Color="Gray" Opacity="0.3" />
-                </Border.Background>
-                <TextBox Name="DecryptPathTextBox" IsReadOnly="True" TextWrapping="Wrap"
-                         Margin="5,0" Background="Transparent" BorderThickness="0" />
-            </Border>
+                <Button Grid.Row="8" Style="{StaticResource AccentButton}"
+                        Margin="0,10" HorizontalAlignment="Center" Padding="10,5"
+                        Click="DecryptButton_OnClick">
+                    Decrypt
+                </Button>
 
-            <Button Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" Margin="0,10"
-                    Click="ChooseFolderButton_OnClick" Tag="DecryptPathTextBox">
-                <StackPanel Orientation="Horizontal" Margin="5,0">
-                    <iconPacks:PackIconFontAwesome Kind="FolderSolid" Margin="2" />
-                    <TextBlock Margin="2">Choose Folder</TextBlock>
-                </StackPanel>
-            </Button>
+                <Button Grid.Row="9" Name="ToggleDecResultButton" Visibility="Collapsed"
+                        Margin="0,10" HorizontalAlignment="Center" Padding="10,5"
+                        Click="ToggleDecResultButton_OnClick">
+                    Show Decrypt Result
+                </Button>
 
-        </Grid>
+            </Grid>
+        </ScrollViewer>
 
+        <ListView Grid.Column="1" Margin="20,0,0,0" Name="DecResultList" BorderThickness="1" Visibility="Collapsed">
 
-        <Button Grid.Row="2" Style="{StaticResource AccentButton}"
-                Margin="0,10" HorizontalAlignment="Center" Padding="10,5"
-                Click="DecryptButton_OnClick">
-            Decrypt
-        </Button>
+            <ListView.Resources>
+                <Style TargetType="{x:Type GridViewColumnHeader}">
+                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                </Style>
+            </ListView.Resources>
+
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Status" Width="70">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <emoji:TextBlock Text="{Binding Status}"
+                                                 TextTrimming="CharacterEllipsis" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Encrypted File" Width="200">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding EncFilePath}"
+                                           ToolTip="{Binding EncFilePath}"
+                                           TextTrimming="CharacterEllipsis" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Decrypted File" Width="200">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DecFilePath}"
+                                           ToolTip="{Binding DecFilePath}"
+                                           TextTrimming="CharacterEllipsis" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Message " Width="300">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Message}"
+                                           TextTrimming="CharacterEllipsis" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
 </mah:MetroWindow>

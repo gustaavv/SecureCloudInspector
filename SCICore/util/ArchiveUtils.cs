@@ -7,7 +7,7 @@ public static class ArchiveUtils
 {
     public static string? RarPath { get; set; }
 
-    public static async Task<bool> CompressRar(
+    public static async Task<int> CompressRar(
         List<string> sources,
         string target,
         string pwd = "",
@@ -92,12 +92,12 @@ public static class ArchiveUtils
 
 
         using var process = ProcessUtils.CreateProcess(RarPath, argument);
-        var (res, output, error, exception) = await ProcessUtils.RunProcess(process);
-        return res;
+        var (exitCode, _, _, _) = await ProcessUtils.RunProcess(process);
+        return exitCode;
     }
 
 
-    public static async Task<bool> ExtractRar(string archive, string outputDir, string pwd = "")
+    public static async Task<int> ExtractRar(string archive, string outputDir, string pwd = "", bool overwrite = false)
     {
         if (!File.Exists(RarPath))
         {
@@ -134,11 +134,60 @@ public static class ArchiveUtils
             pwd = $"-hp\"{pwd}\"";
         }
 
-        var argument = $" x {pwd} \"{archive}\" \"{outputDir}\"";
+        var overwriteMode = overwrite ? "-o+" : "-o-";
+
+        var argument = $" x {overwriteMode} {pwd} \"{archive}\" \"{outputDir}\"";
 
         using var process = ProcessUtils.CreateProcess(RarPath, argument);
-        var (res, output, error, exception) = await ProcessUtils.RunProcess(process);
-        return res;
+        var (exitCode, _, _, _) = await ProcessUtils.RunProcess(process);
+        return exitCode;
+    }
+
+    public static async Task<int> TestRarPassword(string archive, string pwd = "1")
+    {
+        if (!File.Exists(RarPath))
+        {
+            throw new FileNotFoundException($"'{RarPath}' is not a valid path for rar");
+        }
+
+        if (!File.Exists(archive))
+        {
+            throw new FileNotFoundException($"'{archive}' is not a valid path for an archive");
+        }
+
+        if (string.IsNullOrWhiteSpace(pwd))
+        {
+            throw new Exception("empty password is not allowed");
+        }
+
+        var argument = $" t -p{pwd} \"{archive}\"";
+        using var process = ProcessUtils.CreateProcess(RarPath, argument);
+        var (exitCode, _, _, _) = await ProcessUtils.RunProcess(process);
+        return exitCode;
+    }
+
+    public static async Task<List<string>> ListFilesInRar(string archive, string pwd = "1")
+    {
+        if (!File.Exists(RarPath))
+        {
+            throw new FileNotFoundException($"'{RarPath}' is not a valid path for rar");
+        }
+
+        if (!File.Exists(archive))
+        {
+            throw new FileNotFoundException($"'{archive}' is not a valid path for an archive");
+        }
+
+        if (string.IsNullOrWhiteSpace(pwd))
+        {
+            throw new Exception("empty password is not allowed");
+        }
+
+        var argument = $" lb -p{pwd} \"{archive}\"";
+        using var process = ProcessUtils.CreateProcess(RarPath, argument);
+        var (exitCode, output, _, _) = await ProcessUtils.RunProcess(process);
+        
+        return exitCode == 0 ? output.Split("\n").ToList() : new List<string>();
     }
 
     public static void CompressZipInMem(string target, List<(string fileContent, string path)> sources)

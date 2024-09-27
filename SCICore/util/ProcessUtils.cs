@@ -28,7 +28,7 @@ public static class ProcessUtils
     /// Run a process asynchronously
     /// </summary>
     /// <param name="process"> the process to run</param>
-    public static async Task<(bool success, string output, string error, Exception? exception)>
+    public static async Task<(int exitCode, string output, string error, Exception? exception)>
         RunProcess(Process process)
     {
         string output = null!, error = null!;
@@ -46,11 +46,11 @@ public static class ProcessUtils
 
             await process.WaitForExitAsync();
 
-            return (process.ExitCode == 0, output, error, null);
+            return (process.ExitCode, output, error, null);
         }
         catch (Exception ex)
         {
-            return (false, output, error, ex);
+            return (1, output, error, ex);
         }
     }
 }
