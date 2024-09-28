@@ -12,9 +12,10 @@ nav:
       - Prerequisite: gettingStarted/prerequisite.md
       - Encryption Overview: gettingStarted/encryptionOverview.md
       - Concepts: gettingStarted/concepts.md
+      - Hello, SCI: gettingStarted/helloSCI.md
   - User Guide:
-      - Cli: userGuide/cli.md
       - Desktop: userGuide/desktop.md
+      - Cli: userGuide/cli.md
       - Config Location: userGuide/configLocation.md
   - Architecture:
       - Design Thinking: architecture/designThinking.md
