@@ -6,6 +6,12 @@
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
         <Version>2.0.0-alpha1</Version>
+        <ApplicationIcon>asset/icon.ico</ApplicationIcon>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        <SelfContained>true</SelfContained>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Emoji.Wpf" Version="0.3.4" />
+        <PackageReference Include="Emoji.Wpf" Version="0.3.4"/>
         <PackageReference Include="MahApps.Metro" Version="2.4.10"/>
         <PackageReference Include="MahApps.Metro.IconPacks.FontAwesome" Version="5.0.0"/>
         <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1"/>

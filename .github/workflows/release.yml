@@ -35,11 +35,14 @@ jobs:
       
       - name: Build and publish
         run: |
-          dotnet build --configuration Release
-          dotnet publish ./SCICli/SCICli.csproj --configuration Release --output ./publish
-
+          dotnet build ./SCIDesktop/SCIDesktop.csproj --configuration Release
+          dotnet publish ./SCIDesktop/SCIDesktop.csproj --configuration Release --output ./publish/SCIDesktop
+          
       - name: Make artifacts
-        run: zip -j ./publish/SCICli-${{ env.TAG }}-win64.zip ./publish/SCICli.exe
+        run: |
+          cd publish
+          zip ./SCIDesktop-${{ env.TAG }}-win64.zip ./SCIDesktop
+          cd ..
 
       - name: Copy release note
         run: |
@@ -48,10 +51,12 @@ jobs:
 
       - name: Generate checksum
         run: |
-          echo "## Checksum for SCICli-${{ env.TAG }}-win64.zip" >> body.md
+          echo "## Checksum for SCIDesktop-${{ env.TAG }}-win64.zip" >> body.md
           echo "| Checksum | Value |" >> body.md
           echo "| -------- | ----- |" >> body.md
-          zipPath="./publish/SCICli-${{ env.TAG }}-win64.zip"
+          
+          zipPath="./publish/SCIDesktop-${{ env.TAG }}-win64.zip"
+          
           echo "| sha256   | $(sha256sum ${zipPath} | awk '{print $1}') |" >> body.md
           echo "| sha1   | $(sha1sum ${zipPath} | awk '{print $1}') |" >> body.md
           echo "| md5   | $(md5sum ${zipPath} | awk '{print $1}') |" >> body.md
@@ -60,5 +65,5 @@ jobs:
       - name: Upload to GitHub release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: ./publish/SCICli-${{ env.TAG }}-win64.zip
+          artifacts: ./publish/SCIDesktop-${{ env.TAG }}-win64.zip
           bodyFile: body.md
