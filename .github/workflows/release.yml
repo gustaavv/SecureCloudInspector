@@ -16,56 +16,60 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Get tag name
-        shell: bash
+        shell: pwsh
         run: |
-          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
-            TAG="${GITHUB_REF#refs/tags/}"
-            echo "Selected tag is: $TAG"
-            echo "TAG=$TAG" >> $GITHUB_ENV
-          else
-            echo "Error: This workflow requires a tag to be selected. Exiting..."
+          if ($env:GITHUB_REF -match '^refs/tags/(.+)$') {
+            $TAG = $Matches[1]
+            Write-Host "Selected tag is: $TAG"
+            echo "TAG=$TAG" >> $env:GITHUB_ENV
+          } else {
+            Write-Error "Error: This workflow requires a tag to be selected. Exiting..."
             exit 1
-          fi
+          }
 
       - name: Setup DotNet Environment
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '6.0.x'
-      
+
       - name: Build and publish
-        shell: bash
+        shell: pwsh
         run: |
           dotnet build ./SCIDesktop/SCIDesktop.csproj --configuration Release
           dotnet publish ./SCIDesktop/SCIDesktop.csproj --configuration Release --output ./publish/SCIDesktop
-          
+
       - name: Make artifacts
-        shell: bash
+        shell: pwsh
         run: |
           cd publish
-          zip ./SCIDesktop-${{ env.TAG }}-win64.zip ./SCIDesktop
+          Compress-Archive -Path ./SCIDesktop -DestinationPath ./SCIDesktop-${{ env.TAG }}-win64.zip
           cd ..
 
       - name: Copy release note
-        shell: bash
+        shell: pwsh
         run: |
-          cat ./releaseNotes/${{ env.TAG }}.md >> body.md
-          echo "" >> body.md
+          Get-Content "./releaseNotes/${{ env.TAG }}.md" | Out-File -Append -Encoding utf8 body.md
+          Add-Content -Path body.md -Value "`n"
 
       - name: Generate checksum
-        shell: bash
+        shell: pwsh
         run: |
-          echo "## Checksum for SCIDesktop-${{ env.TAG }}-win64.zip" >> body.md
-          echo "| Checksum | Value |" >> body.md
-          echo "| -------- | ----- |" >> body.md
-          
-          zipPath="./publish/SCIDesktop-${{ env.TAG }}-win64.zip"
-          
-          echo "| sha256   | $(sha256sum ${zipPath} | awk '{print $1}') |" >> body.md
-          echo "| sha1   | $(sha1sum ${zipPath} | awk '{print $1}') |" >> body.md
-          echo "| md5   | $(md5sum ${zipPath} | awk '{print $1}') |" >> body.md
-          echo "" >> body.md
+          Add-Content -Path body.md -Value "## Checksum for SCIDesktop-${{ env.TAG }}-win64.zip`n"
+          Add-Content -Path body.md -Value "| Checksum | Value |`n"
+          Add-Content -Path body.md -Value "| -------- | ----- |`n"
+
+          $zipPath = "./publish/SCIDesktop-${{ env.TAG }}-win64.zip"
+
+          $sha256 = Get-FileHash $zipPath -Algorithm SHA256 | Select-Object -ExpandProperty Hash
+          $sha1 = Get-FileHash $zipPath -Algorithm SHA1 | Select-Object -ExpandProperty Hash
+          $md5 = Get-FileHash $zipPath -Algorithm MD5 | Select-Object -ExpandProperty Hash
+
+          Add-Content -Path body.md -Value "| sha256   | $sha256 |`n"
+          Add-Content -Path body.md -Value "| sha1   | $sha1 |`n"
+          Add-Content -Path body.md -Value "| md5   | $md5 |`n"
+          Add-Content -Path body.md -Value "`n"
 
       - name: Upload to GitHub release
         uses: ncipollo/release-action@v1
