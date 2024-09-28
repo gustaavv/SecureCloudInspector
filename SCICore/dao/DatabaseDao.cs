@@ -64,9 +64,9 @@ public class DatabaseDao
         using var conn = CreateConnection();
         const string sql = @"
             INSERT INTO Database (
-                Name, SourceFolder, EncryptedFolder, Node, EncryptScheme, Password, DbType, CreatedAt, UpdatedAt
+                Name, SourceFolder, EncryptedFolder, Node, EncryptScheme, Password, DbType, EncDepth, CreatedAt, UpdatedAt
             ) VALUES (
-                @Name, @SourceFolder, @EncryptedFolder, @Node, @EncryptScheme, @Password, @DbType, @CreatedAt, @UpdatedAt
+                @Name, @SourceFolder, @EncryptedFolder, @Node, @EncryptScheme, @Password, @DbType, @EncDepth, @CreatedAt, @UpdatedAt
             )";
         return conn.Execute(sql, db);
     }
@@ -103,6 +103,7 @@ public class DatabaseDao
                 EncryptScheme = @EncryptScheme,
                 Password = @Password,
                 DbType = @DbType,
+                EncDepth = @EncDepth,
                 CreatedAt = @CreatedAt,
                 UpdatedAt = @UpdatedAt
             WHERE Name = @Name";

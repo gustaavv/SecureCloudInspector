@@ -81,6 +81,13 @@ public record Database
 
     public DbType DbType { get; set; }
 
+    /// <summary>
+    /// Default is -1, means per file;
+    /// 0 means the whole source folder;
+    /// n means per n-level children;
+    /// </summary>
+    public int EncDepth { get; set; } = -1;
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
