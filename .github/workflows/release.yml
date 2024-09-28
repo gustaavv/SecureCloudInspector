@@ -57,8 +57,8 @@ jobs:
         shell: pwsh
         run: |
           Add-Content -Path body.md -Value "## Checksum for SCIDesktop-${{ env.TAG }}-win64.zip`n"
-          Add-Content -Path body.md -Value "| Checksum | Value |`n"
-          Add-Content -Path body.md -Value "| -------- | ----- |`n"
+          Add-Content -Path body.md -Value "| Checksum | Value |"
+          Add-Content -Path body.md -Value "| -------- | ----- |"
 
           $zipPath = "./publish/SCIDesktop-${{ env.TAG }}-win64.zip"
 
@@ -66,9 +66,9 @@ jobs:
           $sha1 = Get-FileHash $zipPath -Algorithm SHA1 | Select-Object -ExpandProperty Hash
           $md5 = Get-FileHash $zipPath -Algorithm MD5 | Select-Object -ExpandProperty Hash
 
-          Add-Content -Path body.md -Value "| sha256   | $sha256 |`n"
-          Add-Content -Path body.md -Value "| sha1   | $sha1 |`n"
-          Add-Content -Path body.md -Value "| md5   | $md5 |`n"
+          Add-Content -Path body.md -Value "| sha256   | $sha256 |"
+          Add-Content -Path body.md -Value "| sha1   | $sha1 |"
+          Add-Content -Path body.md -Value "| md5   | $md5 |"
           Add-Content -Path body.md -Value "`n"
 
       - name: Upload to GitHub release
