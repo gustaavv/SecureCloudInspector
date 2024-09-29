@@ -5,14 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-             xmlns:util="clr-namespace:SCIDesktop.util"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:converter="clr-namespace:SCIDesktop.converter"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
 
     <UserControl.Resources>
-        <util:SingleSelectionConverter x:Key="SingleSelectionConverter" />
-        <util:MultipleSelectionConverter x:Key="MultipleSelectionConverter" />
+        <converter:SingleSelectionConverter x:Key="SingleSelectionConverter" />
+        <converter:MultipleSelectionConverter x:Key="MultipleSelectionConverter" />
     </UserControl.Resources>
 
     <Grid Margin="{StaticResource ContentMargin}">
