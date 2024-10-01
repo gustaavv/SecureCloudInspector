@@ -25,8 +25,14 @@ public partial class CreateDbWindow : MetroWindow
 
     public DbType SelectedDbType { get; set; } = DbType.Normal;
 
+    /// <summary>
+    /// Length of the encrypted filename/dirname.
+    /// </summary>
     public uint EncryptedFilenameLength { get; set; } = 15;
 
+    /// <summary>
+    /// Length of the actual password for the encrypted archive.
+    /// </summary>
     public uint EncryptedArchivePwdLength { get; set; } = 60;
 
     private DatabaseDao DatabaseDao { get; set; }
