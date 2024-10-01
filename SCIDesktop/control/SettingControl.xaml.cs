@@ -9,8 +9,6 @@ namespace SCIDesktop.control;
 
 public partial class SettingControl : UserControl
 {
-    private bool SettingChanged { get; set; } = false;
-
     private ConfigDao ConfigDao { get; set; }
 
     public string EncDbPath
@@ -71,41 +69,8 @@ public partial class SettingControl : UserControl
 
     private void SaveButton_OnClick(object sender, RoutedEventArgs e)
     {
-        if (VerifyDigestWhenImportCheckBox.IsChecked != VerifyDigestWhenImport)
-        {
-            VerifyDigestWhenImport = VerifyDigestWhenImportCheckBox.IsChecked == true;
-            SettingChanged = true;
-        }
-
-        if (CreateDigestWhenExportCheckBox.IsChecked != CreateDigestWhenExport)
-        {
-            CreateDigestWhenExport = CreateDigestWhenExportCheckBox.IsChecked == true;
-            SettingChanged = true;
-        }
-
-        if ((uint)EncryptedFilenameLengthSlider.Value != EncryptedFilenameLength)
-        {
-            EncryptedFilenameLength = (uint)EncryptedFilenameLengthSlider.Value;
-            SettingChanged = true;
-        }
-
-        if ((uint)EncryptedArchivePwdLengthSlider.Value != EncryptedArchivePwdLength)
-        {
-            EncryptedArchivePwdLength = (uint)EncryptedArchivePwdLengthSlider.Value;
-            SettingChanged = true;
-        }
-
-        if (SettingChanged)
-        {
-            _ = Task.Run(ConfigDao.WriteConfig);
-            MessageBox.Show("Settings saved.", "Save Settings", MessageBoxButton.OK);
-        }
-        else
-        {
-            MessageBox.Show("Nothing changed.", "Save Settings", MessageBoxButton.OK);
-        }
-
-        SettingChanged = false;
+        _ = Task.Run(ConfigDao.WriteConfig);
+        MessageBox.Show("Settings saved.", "Save Settings", MessageBoxButton.OK);
     }
 
     private void ChooseFileButton_OnClick(object sender, RoutedEventArgs e)
@@ -117,22 +82,10 @@ public partial class SettingControl : UserControl
         };
         if (openFileDialog.ShowDialog() != true) return;
 
-        var button = sender as Button;
-        var property = (string)button!.Tag;
-        var propertyInfo = typeof(SettingControl).GetProperty(property)!;
-
-        var newFilePath = openFileDialog.FileName;
-        var oldFilePath = propertyInfo.GetValue(this);
-
-        if (oldFilePath != newFilePath)
-        {
-            propertyInfo.SetValue(this, newFilePath);
-            var textBox = (TextBox)FindName($"{property}TextBox")!;
-            textBox.Text = newFilePath;
-            SettingChanged = true;
-        }
+        var textBoxName = (string)(sender as Button)!.Tag;
+        ((TextBox)FindName(textBoxName)!).Text = openFileDialog.FileName;
     }
-    
+
     private void ChooseFolderButton_OnClick(object sender, RoutedEventArgs e)
     {
         var dialog = new VistaFolderBrowserDialog
@@ -142,21 +95,9 @@ public partial class SettingControl : UserControl
             ShowNewFolderButton = true
         };
         if (dialog.ShowDialog() != true) return;
-        
-        var button = sender as Button;
-        var property = (string)button!.Tag;
-        var propertyInfo = typeof(SettingControl).GetProperty(property)!;
 
-        var newFilePath = dialog.SelectedPath;
-        var oldFilePath = propertyInfo.GetValue(this);
-
-        if (oldFilePath != newFilePath)
-        {
-            propertyInfo.SetValue(this, newFilePath);
-            var textBox = (TextBox)FindName($"{property}TextBox")!;
-            textBox.Text = newFilePath;
-            SettingChanged = true;
-        }
+        var textBoxName = (string)(sender as Button)!.Tag;
+        ((TextBox)FindName(textBoxName)!).Text = dialog.SelectedPath;
     }
 
     private void SliderResetButton_OnClick(object sender, RoutedEventArgs e)
@@ -165,6 +106,4 @@ public partial class SettingControl : UserControl
         var slider = (FindName($"{property}Slider") as Slider)!;
         slider.Value = (uint)typeof(SettingControl).GetProperty(property)!.GetValue(this)!;
     }
-
-
 }

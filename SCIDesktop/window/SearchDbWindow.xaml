@@ -23,6 +23,7 @@
 
             <ComboBox Name="ChooseDbComboBox" Width="100" Margin="10, 0"
                       FontSize="{StaticResource HeaderFontSize}"
+                      SelectedItem="{Binding SelectedDb}"
                       SelectionChanged="ChooseDbComboBox_OnSelectionChanged" />
 
             <TextBlock Margin="5, 0" Name="EmptyDbTextBlock" Foreground="Red" VerticalAlignment="Center" />
@@ -37,7 +38,15 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,0">Keywords:</TextBlock>
-            <TextBox Name="KeyWordsTextBox" Grid.Column="1" Margin="0,0,10, 0" KeyDown="KeyWordsTextBox_OnKeyDown" />
+            <TextBox Name="KeyWordsTextBox" Grid.Column="1" Margin="0,0,10, 0" KeyDown="KeyWordsTextBox_OnKeyDown">
+                <TextBox.Text>
+                    <Binding Path="UserInput" UpdateSourceTrigger="PropertyChanged" >
+                        <Binding.ValidationRules>
+                            <local:UserInputValidationRule />
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
             <Button Name="SearchButton" Grid.Column="2" Click="SearchButton_OnClick"
                     Style="{StaticResource AccentButton}">
                 Search
@@ -45,7 +54,7 @@
         </Grid>
 
         <Expander Grid.Row="2" Margin="0,5" Header="Advanced Searching Options">
-            <TextBlock>TBD</TextBlock>
+
         </Expander>
 
         <Separator Grid.Row="3" Margin="0,5" />

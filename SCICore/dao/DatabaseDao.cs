@@ -92,6 +92,13 @@ public class DatabaseDao
         return conn.Query<Database>(sql, new { Names = names }).ToList();
     }
 
+    public IEnumerable<string> SelectNames()
+    {
+        using var conn = CreateConnection();
+        const string sql = "SELECT Name FROM Database";
+        return conn.Query<string>(sql).ToList();
+    }
+
     public int Update(Database db)
     {
         using var conn = CreateConnection();

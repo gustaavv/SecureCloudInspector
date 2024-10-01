@@ -45,7 +45,8 @@
                     <TextBlock Margin="0" FontSize="{StaticResource HeaderFontSize}">Decrypt using</TextBlock>
 
                     <ComboBox Name="ChooseDbComboBox" Width="100" Margin="10, 0"
-                              FontSize="{StaticResource HeaderFontSize}" />
+                              FontSize="{StaticResource HeaderFontSize}" 
+                              SelectedItem="{Binding SelectedDb}"/>
                 </StackPanel>
 
 
@@ -56,20 +57,28 @@
                     <Border.Background>
                         <SolidColorBrush Color="Gray" Opacity="0.3" />
                     </Border.Background>
-                    <TextBox Name="EncFilePathTextBox" IsReadOnly="True" TextWrapping="Wrap"
-                             Margin="5,0" Background="Transparent" BorderThickness="0" />
+                    <TextBox Name="EncPathTextBox" IsReadOnly="True" TextWrapping="Wrap"
+                             Margin="5,0" Background="Transparent" BorderThickness="0" >
+                        <TextBox.Text>
+                            <Binding Path="EncPath" UpdateSourceTrigger="PropertyChanged" >
+                                <Binding.ValidationRules>
+                                    <local:PathValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
                 </Border>
 
                 <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center"
                             Margin="0,5">
-                    <Button Click="ChooseFileButton_OnClick">
+                    <Button Click="ChooseFileButton_OnClick" Tag="EncPathTextBox">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconFontAwesome Kind="FileSolid" Margin="2" />
                             <TextBlock Margin="2">Choose File</TextBlock>
                         </StackPanel>
                     </Button>
 
-                    <Button Margin="10, 0" Click="ChooseFolderButton_OnClick" Tag="EncFilePathTextBox">
+                    <Button Margin="10, 0" Click="ChooseFolderButton_OnClick" Tag="EncPathTextBox">
                         <StackPanel Orientation="Horizontal" Margin="5,0">
                             <iconPacks:PackIconFontAwesome Kind="FolderSolid" Margin="2" />
                             <TextBlock Margin="2">Choose Folder</TextBlock>
@@ -85,12 +94,20 @@
                     <Border.Background>
                         <SolidColorBrush Color="Gray" Opacity="0.3" />
                     </Border.Background>
-                    <TextBox Name="DecryptPathTextBox" IsReadOnly="True" TextWrapping="WrapWithOverflow"
-                             Margin="5,0" Background="Transparent" BorderThickness="0" />
+                    <TextBox Name="DecPathTextBox" IsReadOnly="True" TextWrapping="WrapWithOverflow"
+                             Margin="5,0" Background="Transparent" BorderThickness="0" >
+                        <TextBox.Text>
+                            <Binding Path="DecPath" UpdateSourceTrigger="PropertyChanged" >
+                                <Binding.ValidationRules>
+                                    <local:PathValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
                 </Border>
 
                 <Button Grid.Row="6" HorizontalAlignment="Center" Margin="0,10"
-                        Click="ChooseFolderButton_OnClick" Tag="DecryptPathTextBox">
+                        Click="ChooseFolderButton_OnClick" Tag="DecPathTextBox">
                     <StackPanel Orientation="Horizontal" Margin="5,0">
                         <iconPacks:PackIconFontAwesome Kind="FolderSolid" Margin="2" />
                         <TextBlock Margin="2">Choose Folder</TextBlock>

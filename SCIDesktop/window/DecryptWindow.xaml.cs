@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,6 +20,12 @@ namespace SCIDesktop.window;
 
 public partial class DecryptWindow : MetroWindow
 {
+    public string SelectedDb { get; set; }
+
+    public string EncPath { get; set; }
+
+    public string DecPath { get; set; }
+
     private DatabaseDao DatabaseDao { get; set; }
 
     private ConfigDao ConfigDao { get; set; }
@@ -26,22 +33,16 @@ public partial class DecryptWindow : MetroWindow
     public DecryptWindow(DatabaseDao databaseDao, string dbName, ConfigDao configDao)
     {
         InitializeComponent();
+        DataContext = this;
         DatabaseDao = databaseDao;
         ConfigDao = configDao;
 
-        var databases = DatabaseDao.SelectAll();
-        ChooseDbComboBox.ItemsSource = databases.Select(v => v.Name).ToList();
-        ChooseDbComboBox.SelectedItem = dbName;
+        ChooseDbComboBox.ItemsSource = databaseDao.SelectNames();
+        SelectedDb = dbName;
 
-        DecryptPathTextBox.Text = configDao.Config.PreferredDecryptedPath;
+        DecPath = configDao.Config.PreferredDecryptedPath;
 
-
-        DecResultList.ItemsSource =
-            new List<DecryptResult>(new[]
-            {
-                new DecryptResult { Status = DecryptResult.SuccessStatus, EncFilePath = "abc", DecFilePath = "def" },
-                new DecryptResult { Status = DecryptResult.FailedStatus, EncFilePath = "abc", Message = "not found" },
-            });
+        Loaded += (_, _) => CanDecrypt();
     }
 
     private void ChooseFileButton_OnClick(object sender, RoutedEventArgs e)
@@ -51,14 +52,14 @@ public partial class DecryptWindow : MetroWindow
             Filter = "RAR Archive (*.rar)|*.rar",
             Title = "Select the filepath"
         };
+
+        var textBoxName = (sender as Button)!.Tag as string;
         if (openFileDialog.ShowDialog() != true) return;
-        EncFilePathTextBox.Text = openFileDialog.FileName;
+        (FindName(textBoxName!) as TextBox)!.Text = openFileDialog.FileName;
     }
 
     private void ChooseFolderButton_OnClick(object sender, RoutedEventArgs e)
     {
-        var textBoxName = (sender as Button)!.Tag as string;
-
         var dialog = new VistaFolderBrowserDialog
         {
             Description = "Select a Folder",
@@ -66,6 +67,7 @@ public partial class DecryptWindow : MetroWindow
             ShowNewFolderButton = true
         };
 
+        var textBoxName = (sender as Button)!.Tag as string;
         if (dialog.ShowDialog() != true) return;
         (FindName(textBoxName!) as TextBox)!.Text = dialog.SelectedPath;
     }
@@ -89,10 +91,23 @@ public partial class DecryptWindow : MetroWindow
         public string Message { get; set; }
     }
 
+    private bool CanDecrypt()
+    {
+        EncPathTextBox.GetBindingExpression(TextBox.TextProperty)!.UpdateSource();
+        DecPathTextBox.GetBindingExpression(TextBox.TextProperty)!.UpdateSource();
+        return !Validation.GetHasError(EncPathTextBox) && !Validation.GetHasError(DecPathTextBox);
+    }
+
     private void DecryptButton_OnClick(object sender, RoutedEventArgs e)
     {
-        ArchiveUtils.RarPath = ConfigDao.Config.RarPath;
+        if (!CanDecrypt())
+        {
+            MessageBox.Show("Decrypt condition is not valid.", "Decrypt",
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
 
+        ArchiveUtils.RarPath = ConfigDao.Config.RarPath;
         if (!File.Exists(ArchiveUtils.RarPath))
         {
             MessageBox.Show("Set RAR path in the settings.", "Error",
@@ -100,25 +115,7 @@ public partial class DecryptWindow : MetroWindow
             return;
         }
 
-        var encPath = EncFilePathTextBox.Text;
-
-        var isEncFile = File.Exists(encPath);
-        var isEncDir = Directory.Exists(encPath);
-
-        if (!(isEncFile || isEncDir))
-        {
-            MessageBox.Show("Choose a Encrypted File/Folder", "Decrypt",
-                MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
-        }
-
-        var decPath = DecryptPathTextBox.Text;
-        if (!Directory.Exists(decPath))
-        {
-            MessageBox.Show("Choose a Decrypt Folder", "Decrypt",
-                MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
-        }
+        var isEncFile = File.Exists(EncPath);
 
         var progressDialog = new ProgressDialog
         {
@@ -128,7 +125,6 @@ public partial class DecryptWindow : MetroWindow
         // access the controls outside Task.Run below, otherwise the new thread is trying to access a WPF object
         // (UI element) from a thread other than the one on which the element was created (i.e. the UI thread).
         // told by GPT
-        var dbName = (string)ChooseDbComboBox.SelectedItem;
         var decryptResults = new List<DecryptResult>();
         var overwriteMode = OverwriteModeCheckBox.IsChecked == true;
 
@@ -136,8 +132,8 @@ public partial class DecryptWindow : MetroWindow
         {
             await Task.Run(async () =>
             {
-                var db = DatabaseDao.SelectByName(dbName);
-                var archives = isEncFile ? new[] { encPath } : Directory.GetFiles(encPath);
+                var db = DatabaseDao.SelectByName(SelectedDb);
+                var archives = isEncFile ? new[] { EncPath } : Directory.GetFiles(EncPath);
 
                 foreach (var a in archives)
                 {
@@ -149,7 +145,7 @@ public partial class DecryptWindow : MetroWindow
                     if (db.EncryptScheme.PwdLevel == PasswordLevel.Db) // if the enc level is per db, just decrypt it
                     {
                         var pwd = await EncryptApi.MakeArchivePwd(db, null);
-                        var exitCode = await ArchiveUtils.ExtractRar(a, decPath, pwd, overwriteMode);
+                        var exitCode = await ArchiveUtils.ExtractRar(a, DecPath, pwd, overwriteMode);
                         // 10 means file with the same name already exists
                         extractSuccess = exitCode == 0 || exitCode == 10;
                         if (extractSuccess)
@@ -193,7 +189,7 @@ public partial class DecryptWindow : MetroWindow
                             if (pwdCorrect)
                             {
                                 decFilePath = FsUtils.GetLastEntry(node.FileName);
-                                var exitCode = await ArchiveUtils.ExtractRar(a, decPath, pwd, overwriteMode);
+                                var exitCode = await ArchiveUtils.ExtractRar(a, DecPath, pwd, overwriteMode);
                                 extractSuccess = exitCode == 0 || exitCode == 10;
                                 break;
                             }
@@ -244,5 +240,23 @@ public partial class DecryptWindow : MetroWindow
             DecResultList.Visibility = Visibility.Visible;
             Width = 1200;
         }
+    }
+}
+
+public class PathValidationRule : ValidationRule
+{
+    public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+    {
+        var path = (string)value;
+
+        if (string.IsNullOrWhiteSpace(path))
+            return new ValidationResult(false, "Path cannot be empty.");
+
+        if (!(File.Exists(path) || Directory.Exists(path)))
+        {
+            return new ValidationResult(false, "Path does not exist.");
+        }
+
+        return ValidationResult.ValidResult;
     }
 }

@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using MahApps.Metro.Controls;
@@ -12,6 +15,14 @@ namespace SCIDesktop.window;
 
 public partial class CreateDbWindow : MetroWindow
 {
+    public PasswordLevel SelectedPasswordLevel { get; set; } = PasswordLevel.Db;
+
+    public string DbName { get; set; } = "";
+
+    public string SourceFolder { get; set; } = "";
+
+    public string EncryptedFolder { get; set; } = "";
+
     private DatabaseDao DatabaseDao { get; set; }
 
     private ConfigDao ConfigDao { get; set; }
@@ -19,12 +30,16 @@ public partial class CreateDbWindow : MetroWindow
     public CreateDbWindow(DatabaseDao databaseDao, ConfigDao configDao)
     {
         InitializeComponent();
-
-        PwdLevelComboBox.ItemsSource = Enum.GetValues(typeof(PasswordLevel));
-        PwdLevelComboBox.SelectedItem = PasswordLevel.Db;
-
         DatabaseDao = databaseDao;
         ConfigDao = configDao;
+
+        DataContext = this;
+
+        PwdLevelComboBox.ItemsSource = Enum.GetValues(typeof(PasswordLevel));
+
+        DbNameValidationRule.ExistingDbNames = databaseDao.SelectNames().ToHashSet();
+        SrcFolderValidationRule.Window = this;
+        EncFolderValidationRule.Window = this;
     }
 
     private void ChooseFolderButton_OnClick(object sender, RoutedEventArgs e)
@@ -43,65 +58,41 @@ public partial class CreateDbWindow : MetroWindow
         ((TextBox)FindName(textBoxName)!).Text = dialog.SelectedPath;
     }
 
+    private bool CanSubmit()
+    {
+        DbNameTextBox.GetBindingExpression(TextBox.TextProperty)!.UpdateSource();
+        SourceFolderTextBox.GetBindingExpression(TextBox.TextProperty)!.UpdateSource();
+        EncryptedFolderTextBox.GetBindingExpression(TextBox.TextProperty)!.UpdateSource();
 
-    // see DatabaseCreate
+        return !Validation.GetHasError(DbNameTextBox) &&
+               !Validation.GetHasError(SourceFolderTextBox) &&
+               !Validation.GetHasError(EncryptedFolderTextBox);
+    }
+
     private void SubmitButton_OnClick(object sender, RoutedEventArgs e)
     {
-        var dbName = DbNameTextBox.Text;
-        var sourceFolder = SourceFolderTextBox.Text;
-        var encryptedFolder = EncryptedFolderTextBox.Text;
+        if (!CanSubmit())
+        {
+            MessageBox.Show("Some fields are not valid.", "Create Database",
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        // There seems no built-in ways to validate PasswordBox
         var pwd = PasswordBox.Password;
-        var pwdLevel = (PasswordLevel)PwdLevelComboBox.SelectedItem;
-
-        if (string.IsNullOrWhiteSpace(dbName))
-        {
-            MessageBox.Show("Empty database name is not valid.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
-        }
-
-        if (DatabaseDao.CheckNameExists(dbName))
-        {
-            MessageBox.Show("A database with the same name has already existed.", "Error", MessageBoxButton.OK,
-                MessageBoxImage.Error);
-            return;
-        }
-
-        if (!Directory.Exists(sourceFolder))
-        {
-            MessageBox.Show("Source folder doesn't exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
-        }
-
-        if (!Directory.Exists(encryptedFolder))
-        {
-            MessageBox.Show("Encrypted folder doesn't exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
-        }
-
-        if (sourceFolder.Contains(encryptedFolder))
-        {
-            MessageBox.Show("Source folder should not be a child folder of encrypted folder.", "Error",
-                MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
-        }
-
-        if (encryptedFolder.Contains(sourceFolder))
-        {
-            MessageBox.Show("Encrypted folder should not be a child folder of source folder.", "Error",
-                MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
-        }
-
         if (string.IsNullOrWhiteSpace(pwd))
         {
-            MessageBox.Show("Empty password is not valid.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show("Empty password is not valid.", "Create Database",
+                MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
-        var db = new Database(dbName, sourceFolder, encryptedFolder, null!, new EncryptScheme(), pwd, DbType.Normal,
+        var db = new Database(DbName, SourceFolder, EncryptedFolder, null!, new EncryptScheme(), pwd, DbType.Normal,
             DateTime.Today, DateTime.Today);
 
-        db.EncryptScheme.PwdLevel = pwdLevel;
+        // TODO: the two length should let user choose when create a db, instead of putting them in setting control
+
+        db.EncryptScheme.PwdLevel = SelectedPasswordLevel;
         db.EncryptScheme.FileNamePattern = EncryptApi.MakePattern((int)ConfigDao.Config.EncryptedFilenameLength);
         db.EncryptScheme.PwdPattern = EncryptApi.MakePattern((int)ConfigDao.Config.EncryptedArchivePwdLength);
 
@@ -110,5 +101,60 @@ public partial class CreateDbWindow : MetroWindow
         MessageBox.Show("succeed");
         DialogResult = true;
         Close();
+    }
+}
+
+public class DbNameValidationRule : ValidationRule
+{
+    public HashSet<string> ExistingDbNames { get; set; }
+
+    public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+    {
+        var dbName = (string)value;
+
+        if (string.IsNullOrWhiteSpace(dbName))
+            return new ValidationResult(false, "Empty database name is not valid.");
+
+        if (dbName.StartsWith(' ') || dbName.EndsWith(' '))
+            return new ValidationResult(false, "Database name can not start or end with space.");
+
+        if (ExistingDbNames.Contains(dbName))
+            return new ValidationResult(false, "This name has already existed.");
+
+        return ValidationResult.ValidResult;
+    }
+}
+
+public class SrcEncFolderValidationRule : ValidationRule
+{
+    public CreateDbWindow Window { get; set; }
+
+    public string OtherFolderProperty { get; set; }
+    public bool IsSourceFolder { get; set; }
+
+    public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+    {
+        var folderPath = (string)value;
+        var otherFolderPath = (string)typeof(CreateDbWindow).GetProperty(OtherFolderProperty)!.GetValue(Window)!;
+
+        if (string.IsNullOrWhiteSpace(folderPath))
+        {
+            return new ValidationResult(false, "Path cannot be empty.");
+        }
+
+        if (!Directory.Exists(folderPath))
+        {
+            return new ValidationResult(false, "Folder doesn't exist.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(otherFolderPath) && folderPath.Contains(otherFolderPath))
+        {
+            return new ValidationResult(false,
+                IsSourceFolder
+                    ? "Source folder should not be a child folder of the encrypted folder."
+                    : "Encrypted folder should not be a child folder of the source folder.");
+        }
+
+        return ValidationResult.ValidResult;
     }
 }

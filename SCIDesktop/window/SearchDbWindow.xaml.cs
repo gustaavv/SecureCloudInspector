@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -12,6 +12,10 @@ namespace SCIDesktop.window;
 
 public partial class SearchDbWindow : MetroWindow
 {
+    public string SelectedDb { get; set; }
+
+    public string? UserInput { get; set; }
+
     private DatabaseDao DatabaseDao { get; set; }
 
     private const string EmptyDbMsg = "This is an empty database, run encryption first.";
@@ -19,12 +23,12 @@ public partial class SearchDbWindow : MetroWindow
     public SearchDbWindow(DatabaseDao databaseDao, string dbName)
     {
         InitializeComponent();
+        DataContext = this;
 
         DatabaseDao = databaseDao;
 
-        var databases = DatabaseDao.SelectAll();
-        ChooseDbComboBox.ItemsSource = databases.Select(v => v.Name).ToList();
-        ChooseDbComboBox.SelectedItem = dbName;
+        ChooseDbComboBox.ItemsSource = DatabaseDao.SelectNames();
+        SelectedDb = dbName;
 
         var db = DatabaseDao.SelectByName(dbName);
         if (db.Node == null!)
@@ -61,20 +65,23 @@ public partial class SearchDbWindow : MetroWindow
         }
     }
 
+    private bool CanSearch()
+    {
+        KeyWordsTextBox.GetBindingExpression(TextBox.TextProperty)!.UpdateSource();
+        return !Validation.GetHasError(KeyWordsTextBox);
+    }
+
     private void SearchButton_OnClick(object sender, RoutedEventArgs e)
     {
-        var input = KeyWordsTextBox.Text;
-
-        if (string.IsNullOrWhiteSpace(input))
+        if (!CanSearch())
         {
-            MessageBox.Show("Input some keywords.", "Result", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show("Please enter a valid search condition.", "Search",
+                MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
 
-        var dbName = (string)ChooseDbComboBox.SelectedItem;
-        var db = DatabaseDao.SelectByName(dbName);
-
-        var keywords = input.Split(' ')
+        var db = DatabaseDao.SelectByName(SelectedDb);
+        var keywords = UserInput.Split(' ')
             .Where(s => !string.IsNullOrWhiteSpace(s))
             .Select(s => s.ToLower())
             .ToArray();
@@ -91,17 +98,24 @@ public partial class SearchDbWindow : MetroWindow
             })
             .Select(t => new SearchResult(t.node.FileName, t.srcPath, t.encPath, t.node))
             .ToList();
-        SearchResultList.ItemsSource = results;
-    }
 
-    private void InfoButton_OnClick(object sender, RoutedEventArgs e)
-    {
-        var button = sender as Button;
-        var node = (Node)button!.Tag;
+        SearchResultList.ItemsSource = results;
     }
 
     private void ChooseDbComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         EmptyDbTextBlock.Text = "";
+        SearchResultList.ItemsSource = null;
+    }
+}
+
+public class UserInputValidationRule : ValidationRule
+{
+    public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+    {
+        if (string.IsNullOrWhiteSpace((string)value))
+            return new ValidationResult(false, "Keywords cannot be empty");
+
+        return ValidationResult.ValidResult;
     }
 }
