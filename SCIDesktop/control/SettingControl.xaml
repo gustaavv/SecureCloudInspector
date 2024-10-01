@@ -60,7 +60,8 @@
                         <Border.Background>
                             <SolidColorBrush Color="Gray" Opacity="0.3" />
                         </Border.Background>
-                        <TextBox Name="RarPathTextBox" Text="{Binding Path=RarPath}" IsReadOnly="True"
+                        <TextBox Name="RarPathTextBox"
+                                 Text="{Binding Path=RarPath, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"
                                  Margin="5,0" Background="Transparent" BorderThickness="0" />
                     </Border>
 
@@ -84,7 +85,8 @@
                         <Border.Background>
                             <SolidColorBrush Color="Gray" Opacity="0.3" />
                         </Border.Background>
-                        <TextBox Name="EncDbPathTextBox" Text="{Binding Path=EncDbPath}" IsReadOnly="True"
+                        <TextBox Name="EncDbPathTextBox"
+                                 Text="{Binding Path=EncDbPath, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"
                                  Margin="5,0" Background="Transparent" BorderThickness="0" />
                     </Border>
 
@@ -108,7 +110,8 @@
                         <Border.Background>
                             <SolidColorBrush Color="Gray" Opacity="0.3" />
                         </Border.Background>
-                        <TextBox Name="DecDbPathTextBox" Text="{Binding Path=DecDbPath}" IsReadOnly="True"
+                        <TextBox Name="DecDbPathTextBox"
+                                 Text="{Binding Path=DecDbPath, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"
                                  Margin="5,0" Background="Transparent" BorderThickness="0" />
                     </Border>
 
@@ -129,8 +132,6 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0" Margin="{StaticResource GroupBoxRowMargin}">
@@ -143,7 +144,7 @@
 
                     <CheckBox Grid.Column="1" Margin="0,0,-100,0" HorizontalAlignment="Right"
                               Name="CreateDigestWhenExportCheckBox"
-                              IsChecked="{Binding Path=CreateDigestWhenExport}" />
+                              IsChecked="{Binding Path=CreateDigestWhenExport, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
 
                 <Grid Grid.Row="1" Margin="{StaticResource GroupBoxRowMargin}">
@@ -156,53 +157,10 @@
 
                     <CheckBox Grid.Column="1" Margin="0,0,-100,0"
                               Name="VerifyDigestWhenImportCheckBox"
-                              IsChecked="{Binding Path=VerifyDigestWhenImport}" />
+                              IsChecked="{Binding Path=VerifyDigestWhenImport, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
 
-                <Grid Grid.Row="2" Margin="{StaticResource GroupBoxRowMargin}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Grid.Column="0" VerticalAlignment="Center">Encrypted Filename Length</TextBlock>
-
-                    <DockPanel Grid.Column="1">
-                        <TextBlock DockPanel.Dock="Left" Margin="10, 0"
-                                   Text="{Binding ElementName=EncryptedFilenameLengthSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" />
-                        <Slider Width="200" Orientation="Horizontal" Margin="10, 0"
-                                Name="EncryptedFilenameLengthSlider"
-                                Minimum="12" Maximum="25" SmallChange="1" LargeChange="3"
-                                Value="{Binding Path=EncryptedFilenameLength}" />
-                        <Button ToolTip="Reset" Click="SliderResetButton_OnClick" Tag="EncryptedFilenameLength">
-                            <iconPacks:FontAwesome Kind="ArrowRotateRightSolid" />
-                        </Button>
-                    </DockPanel>
-                </Grid>
-
-                <Grid Grid.Row="3" Margin="{StaticResource GroupBoxRowMargin}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Grid.Column="0" VerticalAlignment="Center">Encrypted Archive Password Length</TextBlock>
-
-                    <DockPanel Grid.Column="1">
-                        <TextBlock DockPanel.Dock="Left" Margin="10, 0"
-                                   Text="{Binding ElementName=EncryptedArchivePwdLengthSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" />
-                        <Slider Width="200" Orientation="Horizontal" Margin="10, 0"
-                                Name="EncryptedArchivePwdLengthSlider"
-                                Minimum="50" Maximum="80" SmallChange="1" LargeChange="5"
-                                Value="{Binding Path=EncryptedArchivePwdLength}" />
-                        <Button ToolTip="Reset" Click="SliderResetButton_OnClick" Tag="EncryptedArchivePwdLength">
-                            <iconPacks:FontAwesome Kind="ArrowRotateRightSolid" />
-                        </Button>
-                    </DockPanel>
-
-                </Grid>
             </Grid>
-
         </GroupBox>
 
         <GroupBox Grid.Row="4" Margin="0,10">
@@ -227,7 +185,8 @@
                             <SolidColorBrush Color="Gray" Opacity="0.3" />
                         </Border.Background>
                         <TextBox Name="PreferredDecryptedPathTextBox"
-                                 Text="{Binding Path=PreferredDecryptedPath}" IsReadOnly="True"
+                                 Text="{Binding Path=PreferredDecryptedPath, UpdateSourceTrigger=PropertyChanged}"
+                                 IsReadOnly="True"
                                  Margin="5,0" Background="Transparent" BorderThickness="0" />
                     </Border>
 

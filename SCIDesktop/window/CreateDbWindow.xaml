@@ -8,7 +8,7 @@
                  xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                  mc:Ignorable="d"
                  TitleCharacterCasing="Normal"
-                 Title="Create a Database" Height="450" Width="600" WindowStartupLocation="CenterScreen">
+                 Title="Create a Database" Height="600" Width="800" WindowStartupLocation="CenterScreen">
     <Grid Margin="{StaticResource ContentMargin}">
         <Grid.Resources>
             <Style TargetType="iconPacks:PackIconFontAwesome">
@@ -18,6 +18,9 @@
         </Grid.Resources>
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -94,10 +97,33 @@
 
         <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Margin="0,10">Password Level:</TextBlock>
         <ComboBox Grid.Row="4" Grid.Column="1" Name="PwdLevelComboBox" Margin="5,10"
-                  SelectedItem="{Binding SelectedPasswordLevel}" />
+                  SelectedItem="{Binding SelectedPasswordLevel, UpdateSourceTrigger=PropertyChanged}" />
 
+        
+        <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Margin="0,10">Database Type:</TextBlock>
+        <ComboBox Grid.Row="5" Grid.Column="1" Name="DbTypeComboBox" Margin="5,10"
+                  SelectedItem="{Binding SelectedDbType, UpdateSourceTrigger=PropertyChanged}" />
 
-        <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Name="SubmitButton" Margin="0,20" Padding="5"
+        
+        <TextBlock Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Margin="0,10">Encrypted Filename Length:</TextBlock>
+        <Slider Grid.Row="6" Grid.Column="1" Orientation="Horizontal" Margin="5, 10"
+                Name="EncryptedFilenameLengthSlider"
+                Minimum="12" Maximum="25" SmallChange="1" LargeChange="3"
+                Value="{Binding Path=EncryptedFilenameLength, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Grid.Row="6" Grid.Column="2" Margin="0, 10"
+                   Text="{Binding ElementName=EncryptedFilenameLengthSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" />
+
+        
+        <TextBlock Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" Margin="0,10">Encrypted Archive Password Length:</TextBlock>
+        <Slider Grid.Row="7" Grid.Column="1" Orientation="Horizontal" Margin="5, 10"
+                Name="EncryptedArchivePwdLengthSlider"
+                Minimum="50" Maximum="80" SmallChange="1" LargeChange="5"
+                Value="{Binding Path=EncryptedArchivePwdLength, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Grid.Row="7" Grid.Column="2" Margin="0, 10"
+                   Text="{Binding ElementName=EncryptedArchivePwdLengthSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" />
+
+        
+        <Button Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Name="SubmitButton" Margin="0,20" Padding="5"
                 VerticalAlignment="Bottom" HorizontalAlignment="Center"
                 Style="{StaticResource AccentButton}"
                 Click="SubmitButton_OnClick">

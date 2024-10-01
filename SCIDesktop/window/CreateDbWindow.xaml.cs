@@ -15,13 +15,19 @@ namespace SCIDesktop.window;
 
 public partial class CreateDbWindow : MetroWindow
 {
-    public PasswordLevel SelectedPasswordLevel { get; set; } = PasswordLevel.Db;
-
     public string DbName { get; set; } = "";
 
     public string SourceFolder { get; set; } = "";
 
     public string EncryptedFolder { get; set; } = "";
+
+    public PasswordLevel SelectedPasswordLevel { get; set; } = PasswordLevel.Db;
+
+    public DbType SelectedDbType { get; set; } = DbType.Normal;
+
+    public uint EncryptedFilenameLength { get; set; } = 15;
+
+    public uint EncryptedArchivePwdLength { get; set; } = 60;
 
     private DatabaseDao DatabaseDao { get; set; }
 
@@ -36,6 +42,7 @@ public partial class CreateDbWindow : MetroWindow
         DataContext = this;
 
         PwdLevelComboBox.ItemsSource = Enum.GetValues(typeof(PasswordLevel));
+        DbTypeComboBox.ItemsSource = Enum.GetValues(typeof(DbType));
 
         DbNameValidationRule.ExistingDbNames = databaseDao.SelectNames().ToHashSet();
         SrcFolderValidationRule.Window = this;
@@ -87,14 +94,12 @@ public partial class CreateDbWindow : MetroWindow
             return;
         }
 
-        var db = new Database(DbName, SourceFolder, EncryptedFolder, null!, new EncryptScheme(), pwd, DbType.Normal,
+        var db = new Database(DbName, SourceFolder, EncryptedFolder, null!, new EncryptScheme(), pwd, SelectedDbType,
             DateTime.Today, DateTime.Today);
 
-        // TODO: the two length should let user choose when create a db, instead of putting them in setting control
-
         db.EncryptScheme.PwdLevel = SelectedPasswordLevel;
-        db.EncryptScheme.FileNamePattern = EncryptApi.MakePattern((int)ConfigDao.Config.EncryptedFilenameLength);
-        db.EncryptScheme.PwdPattern = EncryptApi.MakePattern((int)ConfigDao.Config.EncryptedArchivePwdLength);
+        db.EncryptScheme.FileNamePattern = EncryptApi.MakePattern((int)EncryptedFilenameLength);
+        db.EncryptScheme.PwdPattern = EncryptApi.MakePattern((int)EncryptedArchivePwdLength);
 
         DatabaseDao.Insert(db);
 

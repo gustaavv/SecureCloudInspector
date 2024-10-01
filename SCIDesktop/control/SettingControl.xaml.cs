@@ -41,18 +41,6 @@ public partial class SettingControl : UserControl
         set => ConfigDao.Config.VerifyDigestWhenImport = value;
     }
 
-    public uint EncryptedFilenameLength
-    {
-        get => ConfigDao.Config.EncryptedFilenameLength;
-        set => ConfigDao.Config.EncryptedFilenameLength = value;
-    }
-
-    public uint EncryptedArchivePwdLength
-    {
-        get => ConfigDao.Config.EncryptedArchivePwdLength;
-        set => ConfigDao.Config.EncryptedArchivePwdLength = value;
-    }
-
     public string PreferredDecryptedPath
     {
         get => ConfigDao.Config.PreferredDecryptedPath;
@@ -98,12 +86,5 @@ public partial class SettingControl : UserControl
 
         var textBoxName = (string)(sender as Button)!.Tag;
         ((TextBox)FindName(textBoxName)!).Text = dialog.SelectedPath;
-    }
-
-    private void SliderResetButton_OnClick(object sender, RoutedEventArgs e)
-    {
-        var property = ((sender as Button)!.Tag as string)!;
-        var slider = (FindName($"{property}Slider") as Slider)!;
-        slider.Value = (uint)typeof(SettingControl).GetProperty(property)!.GetValue(this)!;
     }
 }

@@ -46,7 +46,7 @@
 
                     <ComboBox Name="ChooseDbComboBox" Width="100" Margin="10, 0"
                               FontSize="{StaticResource HeaderFontSize}" 
-                              SelectedItem="{Binding SelectedDb}"/>
+                              SelectedItem="{Binding SelectedDb, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
 
 
