@@ -1,4 +1,6 @@
-﻿namespace SCICore.util;
+﻿using ByteSizeLib;
+
+namespace SCICore.util;
 
 /**
  * FileSystem Utils
@@ -47,5 +49,11 @@ public static class FsUtils
         var directories = Directory.GetDirectories(dir).Select(s => absolutePath ? s : GetLastEntry(s)).ToList();
         files.AddRange(directories);
         return files;
+    }
+
+    public static string PrettyPrintBytes(long bytes)
+    {
+        var b = ByteSize.FromBytes(bytes);
+        return b.LargestWholeNumberBinaryValue.ToString("0.00") + " " + b.LargestWholeNumberBinarySymbol;
     }
 }

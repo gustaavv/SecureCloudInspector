@@ -40,7 +40,7 @@
             <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,0">Keywords:</TextBlock>
             <TextBox Name="KeyWordsTextBox" Grid.Column="1" Margin="0,0,10, 0" KeyDown="KeyWordsTextBox_OnKeyDown">
                 <TextBox.Text>
-                    <Binding Path="UserInput" UpdateSourceTrigger="PropertyChanged" >
+                    <Binding Path="UserInput" UpdateSourceTrigger="PropertyChanged">
                         <Binding.ValidationRules>
                             <local:UserInputValidationRule />
                         </Binding.ValidationRules>
@@ -61,7 +61,8 @@
 
         <ListView Grid.Row="4" Margin="0,5" Name="SearchResultList"
                   ScrollViewer.VerticalScrollBarVisibility="Visible"
-                  ScrollViewer.CanContentScroll="False" BorderThickness="1">
+                  ScrollViewer.CanContentScroll="False" BorderThickness="1"
+                  MouseDoubleClick="SearchResultList_OnMouseDoubleClick">
             <ListView.Resources>
                 <Style TargetType="{x:Type GridViewColumnHeader}">
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -73,11 +74,11 @@
                     <GridViewColumn Header="Filename" Width="250">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <!-- <TextBlock Text="{Binding Filename}" -->
-                                <!--            ToolTip="{Binding Filename}" -->
-                                <!--            TextTrimming="CharacterEllipsis" /> -->
-                                <TextBox Text="{Binding Filename}" ToolTip="{Binding Filename}"
-                                         BorderThickness="0" Background="Transparent" IsReadOnly="True" />
+                                <TextBlock Text="{Binding Filename}"
+                                           ToolTip="{Binding Filename}"
+                                           TextTrimming="CharacterEllipsis" />
+                                <!-- <TextBox Text="{Binding Filename}" ToolTip="{Binding Filename}" -->
+                                <!--          BorderThickness="0" Background="Transparent" IsReadOnly="True" /> -->
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -85,11 +86,11 @@
                     <GridViewColumn Header="Source Path" Width="350">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <!-- <TextBlock Text="{Binding SourcePath}" -->
-                                <!--            ToolTip="{Binding SourcePath}" -->
-                                <!--            TextTrimming="CharacterEllipsis" /> -->
-                                <TextBox Text="{Binding SourcePath}" ToolTip="{Binding SourcePath}"
-                                         BorderThickness="0" Background="Transparent" IsReadOnly="True" />
+                                <TextBlock Text="{Binding SourcePath}"
+                                           ToolTip="{Binding SourcePath}"
+                                           TextTrimming="CharacterEllipsis" />
+                                <!-- <TextBox Text="{Binding SourcePath}" ToolTip="{Binding SourcePath}" -->
+                                <!--          BorderThickness="0" Background="Transparent" IsReadOnly="True" /> -->
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -97,11 +98,11 @@
                     <GridViewColumn Header="Encrypted Path" Width="350">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <!-- <TextBlock Text="{Binding EncryptedPath}" -->
-                                <!--            ToolTip="{Binding EncryptedPath}" -->
-                                <!--            TextTrimming="CharacterEllipsis" /> -->
-                                <TextBox Text="{Binding EncryptedPath}" ToolTip="{Binding EncryptedPath}"
-                                         BorderThickness="0" Background="Transparent" IsReadOnly="True" />
+                                <TextBlock Text="{Binding EncryptedPath}"
+                                           ToolTip="{Binding EncryptedPath}"
+                                           TextTrimming="CharacterEllipsis" />
+                                <!-- <TextBox Text="{Binding EncryptedPath}" ToolTip="{Binding EncryptedPath}" -->
+                                <!--          BorderThickness="0" Background="Transparent" IsReadOnly="True" /> -->
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

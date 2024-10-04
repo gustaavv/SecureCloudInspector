@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="ByteSize" Version="2.1.2" />
       <PackageReference Include="Dapper" Version="2.1.35" />
       <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
     </ItemGroup>

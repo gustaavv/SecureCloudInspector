@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,6 +8,7 @@ using System.Windows.Input;
 using MahApps.Metro.Controls;
 using SCICore.dao;
 using SCICore.entity;
+using SCICore.util;
 
 namespace SCIDesktop.window;
 
@@ -106,6 +108,24 @@ public partial class SearchDbWindow : MetroWindow
     {
         EmptyDbTextBlock.Text = "";
         SearchResultList.ItemsSource = null;
+    }
+
+    private void SearchResultList_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (SearchResultList.SelectedItem == null) return;
+        var result = (SearchResult)SearchResultList.SelectedItem;
+
+        var infoRows = new List<InfoWindow.InfoRow>
+        {
+            new("Filename", result.Filename),
+            new("Source Path", result.SourcePath),
+            new("Encrypted Path", result.EncryptedPath),
+            new("File Size", FsUtils.PrettyPrintBytes(result.Node.FileSize)),
+            new("Archive Size", FsUtils.PrettyPrintBytes(result.Node.ArchiveSize))
+        };
+
+        var infoWindow = new InfoWindow(infoRows, "Detailed File Info");
+        infoWindow.ShowDialog();
     }
 }
 
