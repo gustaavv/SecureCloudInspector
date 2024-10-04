@@ -6,6 +6,7 @@ using SCICore.dao;
 using SCICore.entity;
 using System.Windows.Controls;
 using Microsoft.Win32;
+using SCICore.api;
 using SCICore.util;
 using SCIDesktop.window;
 
@@ -33,8 +34,24 @@ public partial class DecryptionControl : UserControl
 
     private void InfoButton_OnClick(object sender, RoutedEventArgs e)
     {
-        var dbName = ((Database)DbList.SelectedItem).Name;
-        MessageBox.Show(dbName, "info");
+        var db = (Database)DbList.SelectedItem;
+
+        var infoRows = new List<InfoWindow.InfoRow>
+        {
+            new("Name", db.Name),
+            new("Source Folder", db.SourceFolder),
+            new("Database Type", db.DbType),
+            new("Base Password", db.Password)
+        };
+
+        if (db.EncryptScheme.PwdLevel == PasswordLevel.Db)
+        {
+            infoRows.Add(new InfoWindow.InfoRow("Actual Password",
+                Task.Run(() => EncryptApi.MakeArchivePwd(db, null)).Result));
+        }
+
+        var infoWindow = new InfoWindow(infoRows, "Database Info");
+        infoWindow.ShowDialog();
     }
 
     private void SearchButton_OnClick(object sender, RoutedEventArgs e)
