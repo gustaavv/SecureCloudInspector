@@ -1,10 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using MahApps.Metro.Controls;
 using SCICore.dao;
-using SCICore.entity;
 
 namespace SCIDesktop.window;
 
