@@ -2,6 +2,14 @@
 
 namespace SCICore.util;
 
+public enum ByteUnit
+{
+    B,
+    KB,
+    MB,
+    GB
+}
+
 /**
  * FileSystem Utils
  */
@@ -55,5 +63,17 @@ public static class FsUtils
     {
         var b = ByteSize.FromBytes(bytes);
         return b.LargestWholeNumberBinaryValue.ToString("0.00") + " " + b.LargestWholeNumberBinarySymbol;
+    }
+
+    public static long ToBytes(double bytes, ByteUnit unit)
+    {
+        return unit switch
+        {
+            ByteUnit.B => (long)bytes,
+            ByteUnit.KB => (long)ByteSize.FromKibiBytes(bytes).Bytes,
+            ByteUnit.MB => (long)ByteSize.FromMebiBytes(bytes).Bytes,
+            ByteUnit.GB => (long)ByteSize.FromGibiBytes(bytes).Bytes,
+            _ => -1
+        };
     }
 }

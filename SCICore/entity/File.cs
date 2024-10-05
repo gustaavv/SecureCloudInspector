@@ -219,12 +219,13 @@ public record Node
         return null;
     }
 
-
-    /// <summary>
-    /// All the conditions are ORed, not ANDed.
-    /// </summary>
     public class SearchCondition
     {
+        /// <summary>
+        /// if true, AND all conditions; if false, OR all conditions
+        /// </summary>
+        public bool And { get; set; } = true;
+
         public string[] Keywords { get; set; } = Array.Empty<string>();
 
         public bool UseFileSize { get; set; } = false;
@@ -248,6 +249,52 @@ public record Node
         public SearchCondition()
         {
         }
+
+        public bool Match(Node node)
+        {
+            var checks = new List<bool> { MatchKeywords(node) };
+            if (FileHashResult != null) checks.Add(MatchFileHashResult(node));
+            if (ArchiveHashResult != null) checks.Add(MatchArchiveHashResult(node));
+            if (ItemType != null) checks.Add(MatchItemType(node));
+            if (UseFileSize) checks.Add(MatchFileSize(node));
+            if (UseArchiveSize) checks.Add(MatchArchiveSize(node));
+
+            return And ? checks.All(b => b) : checks.Any(b => b);
+        }
+
+        public bool MatchKeywords(Node node)
+        {
+            return Keywords.Any(kw =>
+                node.FileName.ToLower().Contains(kw) ||
+                (node.ArchiveName != null! && node.ArchiveName.ToLower().Contains(kw))
+            );
+        }
+
+        public bool MatchFileHashResult(Node node)
+        {
+            return FileHashResult != null && FileHashResult == node.FileHashResult;
+        }
+
+        public bool MatchArchiveHashResult(Node node)
+        {
+            return ArchiveHashResult != null && ArchiveHashResult == node.ArchiveHashResult;
+        }
+
+        public bool MatchItemType(Node node)
+        {
+            return ItemType != null && ItemType == node.Type;
+        }
+
+        public bool MatchFileSize(Node node)
+        {
+            return UseFileSize && FileSizeLowerBound <= node.FileSize && node.FileSize <= FileSizeUpperBound;
+        }
+
+        public bool MatchArchiveSize(Node node)
+        {
+            return UseArchiveSize && ArchiveSizeLowerBound <= node.ArchiveSize &&
+                   node.ArchiveSize <= FileSizeUpperBound;
+        }
     }
 
     /// <summary>
@@ -265,50 +312,8 @@ public record Node
     private static void Search(Node cur, StringBuilder srcPath, StringBuilder encPath,
         SearchCondition condition, List<(Node node, string srcPath, string encPath)> ans)
     {
-        var hit = false;
-        foreach (var kw in condition.Keywords)
-        {
-            if (cur.FileName.ToLower().Contains(kw) ||
-                (cur.ArchiveName != null && cur.ArchiveName.ToLower().Contains(kw)))
-            {
-                hit = true;
-                ans.Add((cur, srcPath.ToString(), encPath.ToString()));
-                break;
-            }
-        }
-
-        if (!hit && condition.FileHashResult != null && condition.FileHashResult == cur.FileHashResult)
-        {
+        if (condition.Match(cur))
             ans.Add((cur, srcPath.ToString(), encPath.ToString()));
-            hit = true;
-        }
-
-        if (!hit && condition.ArchiveHashResult != null && condition.ArchiveHashResult == cur.ArchiveHashResult)
-        {
-            ans.Add((cur, srcPath.ToString(), encPath.ToString()));
-            hit = true;
-        }
-
-        if (!hit && condition.ItemType != null && condition.ItemType == cur.Type)
-        {
-            ans.Add((cur, srcPath.ToString(), encPath.ToString()));
-            hit = true;
-        }
-
-        if (!hit && condition.UseFileSize && condition.FileSizeLowerBound <= cur.FileSize &&
-            cur.FileSize <= condition.FileSizeUpperBound)
-        {
-            ans.Add((cur, srcPath.ToString(), encPath.ToString()));
-            hit = true;
-        }
-
-        if (!hit && condition.UseArchiveSize && condition.ArchiveSizeLowerBound <= cur.ArchiveSize &&
-            cur.ArchiveSize <= condition.ArchiveSizeUpperBound)
-        {
-            ans.Add((cur, srcPath.ToString(), encPath.ToString()));
-            hit = true;
-        }
-
 
         var oldEncLen = encPath.Length;
         var oldSrcLen = srcPath.Length;

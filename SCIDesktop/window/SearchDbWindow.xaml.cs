@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -16,7 +17,20 @@ public partial class SearchDbWindow : MetroWindow
 {
     public string SelectedDb { get; set; }
 
-    public string? UserInput { get; set; }
+    public string UserInput { get; set; } = "";
+
+
+    public bool AndCondition { get; set; } = true;
+
+    public bool FilesizeChecked { get; set; } = false;
+
+    public double FileSizeLowerBound { get; set; } = 0;
+
+    public ByteUnit FileSizeLowerBoundUnit { get; set; } = ByteUnit.MB;
+
+    public double FileSizeUpperBound { get; set; } = 10;
+
+    public ByteUnit FileSizeUpperBoundUnit { get; set; } = ByteUnit.MB;
 
     private DatabaseDao DatabaseDao { get; set; }
 
@@ -28,6 +42,16 @@ public partial class SearchDbWindow : MetroWindow
         DataContext = this;
 
         DatabaseDao = databaseDao;
+
+        var units = Enum.GetValues(typeof(ByteUnit));
+        var comboBoxes = new[] { FileSizeLowerBoundUnitComboBox, FileSizeUpperBoundUnitComboBox };
+        foreach (var cb in comboBoxes)
+        {
+            cb.ItemsSource = units;
+        }
+
+        FileLowerBoundValidationRule.Window = this;
+        FileUpperBoundValidationRule.Window = this;
 
         ChooseDbComboBox.ItemsSource = DatabaseDao.SelectNames();
         SelectedDb = dbName;
@@ -70,7 +94,12 @@ public partial class SearchDbWindow : MetroWindow
     private bool CanSearch()
     {
         KeyWordsTextBox.GetBindingExpression(TextBox.TextProperty)!.UpdateSource();
-        return !Validation.GetHasError(KeyWordsTextBox);
+        FileSizeLowerBoundTextBox.GetBindingExpression(TextBox.TextProperty)!.UpdateSource();
+        FileSizeUpperBoundTextBox.GetBindingExpression(TextBox.TextProperty)!.UpdateSource();
+
+        return !Validation.GetHasError(KeyWordsTextBox) &&
+               !Validation.GetHasError(FileSizeLowerBoundTextBox) &&
+               !Validation.GetHasError(FileSizeUpperBoundTextBox);
     }
 
     private void SearchButton_OnClick(object sender, RoutedEventArgs e)
@@ -96,7 +125,11 @@ public partial class SearchDbWindow : MetroWindow
 
         var results = db.Node.Search(new Node.SearchCondition
             {
-                Keywords = keywords
+                And = AndCondition,
+                Keywords = keywords,
+                UseFileSize = FilesizeChecked,
+                FileSizeLowerBound = FsUtils.ToBytes(FileSizeLowerBound, FileSizeLowerBoundUnit),
+                FileSizeUpperBound = FsUtils.ToBytes(FileSizeUpperBound, FileSizeUpperBoundUnit)
             })
             .Select(t => new SearchResult(t.node.FileName, t.srcPath, t.encPath, t.node))
             .ToList();
@@ -135,6 +168,100 @@ public class UserInputValidationRule : ValidationRule
     {
         if (string.IsNullOrWhiteSpace((string)value))
             return new ValidationResult(false, "Keywords cannot be empty");
+
+        return ValidationResult.ValidResult;
+    }
+}
+
+public class LowerBoundValidationRule : ValidationRule
+{
+    public string LowerBoundUnitProperty { get; set; }
+
+    public string UpperBoundProperty { get; set; }
+
+    public string UpperBoundUnitProperty { get; set; }
+
+    public string CheckBoxProperty { get; set; }
+
+    public SearchDbWindow Window { get; set; }
+
+    public override ValidationResult Validate(object? value, CultureInfo cultureInfo)
+    {
+        if ((bool)typeof(SearchDbWindow).GetProperty(CheckBoxProperty)!.GetValue(Window)! != true)
+        {
+            return ValidationResult.ValidResult;
+        }
+
+        double lowerBound;
+
+        if (double.TryParse((string)value!, NumberStyles.Float, CultureInfo.InvariantCulture, out lowerBound))
+        {
+            if (lowerBound < 0)
+                return new ValidationResult(false, "lowerbound must be a number greater than or equal to 0");
+        }
+        else
+        {
+            return new ValidationResult(false, "lowerbound must be a number.");
+        }
+
+        var upperBound = (double)typeof(SearchDbWindow).GetProperty(UpperBoundProperty)!.GetValue(Window)!;
+
+        var lowerBoundUnit =
+            (ByteUnit)typeof(SearchDbWindow).GetProperty(LowerBoundUnitProperty)!.GetValue(Window)!;
+        var upperBoundUnit =
+            (ByteUnit)typeof(SearchDbWindow).GetProperty(UpperBoundUnitProperty)!.GetValue(Window)!;
+
+        if (FsUtils.ToBytes(lowerBound, lowerBoundUnit) > FsUtils.ToBytes(upperBound, upperBoundUnit))
+        {
+            return new ValidationResult(false, "lowerbound must be less than or equal to upperbound");
+        }
+
+        return ValidationResult.ValidResult;
+    }
+}
+
+public class UpperBoundValidationRule : ValidationRule
+{
+    public string LowerBoundProperty { get; set; }
+
+    public string LowerBoundUnitProperty { get; set; }
+
+    public string UpperBoundUnitProperty { get; set; }
+
+    public string CheckBoxProperty { get; set; }
+
+    public SearchDbWindow Window { get; set; }
+
+    public override ValidationResult Validate(object? value, CultureInfo cultureInfo)
+    {
+        if ((bool)typeof(SearchDbWindow).GetProperty(CheckBoxProperty)!.GetValue(Window)! != true)
+        {
+            return ValidationResult.ValidResult;
+        }
+
+        double upperBound;
+
+        if (double.TryParse((string)value!, NumberStyles.Float, CultureInfo.InvariantCulture, out upperBound))
+        {
+            if (upperBound < 0)
+                return new ValidationResult(false, "upperBound must be a number greater than or equal to 0");
+        }
+        else
+        {
+            return new ValidationResult(false, "upperBound must be a number.");
+        }
+
+        var lowerBound = (double)typeof(SearchDbWindow).GetProperty(LowerBoundProperty)!.GetValue(Window)!;
+
+        var lowerBoundUnit =
+            (ByteUnit)typeof(SearchDbWindow).GetProperty(LowerBoundUnitProperty)!.GetValue(Window)!;
+        var upperBoundUnit =
+            (ByteUnit)typeof(SearchDbWindow).GetProperty(UpperBoundUnitProperty)!.GetValue(Window)!;
+
+        if (FsUtils.ToBytes(lowerBound, lowerBoundUnit) > FsUtils.ToBytes(upperBound, upperBoundUnit))
+        {
+            return new ValidationResult(false, "upperBound must be greter than or equal to lowerbound");
+        }
 
         return ValidationResult.ValidResult;
     }

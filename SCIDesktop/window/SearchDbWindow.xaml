@@ -6,9 +6,15 @@
                  xmlns:local="clr-namespace:SCIDesktop.window"
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:system="clr-namespace:System;assembly=System.Runtime"
+                 xmlns:converter="clr-namespace:SCIDesktop.converter"
                  mc:Ignorable="d"
                  MinHeight="700" MinWidth="800" Height="700" Width="1005"
                  Title="Search a database" TitleCharacterCasing="Normal" WindowStartupLocation="CenterScreen">
+    <mah:MetroWindow.Resources>
+        <converter:EnabledToTextColorConverter x:Key="EnabledToTextColorConverter" />
+        <converter:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    </mah:MetroWindow.Resources>
+
     <Grid Margin="{StaticResource ContentMargin}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -41,9 +47,9 @@
             <TextBox Name="KeyWordsTextBox" Grid.Column="1" Margin="0,0,10, 0" KeyDown="KeyWordsTextBox_OnKeyDown">
                 <TextBox.Text>
                     <Binding Path="UserInput" UpdateSourceTrigger="PropertyChanged">
-                        <Binding.ValidationRules>
-                            <local:UserInputValidationRule />
-                        </Binding.ValidationRules>
+                        <!-- <Binding.ValidationRules> -->
+                        <!--     <local:UserInputValidationRule /> -->
+                        <!-- </Binding.ValidationRules> -->
                     </Binding>
                 </TextBox.Text>
             </TextBox>
@@ -53,8 +59,82 @@
             </Button>
         </Grid>
 
-        <Expander Grid.Row="2" Margin="0,5" Header="Advanced Searching Options">
+        <Expander Grid.Row="2" Margin="0,5" Header="Advanced Searching Options" IsExpanded="False">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center" Margin="5">Search Condition: </TextBlock>
+                    <RadioButton IsChecked="{Binding AndCondition}" Margin="5">AND</RadioButton>
+                    <RadioButton IsChecked="{Binding  AndCondition,Converter={StaticResource InverseBooleanConverter}}"
+                                 Margin="5">
+                        OR
+                    </RadioButton>
+                </StackPanel>
+
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <CheckBox Name="FilesizeCheckBox"
+                              IsChecked="{Binding FilesizeChecked, UpdateSourceTrigger=PropertyChanged}"
+                              VerticalAlignment="Center" Margin="5">
+                        Filesize
+                    </CheckBox>
+
+                    <TextBlock VerticalAlignment="Center" Margin="5"
+                               Foreground="{Binding IsChecked,ElementName=FilesizeCheckBox, Converter={StaticResource EnabledToTextColorConverter}}">
+                        Between
+                    </TextBlock>
+
+                    <TextBox Name="FileSizeLowerBoundTextBox" Margin="5,5,0,5" MaxLength="20"
+                             IsEnabled="{Binding IsChecked,ElementName=FilesizeCheckBox}">
+                        <TextBox.Text>
+                            <Binding Path="FileSizeLowerBound" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <local:LowerBoundValidationRule x:Name="FileLowerBoundValidationRule"
+                                                                    CheckBoxProperty="FilesizeChecked"
+                                                                    LowerBoundUnitProperty="FileSizeLowerBoundUnit"
+                                                                    UpperBoundProperty="FileSizeUpperBound"
+                                                                    UpperBoundUnitProperty="FileSizeUpperBoundUnit" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+
+                    <ComboBox Name="FileSizeLowerBoundUnitComboBox" Margin="2,5,5,5"
+                              SelectedItem="{Binding FileSizeLowerBoundUnit, UpdateSourceTrigger=PropertyChanged}"
+                              IsEnabled="{Binding IsChecked,ElementName=FilesizeCheckBox}">
+                    </ComboBox>
+
+                    <TextBlock VerticalAlignment="Center" Margin="5"
+                               Foreground="{Binding IsChecked,ElementName=FilesizeCheckBox, Converter={StaticResource EnabledToTextColorConverter}}">
+                        and
+                    </TextBlock>
+
+                    <TextBox Name="FileSizeUpperBoundTextBox" Margin="5,5,0,5" MaxLength="20"
+                             IsEnabled="{Binding IsChecked,ElementName=FilesizeCheckBox}">
+                        <TextBox.Text>
+                            <Binding Path="FileSizeUpperBound" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <local:UpperBoundValidationRule x:Name="FileUpperBoundValidationRule"
+                                                                    CheckBoxProperty="FilesizeChecked"
+                                                                    LowerBoundProperty="FileSizeLowerBound"
+                                                                    LowerBoundUnitProperty="FileSizeLowerBoundUnit"
+                                                                    UpperBoundUnitProperty="FileSizeUpperBoundUnit" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+
+                    <ComboBox Name="FileSizeUpperBoundUnitComboBox" Margin="2,5,5,5"
+                              SelectedItem="{Binding FileSizeUpperBoundUnit, UpdateSourceTrigger=PropertyChanged}"
+                              IsEnabled="{Binding IsChecked,ElementName=FilesizeCheckBox}">
+                    </ComboBox>
+                </StackPanel>
+
+            </Grid>
         </Expander>
 
         <Separator Grid.Row="3" Margin="0,5" />
