@@ -41,6 +41,8 @@ public partial class SearchDbWindow : MetroWindow
 
     public ByteUnit ArchiveSizeUpperBoundUnit { get; set; } = ByteUnit.MB;
 
+    public ItemType? SelectedItemType { get; set; } = null;
+
     private DatabaseDao DatabaseDao { get; set; }
 
     private const string EmptyDbMsg = "This is an empty database, run encryption first.";
@@ -147,7 +149,8 @@ public partial class SearchDbWindow : MetroWindow
                 FileSizeUpperBound = FsUtils.ToBytes(FileSizeUpperBound, FileSizeUpperBoundUnit),
                 UseArchiveSize = ArchiveSizeChecked,
                 ArchiveSizeLowerBound = FsUtils.ToBytes(ArchiveSizeLowerBound, ArchiveSizeLowerBoundUnit),
-                ArchiveSizeUpperBound = FsUtils.ToBytes(ArchiveSizeUpperBound, ArchiveSizeUpperBoundUnit)
+                ArchiveSizeUpperBound = FsUtils.ToBytes(ArchiveSizeUpperBound, ArchiveSizeUpperBoundUnit),
+                ItemType = SelectedItemType
             })
             .Select(t => new SearchResult(t.node.FileName, t.srcPath, t.encPath, t.node))
             .ToList();

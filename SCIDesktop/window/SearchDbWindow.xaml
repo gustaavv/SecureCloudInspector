@@ -7,12 +7,14 @@
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:system="clr-namespace:System;assembly=System.Runtime"
                  xmlns:converter="clr-namespace:SCIDesktop.converter"
+                 xmlns:entity="clr-namespace:SCICore.entity;assembly=SCICore"
                  mc:Ignorable="d"
                  MinHeight="700" MinWidth="800" Height="700" Width="1005"
                  Title="Search a database" TitleCharacterCasing="Normal" WindowStartupLocation="CenterScreen">
     <mah:MetroWindow.Resources>
         <converter:EnabledToTextColorConverter x:Key="EnabledToTextColorConverter" />
         <converter:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <converter:EnumToBoolConverter x:Key="EnumToBoolConverter" />
     </mah:MetroWindow.Resources>
 
     <Grid Margin="{StaticResource ContentMargin}">
@@ -62,6 +64,7 @@
         <Expander Grid.Row="2" Margin="0,5" Header="Advanced Searching Options" IsExpanded="False">
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -192,6 +195,24 @@
                     </ComboBox>
                 </StackPanel>
 
+
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center" Margin="5">Type: </TextBlock>
+                    <RadioButton Margin="5"
+                                 IsChecked="{Binding SelectedItemType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Null}}">
+                        All
+                    </RadioButton>
+
+                    <RadioButton Margin="5"
+                                 IsChecked="{Binding SelectedItemType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entity:ItemType.File}}">
+                        File
+                    </RadioButton>
+
+                    <RadioButton Margin="5"
+                                 IsChecked="{Binding SelectedItemType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entity:ItemType.Dir}}">
+                        Folder
+                    </RadioButton>
+                </StackPanel>
             </Grid>
         </Expander>
 
