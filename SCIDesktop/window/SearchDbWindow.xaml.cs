@@ -19,7 +19,6 @@ public partial class SearchDbWindow : MetroWindow
 
     public string UserInput { get; set; } = "";
 
-
     public bool AndCondition { get; set; } = true;
 
     public bool FilesizeChecked { get; set; } = false;
@@ -31,6 +30,16 @@ public partial class SearchDbWindow : MetroWindow
     public double FileSizeUpperBound { get; set; } = 10;
 
     public ByteUnit FileSizeUpperBoundUnit { get; set; } = ByteUnit.MB;
+
+    public bool ArchiveSizeChecked { get; set; } = false;
+
+    public double ArchiveSizeLowerBound { get; set; } = 0;
+
+    public ByteUnit ArchiveSizeLowerBoundUnit { get; set; } = ByteUnit.MB;
+
+    public double ArchiveSizeUpperBound { get; set; } = 10;
+
+    public ByteUnit ArchiveSizeUpperBoundUnit { get; set; } = ByteUnit.MB;
 
     private DatabaseDao DatabaseDao { get; set; }
 
@@ -44,7 +53,11 @@ public partial class SearchDbWindow : MetroWindow
         DatabaseDao = databaseDao;
 
         var units = Enum.GetValues(typeof(ByteUnit));
-        var comboBoxes = new[] { FileSizeLowerBoundUnitComboBox, FileSizeUpperBoundUnitComboBox };
+        var comboBoxes = new[]
+        {
+            FileSizeLowerBoundUnitComboBox, FileSizeUpperBoundUnitComboBox,
+            ArchiveSizeLowerBoundUnitComboBox, ArchiveSizeUpperBoundUnitComboBox
+        };
         foreach (var cb in comboBoxes)
         {
             cb.ItemsSource = units;
@@ -52,6 +65,8 @@ public partial class SearchDbWindow : MetroWindow
 
         FileLowerBoundValidationRule.Window = this;
         FileUpperBoundValidationRule.Window = this;
+        ArchiveLowerBoundValidationRule.Window = this;
+        ArchiveUpperBoundValidationRule.Window = this;
 
         ChooseDbComboBox.ItemsSource = DatabaseDao.SelectNames();
         SelectedDb = dbName;
@@ -129,7 +144,10 @@ public partial class SearchDbWindow : MetroWindow
                 Keywords = keywords,
                 UseFileSize = FilesizeChecked,
                 FileSizeLowerBound = FsUtils.ToBytes(FileSizeLowerBound, FileSizeLowerBoundUnit),
-                FileSizeUpperBound = FsUtils.ToBytes(FileSizeUpperBound, FileSizeUpperBoundUnit)
+                FileSizeUpperBound = FsUtils.ToBytes(FileSizeUpperBound, FileSizeUpperBoundUnit),
+                UseArchiveSize = ArchiveSizeChecked,
+                ArchiveSizeLowerBound = FsUtils.ToBytes(ArchiveSizeLowerBound, ArchiveSizeLowerBoundUnit),
+                ArchiveSizeUpperBound = FsUtils.ToBytes(ArchiveSizeUpperBound, ArchiveSizeUpperBoundUnit)
             })
             .Select(t => new SearchResult(t.node.FileName, t.srcPath, t.encPath, t.node))
             .ToList();

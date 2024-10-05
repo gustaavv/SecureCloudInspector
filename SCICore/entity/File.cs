@@ -293,7 +293,7 @@ public record Node
         public bool MatchArchiveSize(Node node)
         {
             return UseArchiveSize && ArchiveSizeLowerBound <= node.ArchiveSize &&
-                   node.ArchiveSize <= FileSizeUpperBound;
+                   node.ArchiveSize <= ArchiveSizeUpperBound;
         }
     }
 

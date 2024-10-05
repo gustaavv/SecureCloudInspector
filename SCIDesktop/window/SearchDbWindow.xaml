@@ -64,6 +64,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" Orientation="Horizontal">
@@ -74,7 +75,6 @@
                         OR
                     </RadioButton>
                 </StackPanel>
-
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
                     <CheckBox Name="FilesizeCheckBox"
@@ -131,6 +131,64 @@
                     <ComboBox Name="FileSizeUpperBoundUnitComboBox" Margin="2,5,5,5"
                               SelectedItem="{Binding FileSizeUpperBoundUnit, UpdateSourceTrigger=PropertyChanged}"
                               IsEnabled="{Binding IsChecked,ElementName=FilesizeCheckBox}">
+                    </ComboBox>
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <CheckBox Name="ArchiveSizeCheckBox"
+                              IsChecked="{Binding ArchiveSizeChecked, UpdateSourceTrigger=PropertyChanged}"
+                              VerticalAlignment="Center" Margin="5">
+                        Archive Size
+                    </CheckBox>
+
+                    <TextBlock VerticalAlignment="Center" Margin="5"
+                               Foreground="{Binding IsChecked,ElementName=ArchiveSizeCheckBox, Converter={StaticResource EnabledToTextColorConverter}}">
+                        Between
+                    </TextBlock>
+
+                    <TextBox Name="ArchiveSizeLowerBoundTextBox" Margin="5,5,0,5" MaxLength="20"
+                             IsEnabled="{Binding IsChecked,ElementName=ArchiveSizeCheckBox}">
+                        <TextBox.Text>
+                            <Binding Path="ArchiveSizeLowerBound" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <local:LowerBoundValidationRule x:Name="ArchiveLowerBoundValidationRule"
+                                                                    CheckBoxProperty="ArchiveSizeChecked"
+                                                                    LowerBoundUnitProperty="ArchiveSizeLowerBoundUnit"
+                                                                    UpperBoundProperty="ArchiveSizeUpperBound"
+                                                                    UpperBoundUnitProperty="ArchiveSizeUpperBoundUnit" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+
+                    <ComboBox Name="ArchiveSizeLowerBoundUnitComboBox" Margin="2,5,5,5"
+                              SelectedItem="{Binding ArchiveSizeLowerBoundUnit, UpdateSourceTrigger=PropertyChanged}"
+                              IsEnabled="{Binding IsChecked,ElementName=ArchiveSizeCheckBox}">
+                    </ComboBox>
+
+                    <TextBlock VerticalAlignment="Center" Margin="5"
+                               Foreground="{Binding IsChecked,ElementName=ArchiveSizeCheckBox, Converter={StaticResource EnabledToTextColorConverter}}">
+                        and
+                    </TextBlock>
+
+                    <TextBox Name="ArchiveSizeUpperBoundTextBox" Margin="5,5,0,5" MaxLength="20"
+                             IsEnabled="{Binding IsChecked,ElementName=ArchiveSizeCheckBox}">
+                        <TextBox.Text>
+                            <Binding Path="ArchiveSizeUpperBound" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <local:UpperBoundValidationRule x:Name="ArchiveUpperBoundValidationRule"
+                                                                    CheckBoxProperty="ArchiveSizeChecked"
+                                                                    LowerBoundProperty="ArchiveSizeLowerBound"
+                                                                    LowerBoundUnitProperty="ArchiveSizeLowerBoundUnit"
+                                                                    UpperBoundUnitProperty="ArchiveSizeUpperBoundUnit" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+
+                    <ComboBox Name="ArchiveSizeUpperBoundUnitComboBox" Margin="2,5,5,5"
+                              SelectedItem="{Binding ArchiveSizeUpperBoundUnit, UpdateSourceTrigger=PropertyChanged}"
+                              IsEnabled="{Binding IsChecked,ElementName=ArchiveSizeCheckBox}">
                     </ComboBox>
                 </StackPanel>
 
